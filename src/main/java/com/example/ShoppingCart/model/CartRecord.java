@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})}) // Unique constraint: The same user cannot add the same product to the cart more than once
 public class CartRecord {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 50)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String cartId;
 
     private Integer quantity = 1;  // Quantity Added to Cart

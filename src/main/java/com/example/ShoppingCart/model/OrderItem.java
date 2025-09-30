@@ -6,10 +6,9 @@ import java.math.BigDecimal;
 
 @Entity
 public class OrderItem {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 32)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String itemId;
 
     @Column(length = 200) // The product name at the time of placing the order (to avoid the historical order name changing after the main product list is modified)

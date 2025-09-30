@@ -10,9 +10,9 @@ import java.util.List;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 32)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
+    private String userId;
     @Column(length = 50)
     private String userName;
 
@@ -28,10 +28,8 @@ public class User {
     @Column(updatable = false) // Cannot be updated
     private LocalDateTime createTime;
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAddress> userAddresses;
-
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartRecord> cartRecords;
@@ -39,12 +37,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {
@@ -109,5 +107,13 @@ public class User {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
+    }
+
+    public List<CartRecord> getCartRecords() {
+        return cartRecords;
+    }
+
+    public void setCartRecords(List<CartRecord> cartRecords) {
+        this.cartRecords = cartRecords;
     }
 }

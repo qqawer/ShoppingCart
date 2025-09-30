@@ -7,11 +7,10 @@ import java.util.List;
 
 @Entity
 public class Product {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 32)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
+    private String productId;
 
     @Column(length = 200)
     private String name;
@@ -33,12 +32,12 @@ public class Product {
 
     private Integer status = 1;  // Status: 0 = Off shelves, 1 = On shelves
 
-    public String getId() {
-        return id;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getName() {

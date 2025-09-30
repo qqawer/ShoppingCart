@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 
 @Entity
 public class PaymentRecord {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 32)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String paymentId;
 
     @Column(length = 20) //// Payment methods: Alipay, wechat Pay, UnionPay

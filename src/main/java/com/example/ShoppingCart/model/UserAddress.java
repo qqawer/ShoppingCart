@@ -8,10 +8,9 @@ import java.util.List;
 
 @Entity
 public class UserAddress {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 32)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String addressId;
 
     @Column(length = 50)

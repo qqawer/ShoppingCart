@@ -8,11 +8,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-
+@Table(name = "shop_order")   // Avoid reserved characters
 public class Order {
     @Id
-    @Column(length = 32) // Use a string for the order number (such as "20240601123456789"), and do not increment it
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String orderId;
+
 
     @CreationTimestamp // Automatically fill in the order time
     @Column(updatable = false)
