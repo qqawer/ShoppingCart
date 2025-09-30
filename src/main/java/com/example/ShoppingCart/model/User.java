@@ -1,0 +1,113 @@
+package com.example.ShoppingCart.model;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(length = 32)
+    private String id;
+    @Column(length = 50)
+    private String userName;
+
+    @Column(length = 100)
+    private String password;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column(columnDefinition = "TEXT")
+    private String avatar;
+    @CreationTimestamp // Automatically fill in creation time
+    @Column(updatable = false) // Cannot be updated
+    private LocalDateTime createTime;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserAddress> userAddresses;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CartRecord> cartRecords;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public List<UserAddress> getUserAddresses() {
+        return userAddresses;
+    }
+
+    public void setUserAddresses(List<UserAddress> userAddresses) {
+        this.userAddresses = userAddresses;
+    }
+
+    public List<CartRecord> getShoppingCartRecords() {
+        return cartRecords;
+    }
+
+    public void setShoppingCartRecords(List<CartRecord> cartRecords) {
+        this.cartRecords = cartRecords;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+}
