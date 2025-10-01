@@ -85,6 +85,6 @@ public class PaymentRecord {
     }
 
     @OneToOne(optional = false)
-    @JoinColumn(unique = true)// unique=true ensures that there is only one payment record for each order
+    @JoinColumn(name = "order_id",unique = true)// unique=true ensures that there is only one payment record for each order
     private Order order;
 }
