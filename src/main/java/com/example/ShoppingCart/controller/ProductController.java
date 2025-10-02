@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.controller;
 
+import com.example.ShoppingCart.dto.ResponseMessage;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +15,24 @@ public class ProductController {
     @Autowired
     private ProductInterface pservice;
 
-    // 查询所有商品
+    //Query all products.
     @GetMapping("/products")
-    public List<Product> getAllProducts() {
-        return pservice.getAllProducts();
+    public ResponseMessage<List<Product>>getAllProducts() {
+        List<Product> products=pservice.getAllProducts();
+        return ResponseMessage.success(products);
     }
 
-    // 根据商品 ID 查询单个商品
+    // Query a single product based on the product ID
     @GetMapping("/products/{productId}")
-    public Product getProductById(@PathVariable String productId) {
-        return pservice.getProductById(productId);
+    public ResponseMessage<Product> getProductById(@PathVariable String productId) {
+        Product product= pservice.getProductById(productId);
+        return ResponseMessage.success(product);
     }
 
-    // 根据商品名称模糊查询
+    // Perform a fuzzy search based on the product name
     @GetMapping("/products/search")
-    public List<Product> searchProductsByName(@RequestParam String productName) {
-        return pservice.searchProductsByName(productName);
+    public ResponseMessage<List<Product>> searchProductsByName(@RequestParam String productName) {
+        List<Product> products=pservice.searchProductsByName(productName);
+        return ResponseMessage.success(products);
     }
 }
