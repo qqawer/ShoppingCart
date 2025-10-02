@@ -13,7 +13,7 @@ public class Product {
     private String productId;
 
     @Column(length = 200)
-    private String name;
+    private String productName;
 
     @Column(precision = 10, scale = 2) // Selling price, 10-digit precision, 2 decimal places
     private BigDecimal price;
@@ -40,12 +40,12 @@ public class Product {
         this.productId = productId;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public BigDecimal getPrice() {
