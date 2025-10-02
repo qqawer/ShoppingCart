@@ -23,6 +23,12 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(4201, "订单不存在"),
     ORDER_STATUS_ERROR(4202, "订单状态错误，当前状态：%s"),
 
+    //Product module error (43xx)
+    PRODUCT_NOT_EXIST(4301, "The product does not exist."),
+    PRODUCT_LIST_EMPTY(4302, "There are currently no products available"),
+    PARAM_CANNOT_BE_NULL (4303, "Request parameter cannot be empty"),
+
+
     // 服务端错误（5xxx）
     DB_ERROR(5001, "数据库操作失败"),
     SYSTEM_ERROR(5002, "系统内部错误，请稍后重试"),
