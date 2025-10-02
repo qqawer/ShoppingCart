@@ -1,4 +1,4 @@
-package com.example.ShoppingCart.dto;
+package com.example.ShoppingCart.pojo.dto;
 
 import org.springframework.http.HttpStatus;
 

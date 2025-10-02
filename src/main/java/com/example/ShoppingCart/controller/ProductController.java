@@ -1,6 +1,6 @@
 package com.example.ShoppingCart.controller;
 
-import com.example.ShoppingCart.dto.ResponseMessage;
+import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
