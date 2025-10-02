@@ -1,14 +1,27 @@
 package com.example.ShoppingCart.service;
 
 import com.example.ShoppingCart.interfacemethods.CartInterface;
+import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.repository.CartRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
 public class CartImplementation implements CartInterface {
     @Autowired
     private CartRepository prepo;
+
+    @Override
+    public CartRecord updateCartItem(String userId, Long productId, Integer quantity) {
+        return null;
+    }
+
+    @Override
+    public List<CartRecord> updateCartItemsByUserId(String userId, Long productId, Integer quantity) {
+        return List.of();
+    }
 }
