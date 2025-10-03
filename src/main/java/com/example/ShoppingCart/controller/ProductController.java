@@ -8,24 +8,28 @@ import com.example.ShoppingCart.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
-@RestController
-@RequestMapping("/api")
+@Controller
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private ProductInterface pservice;
 
     //Query all products.
-    @GetMapping("/products")
-    public ResponseMessage<Page<Product>>getAllProducts(Pageable pageable) {
+    @GetMapping("/lists")
+    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable, Model model) {
         Page<Product> products=pservice.getAllProducts(pageable);
 //        if (products.isEmpty()) {
 //            throw new BusinessException(ErrorCode.PRODUCT_LIST_EMPTY);
 //        }
-        return ResponseMessage.success(products);
+        model.addAttribute("page", products);
+        return "product/lists";
     }
 
     // Query a single product based on the product ID
