@@ -15,13 +15,5 @@ public class CartImplementation implements CartInterface {
     @Autowired
     private CartRepository prepo;
 
-    @Override
-    public CartRecord updateCartItem(String userId, Long productId, Integer quantity) {
-        return null;
-    }
 
-    @Override
-    public List<CartRecord> updateCartItemsByUserId(String userId, Long productId, Integer quantity) {
-        return List.of();
-    }
 }

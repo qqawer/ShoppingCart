@@ -1,28 +1,27 @@
 package com.example.ShoppingCart.interfacemethods;
 
+import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.model.Order;
 import com.example.ShoppingCart.model.OrderItem;
 import com.example.ShoppingCart.model.PaymentRecord;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderInterface {
 
 
     //checkout
-    //2.createOrder
-    public Order createOrder(@RequestBody Order order);
+    //2.createOrder and orderItem
+    Order createOrder(String userId);
 
     //calculateTotalAmount
-    public double calculateTotalPrice(@RequestBody Order order);
+    BigDecimal calculateTotalPrice(List<CartRecord> cartRecords);
 
     //updateOrderStatus
-    public void updateOrderStatus(@RequestBody Order order);
-
-    //createOrderItems
-    public List<OrderItem> createOrderItem(@RequestBody OrderItem orderItem);
+    void updateOrderStatus(String orderId,int orderStatus);
 
     //createPayment
-    public PaymentRecord createPaymentRecord(@RequestBody PaymentRecord paymentRecord);
+    PaymentRecord createPaymentRecord(String paymentMethod, Order order);
 }
