@@ -7,6 +7,8 @@ import com.example.ShoppingCart.model.User;
 import com.example.ShoppingCart.repository.CartRepository;
 import com.example.ShoppingCart.repository.ProductRepository;
 import com.example.ShoppingCart.repository.UserRepository;
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,10 +31,10 @@ public class CartImplementation implements CartInterface {
     @Override
     public CartRecord checkCartItem(String userId, String productId) {
         if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("用户ID不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "userId");
         }
         if (productId == null || productId.isEmpty()) {
-            throw new IllegalArgumentException("商品ID不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "productId");
         }
 
         Optional<CartRecord> cartRecord = cartRepository.findByUser_UserIdAndProduct_ProductId(userId, productId);
@@ -42,7 +44,7 @@ public class CartImplementation implements CartInterface {
     @Override
     public CartRecord updateQuantity(CartRecord existingCartRecord, Integer quantity) {
         if (quantity == null || quantity < 0) {
-            throw new IllegalArgumentException("数量不能为负数");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量不能为负数");
         }
 
         if (quantity == 0) {
@@ -57,20 +59,20 @@ public class CartImplementation implements CartInterface {
     @Override
     public CartRecord createCartItem(String userId, String productId, Integer quantity) {
         if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("用户ID不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "userId");
         }
         if (productId == null || productId.isEmpty()) {
-            throw new IllegalArgumentException("商品ID不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "productId");
         }
         if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("数量必须大于0");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量必须大于0");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在，userId: " + userId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("商品不存在，productId: " + productId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_EXIST));
 
         CartRecord newCartRecord = new CartRecord();
         newCartRecord.setUser(user);
@@ -84,7 +86,7 @@ public class CartImplementation implements CartInterface {
     @Override
     public List<CartRecord> getCartItemsByUserId(String userId) {
         if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("用户ID不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "userId");
         }
         return cartRepository.findByUser_UserId(userId);
     }
