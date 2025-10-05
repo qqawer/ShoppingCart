@@ -16,54 +16,65 @@ import java.util.List;
 @RequestMapping("/checkout")
 public class OrderController {
     @Autowired
-    private OrderInterface oservice;
+    private OrderInterface orderService;
 
+    /**
+     * 创建订单
+     * POST /checkout/order
+     */
     //用拦截器去判断是否登录
     //不用重复的session判断
     //补全拦截器后删除
     //添加html
-//点击checkout 跳转订单确认页面
-@PostMapping("/order")
-    public String createOrder(HttpSession session){
-    //补全拦截器
-    //生成订单和订单项目
-    //需要添加异常处理
-
-        String userId = (String) session.getAttribute("userId");
-        Order order= oservice.createOrder(userId);
-        session.setAttribute("order",order);
+    //点击checkout 跳转订单确认页面
+    @PostMapping("/order")
+    public String createOrder(HttpSession session) {
+        // 使用统一的 Session 常量获取用户 ID
+        //补全拦截器
+        //生成订单和订单项目
+        //需要添加异常处理
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        Order order = orderService.createOrder(userId);
+        session.setAttribute("order", order);
         return "redirect:/checkout/order/confirm";
     }
 
-
-@GetMapping("/order/confirm")
-    public String confirm(Model model,HttpSession session){
-    //补全拦截器
-    //session 存order
-    Order order =(Order) session.getAttribute("order");
-    model.addAttribute("currentPendingOrder",order);
-    return "confirm-page";                  //需要填支付方式
-
+    /**
+     * 订单确认页面
+     * GET /checkout/order/confirm
+     */
+    @GetMapping("/order/confirm")
+    public String confirm(Model model, HttpSession session) {
+        //补全拦截器
+        //session 存order
+        Order order = (Order) session.getAttribute("order");
+        model.addAttribute("currentPendingOrder", order);
+        return "confirm-page";
     }
 
-@PostMapping("/order/payment")
-    public String payment(HttpSession session,String paymentMethod){
-    String userId = (String) session.getAttribute("userId");
-    Order order =oservice.findPendingOrder(userId);
+    /**
+     * 处理支付
+     * POST /checkout/order/payment
+     */
+    @PostMapping("/order/payment")
+    public String payment(HttpSession session, @RequestParam String paymentMethod) {
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        Order order = orderService.findPendingOrder(userId);
+        orderService.createPaymentRecord(paymentMethod, order);
+        return "redirect:/checkout/order/payment/success";
+    }
 
-    oservice.createPaymentRecord(paymentMethod,order);
-
-    return "redirect:/checkout/payment/success";         //点击支付跳转支付成功
-                                                //生成订单记录
-}
-
-@GetMapping("/order/payment/success")
-    public String paymentSuccess(HttpSession session,Model model){
-    String userId = (String) session.getAttribute("userId");
-    Order order =oservice.findPaidOrder(userId);
-    model.addAttribute("currentPaidOrder",order);
-    return "payment-success";
-}
+    /**
+     * 支付成功页面
+     * GET /checkout/order/payment/success
+     */
+    @GetMapping("/order/payment/success")
+    public String paymentSuccess(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        Order order = orderService.findPaidOrder(userId);
+        model.addAttribute("currentPaidOrder", order);
+        return "payment-success";
+    }
 
     @GetMapping("/order/history") //历史菜单
     public String getUserOrderHistory(HttpSession session, Model model) {
@@ -72,7 +83,7 @@ public class OrderController {
             return "redirect:/login"; // 未登录时重定向到登录页面
         }
 
-        List<Order> orders = oservice.getOrdersByUserId(user.getUserId());
+        List<Order> orders = orderService.getOrdersByUserId(user.getUserId());
         model.addAttribute("orders", orders);
         return "order-history"; // 对应templates/order-history.html
     }
@@ -85,8 +96,8 @@ public class OrderController {
         }
 
         // 获取订单项和支付信息
-        List<OrderItem> orderItems = oservice.getOrderItemsByOrderId(orderId);
-        PaymentRecord payment = oservice.getPaymentRecordByOrderId(orderId);
+        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderId);
+        PaymentRecord payment = orderService.getPaymentRecordByOrderId(orderId);
 
         // 添加到模型中
         model.addAttribute("orderItems", orderItems);
@@ -98,7 +109,7 @@ public class OrderController {
 
     @GetMapping("/order/history/items/{orderItemId}/product") //通过order detail找product
     public String viewOrderItemProduct(@PathVariable String orderItemId, Model model) {
-        Product product = oservice.getProductByOrderItemId(orderItemId);
+        Product product = orderService.getProductByOrderItemId(orderItemId);
 
         if (product == null) {
             return "error-page"; // 产品未找到

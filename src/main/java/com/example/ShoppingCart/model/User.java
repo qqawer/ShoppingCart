@@ -13,13 +13,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length = 36)
     private String userId;
-    @Column(length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String userName;
 
     @Column(length = 100)
     private String password;
 
-    @Column(length = 20)
+    @Column(unique = true, length = 20)
     private String phoneNumber;
 
     @Column(columnDefinition = "TEXT")
@@ -93,11 +93,11 @@ public class User {
         this.userAddresses = userAddresses;
     }
 
-    public List<CartRecord> getShoppingCartRecords() {
+    public List<CartRecord> getCartRecords() {
         return cartRecords;
     }
 
-    public void setShoppingCartRecords(List<CartRecord> cartRecords) {
+    public void setCartRecords(List<CartRecord> cartRecords) {
         this.cartRecords = cartRecords;
     }
 
@@ -107,13 +107,5 @@ public class User {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
-    }
-
-    public List<CartRecord> getCartRecords() {
-        return cartRecords;
-    }
-
-    public void setCartRecords(List<CartRecord> cartRecords) {
-        this.cartRecords = cartRecords;
     }
 }
