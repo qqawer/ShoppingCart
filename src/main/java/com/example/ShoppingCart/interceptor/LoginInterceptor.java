@@ -1,6 +1,5 @@
 package com.example.ShoppingCart.interceptor;
 
-import com.example.ShoppingCart.model.Order;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +17,9 @@ public class LoginInterceptor implements HandlerInterceptor {
      @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws IOException {
-         Order order =(Order) request.getSession().getAttribute("order");
-         if (order==null){
-             log.info("Order not found");
+         String userId =(String) request.getSession().getAttribute("userId");
+         if (userId==null){
+             log.info("not login");
              response.sendRedirect("/login");
              return  false;
          }
