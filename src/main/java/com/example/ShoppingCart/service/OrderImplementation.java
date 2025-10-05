@@ -27,8 +27,6 @@ public class OrderImplementation implements OrderInterface {
     @Autowired
     private UserRepository userrepo;
     @Autowired
-    private ProductRepository productrepo;
-    @Autowired
     private OrderItemRepository orderitemrepo;
     @Autowired
     private UserAddressRepository useraddressrepo;
@@ -114,8 +112,8 @@ public class OrderImplementation implements OrderInterface {
         newRecord.setOrder(order);
         order.setOrderStatus(1);                                        //"paid" status
         order.setPaymentRecord(newRecord);
-
         newRecord=paymentrepo.save(newRecord);
+        orderrepo.save(order);
         return  newRecord;
     }
 

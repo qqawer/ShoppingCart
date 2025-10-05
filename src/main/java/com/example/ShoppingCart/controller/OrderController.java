@@ -32,7 +32,7 @@ public class OrderController {
         String userId = (String) session.getAttribute("userId");
         Order order= oservice.createOrder(userId);
         session.setAttribute("order",order);
-        return "redirect:/order/confirm";
+        return "redirect:/checkout/order/confirm";
     }
 
 
@@ -53,7 +53,7 @@ public class OrderController {
 
     oservice.createPaymentRecord(paymentMethod,order);
 
-    return "redirect:/payment/success";         //点击支付跳转支付成功
+    return "redirect:/checkout/payment/success";         //点击支付跳转支付成功
                                                 //生成订单记录
 }
 
