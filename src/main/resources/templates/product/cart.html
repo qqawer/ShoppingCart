@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车 - 电商购物车系统</title>
+</head>
+<body>
+
+<h2>我的购物车</h2>
+
+<div th:if="${cartItems != null and !cartItems.isEmpty()}">
+    <form th:action="@{/cart/update}" method="post">
+        <input type="hidden" name="userId" th:value="${userId}">
+
+        <table style="border: 1px solid black; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> 全选
+                </th>
+                <th>商品名称</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>小计</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td>
+                    <input type="checkbox"
+                           class="item-checkbox"
+                           th:checked="${item.selected}"
+                           th:data-price="${item.product.price}"
+                           th:data-quantity="${item.quantity}">
+                </td>
+                <td>
+                    <img th:src="${item.product.mainImage}"
+                         width="80"
+                         height="80"
+                         th:alt="${item.product.productName}">
+                    <span th:text="${item.product.productName}">商品名称</span>
+                </td>
+                <td th:text="${item.product.price + '元'}">0元</td>
+                <td>
+                    <a th:href="@{/cart/decrease(userId=${userId}, productId=${item.product.productId})}">
+                        <button type="button">-</button>
+                    </a>
+                    <input type="text"
+                           th:value="${item.quantity}"
+                           readonly
+                           style="width: 50px; text-align: center;">
+                    <a th:href="@{/cart/increase(userId=${userId}, productId=${item.product.productId})}">
+                        <button type="button">+</button>
+                    </a>
+                </td>
+                <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2) + '元'}">0.00元</td>
+                <td>
+                    <a th:href="@{/cart/remove(userId=${userId}, productId=${item.product.productId})}"
+                       onclick="return confirm('确定要删除该商品吗？')">
+                        <button type="button">×</button>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<!-- 空购物车提示 -->
+<div th:if="${cartItems == null or cartItems.isEmpty()}">
+    <p>购物车是空的，快去选购商品吧！</p>
+    <a href="/products/lists">去购物</a>
+</div>
+
+<!-- 结算区域 -->
+<div th:if="${cartItems != null and !cartItems.isEmpty()}">
+    <p>已选商品 <span id="selectedCount" th:text="${selectedCount}">0</span> 件</p>
+    <p>合计：<span id="totalPrice" th:text="${#numbers.formatDecimal(totalPrice, 0, 0) + '元'}">0元</span></p>
+    <button onclick="goToCheckout()">去结算</button>
+</div>
+
+<script>
+    // 全选/取消全选
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = checkbox.checked;
+        });
+        updateTotal();
+    }
+
+    // 监听单个复选框变化
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateTotal);
+        });
+        updateTotal();
+    });
+
+    // 更新总计
+    function updateTotal() {
+        let selectedCount = 0;
+        let totalPrice = 0;
+
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                selectedCount++;
+                const price = parseFloat(cb.getAttribute('data-price'));
+                const quantity = parseInt(cb.getAttribute('data-quantity'));
+                totalPrice += price * quantity;
+            }
+        });
+
+        document.getElementById('selectedCount').textContent = String(selectedCount);
+        document.getElementById('totalPrice').textContent = String(Math.round(totalPrice)) + '元';
+    }
+
+    // 去结算
+    function goToCheckout() {
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+        if (checkboxes.length === 0) {
+            alert('请先选择要结算的商品');
+            return;
+        }
+        alert('准备结算 ' + checkboxes.length + ' 件商品，总价：' + document.getElementById('totalPrice').textContent);
+        // window.location.href = '/checkout';
+    }
+</script>
+
+</body>
+</html>
