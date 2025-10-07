@@ -7,7 +7,7 @@ public class LoginRequest {
     /**
      * 用户名或手机号
      */
-    @NotBlank(message = "Please enter Username or Phone Number")
+    @NotBlank(message = "Please enter Phone Number")
     @Size(min = 3, max = 12, message = "Code must be between 3-12 characters")
     private String username;
 
@@ -15,7 +15,7 @@ public class LoginRequest {
      * 密码（明文）
      */
     @NotBlank(message = "Please enter correct password")
-    @Size(min = 8, max = 20, message = "Code must be between 8-20 characters")
+    @Size(min = 8, max = 30, message = "Code must be between 8-20 characters")
     private String password;
 
     public LoginRequest() {

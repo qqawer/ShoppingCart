@@ -24,19 +24,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (userId == null) {
             log.info("用户未登录，拦截请求: {}", request.getRequestURI());
 
-            // 判断请求类型：API 请求还是页面请求
-            String requestURI = request.getRequestURI();
-            if (requestURI.startsWith("/api/")) {
-                // API 请求返回 JSON 错误响应
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"code\":4002,\"message\":\"请先登录\",\"data\":null}");
-            } else {
-                // 页面请求重定向到登录页
+
                 response.sendRedirect("/login");
-            }
             return false;
-        }
+            }
         return true;
+        }
     }
-}
+
