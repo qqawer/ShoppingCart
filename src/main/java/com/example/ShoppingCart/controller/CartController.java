@@ -3,10 +3,8 @@ package com.example.ShoppingCart.controller;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.model.SessionConstant;
-import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,21 +29,16 @@ public class CartController {
 
         List<CartRecord> cartItems = cartInterface.getCartItemsByUserId(userId);
 
-        // 计算总计
+        // 计算总计（所有商品）
         BigDecimal totalPrice = BigDecimal.ZERO;
-        int selectedCount = 0;
         for (CartRecord item : cartItems) {
-            if (item.getSelected()) {
-                selectedCount++;
-                BigDecimal itemTotal = item.getProduct().getPrice()
-                        .multiply(new BigDecimal(item.getQuantity()));
-                totalPrice = totalPrice.add(itemTotal);
-            }
+            BigDecimal itemTotal = item.getProduct().getPrice()
+                    .multiply(new BigDecimal(item.getQuantity()));
+            totalPrice = totalPrice.add(itemTotal);
         }
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("selectedCount", selectedCount);
         model.addAttribute("userId", userId);
 
         return "product/cart";
@@ -56,7 +49,7 @@ public class CartController {
     public String increaseQuantity(@RequestParam String userId, @RequestParam String productId) {
         CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
         if (existingCartRecord != null) {
-            cartInterface.updateQuantity(existingCartRecord, existingCartRecord.getQuantity() + 1);
+            cartInterface.updateQuantity(existingCartRecord, 1);
         }
         return "redirect:/cart";
     }
@@ -66,8 +59,7 @@ public class CartController {
     public String decreaseQuantity(@RequestParam String userId, @RequestParam String productId) {
         CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
         if (existingCartRecord != null) {
-            int newQuantity = existingCartRecord.getQuantity() - 1;
-            cartInterface.updateQuantity(existingCartRecord, newQuantity);
+            cartInterface.updateQuantity(existingCartRecord, -1);
         }
         return "redirect:/cart";
     }
@@ -83,9 +75,8 @@ public class CartController {
     }
 
     //add product into Cart
-    @PostMapping("/api/cart/add")
-    @ResponseBody
-    public ResponseMessage<CartRecord> addToCart(
+    @PostMapping("/cart/add")
+    public String addToCart(
             @RequestParam String userId,
             @RequestParam String productId,
             @RequestParam Integer quantity) {
@@ -93,51 +84,11 @@ public class CartController {
         CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
 
         if (existingCartRecord != null) {
-            CartRecord updatedCart = cartInterface.updateQuantity(existingCartRecord, quantity);
-
-            if (updatedCart == null) {
-                return new ResponseMessage<>(
-                        HttpStatus.OK.value(),
-                        "商品已从购物车移除",
-                        null
-                );
-            } else {
-                return ResponseMessage.success(updatedCart);
-            }
+            cartInterface.updateQuantity(existingCartRecord, quantity);
         } else {
-            CartRecord newCart = cartInterface.createCartItem(userId, productId, quantity);
-            return ResponseMessage.success(newCart);
-        }
-    }
-    //get user's Cart
-    @GetMapping("/api/cart/items")
-    @ResponseBody
-    public ResponseMessage<List<CartRecord>> getCartItems(@RequestParam String userId) {
-        List<CartRecord> items = cartInterface.getCartItemsByUserId(userId);
-        return ResponseMessage.success(items);
-    }
-    //delete the product of Cart
-    @DeleteMapping("/api/cart/remove")
-    @ResponseBody
-    public ResponseMessage<String> removeFromCart(
-            @RequestParam String userId,
-            @RequestParam String productId) {
-
-        CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
-
-        if (existingCartRecord == null) {
-            return new ResponseMessage<>(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "购物车中没有该商品",
-                    null
-            );
+            cartInterface.createCartItem(userId, productId, quantity);
         }
 
-        cartInterface.updateQuantity(existingCartRecord, 0);
-        return new ResponseMessage<>(
-                HttpStatus.OK.value(),
-                "商品已从购物车移除",
-                "删除成功"
-        );
+        return "redirect:/cart";
     }
 }

@@ -43,16 +43,19 @@ public class CartImplementation implements CartInterface {
     //Update the quantity of product in Cart
     @Override
     public CartRecord updateQuantity(CartRecord existingCartRecord, Integer quantity) {
-        if (quantity == null || quantity < 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量不能为负数");
+        if (quantity == null) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量不能为空");
         }
 
-        if (quantity == 0) {
+        int newQuantity = existingCartRecord.getQuantity() + quantity;
+
+        // 如果新数量小于等于0，删除购物车项
+        if (newQuantity <= 0) {
             cartRepository.delete(existingCartRecord);
             return null;
         }
 
-        existingCartRecord.setQuantity(existingCartRecord.getQuantity() + quantity);
+        existingCartRecord.setQuantity(newQuantity);
         return cartRepository.save(existingCartRecord);
     }
     //Create the product in Cart

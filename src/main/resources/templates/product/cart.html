@@ -3,97 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <title>购物车 - 电商购物车系统</title>
-<!--    <style>-->
-<!--        html, body {-->
-<!--            height: 100%;-->
-<!--            margin: 0;-->
-<!--            background: #f4f5f6;-->
-<!--            font-family: Arial, Helvetica, sans-serif;-->
-<!--        }-->
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #f4f5f6;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-<!--        body {-->
-<!--            display: flex;-->
-<!--            justify-content: center;-->
-<!--            align-items: flex-start;-->
-<!--            padding-top: 40px;-->
-<!--        }-->
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
 
-<!--        .container {-->
-<!--            max-width: 800px;-->
-<!--            width: 90%;-->
-<!--            background: #fff;-->
-<!--            padding: 32px;-->
-<!--            border-radius: 10px;-->
-<!--            box-shadow: 0 6px 18px rgba(0,0,0,0.06);-->
-<!--            box-sizing: border-box;-->
-<!--        }-->
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            box-sizing: border-box;
+        }
 
-<!--        h1, h2, h3 {-->
-<!--            text-align: center;-->
-<!--            color: #333;-->
-<!--        }-->
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
 
-<!--        table {-->
-<!--            width: 100%;-->
-<!--            border-collapse: collapse;-->
-<!--            margin-top: 12px;-->
-<!--        }-->
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
 
-<!--        th, td {-->
-<!--            border: 1px solid #e0e0e0;-->
-<!--            padding: 10px;-->
-<!--            text-align: center;-->
-<!--        }-->
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+        }
 
-<!--        label {-->
-<!--            font-weight: bold;-->
-<!--        }-->
+        label {
+            font-weight: bold;
+        }
 
-<!--        .form-section {-->
-<!--            margin-top: 24px;-->
-<!--        }-->
+        .form-section {
+            margin-top: 24px;
+        }
 
-<!--        .button-group {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            margin-top: 28px;-->
-<!--        }-->
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+        }
 
-<!--        button, a.button-link {-->
-<!--            background-color: #007bff;-->
-<!--            color: white;-->
-<!--            padding: 10px 16px;-->
-<!--            border: none;-->
-<!--            border-radius: 6px;-->
-<!--            text-decoration: none;-->
-<!--            cursor: pointer;-->
-<!--            font-size: 14px;-->
-<!--        }-->
+        button, a.button-link {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
 
-<!--        button:hover, a.button-link:hover {-->
-<!--            background-color: #0056b3;-->
-<!--        }-->
+        button:hover, a.button-link:hover {
+            background-color: #0056b3;
+        }
 
-<!--        .no-order {-->
-<!--            text-align: center;-->
-<!--            color: #555;-->
-<!--        }-->
-<!--    </style>-->
+        .no-order {
+            text-align: center;
+            color: #555;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .summary {
+            margin-top: 24px;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        .summary p {
+            margin: 8px 0;
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
 
-<h2>我的购物车</h2>
+<div class="container">
+    <h2>我的购物车</h2>
 
-<div th:if="${cartItems != null and !cartItems.isEmpty()}">
-    <form th:action="@{/cart/update}" method="post">
+    <div th:if="${cartItems != null and !cartItems.isEmpty()}">
         <input type="hidden" name="userId" th:value="${userId}">
 
-        <table style="border: 1px solid black; border-collapse: collapse;">
+        <table>
             <thead>
             <tr>
-                <th>
-                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> 全选
-                </th>
                 <th>商品名称</th>
                 <th>单价</th>
                 <th>数量</th>
@@ -104,31 +131,28 @@
             <tbody>
             <tr th:each="item : ${cartItems}">
                 <td>
-                    <input type="checkbox"
-                           class="item-checkbox"
-                           th:checked="${item.selected}"
-                           th:data-price="${item.product.price}"
-                           th:data-quantity="${item.quantity}">
-                </td>
-                <td>
-                    <img th:src="${item.product.mainImage}"
-                         width="80"
-                         height="80"
-                         th:alt="${item.product.productName}">
-                    <span th:text="${item.product.productName}">商品名称</span>
+                    <div class="product-info">
+                        <img th:src="${item.product.mainImage}"
+                             width="80"
+                             height="80"
+                             th:alt="${item.product.productName}">
+                        <span th:text="${item.product.productName}">商品名称</span>
+                    </div>
                 </td>
                 <td th:text="${item.product.price + '元'}">0元</td>
                 <td>
-                    <a th:href="@{/cart/decrease(userId=${userId}, productId=${item.product.productId})}">
-                        <button type="button">-</button>
-                    </a>
-                    <input type="text"
-                           th:value="${item.quantity}"
-                           readonly
-                           style="width: 50px; text-align: center;">
-                    <a th:href="@{/cart/increase(userId=${userId}, productId=${item.product.productId})}">
-                        <button type="button">+</button>
-                    </a>
+                    <div class="quantity-control">
+                        <a th:href="@{/cart/decrease(userId=${userId}, productId=${item.product.productId})}">
+                            <button type="button">-</button>
+                        </a>
+                        <input type="text"
+                               th:value="${item.quantity}"
+                               readonly
+                               style="width: 50px; text-align: center;">
+                        <a th:href="@{/cart/increase(userId=${userId}, productId=${item.product.productId})}">
+                            <button type="button">+</button>
+                        </a>
+                    </div>
                 </td>
                 <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2) + '元'}">0.00元</td>
                 <td>
@@ -140,71 +164,29 @@
             </tr>
             </tbody>
         </table>
-    </form>
-</div>
 
-<!-- 空购物车提示 -->
-<div th:if="${cartItems == null or cartItems.isEmpty()}">
-    <p>购物车是空的，快去选购商品吧！</p>
-    <a href="/products/lists">去购物</a>
-</div>
+        <!-- 结算区域 -->
+        <div class="summary">
+            <p>商品总数：<span th:text="${cartItems.size()}">0</span> 件</p>
+            <p class="total-price">合计：<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + '元'}">0元</span></p>
+            <button onclick="goToCheckout()">去结算</button>
+        </div>
+    </div>
 
-<!-- 结算区域 -->
-<div th:if="${cartItems != null and !cartItems.isEmpty()}">
-    <p>已选商品 <span id="selectedCount" th:text="${selectedCount}">0</span> 件</p>
-    <p>合计：<span id="totalPrice" th:text="${#numbers.formatDecimal(totalPrice, 0, 0) + '元'}">0元</span></p>
-    <button onclick="goToCheckout()">去结算</button>
-</div>
+    <!-- 空购物车提示 -->
+    <div th:if="${cartItems == null or cartItems.isEmpty()}" class="no-order">
+        <p>购物车是空的，快去选购商品吧！</p>
+        <a href="/products/lists" class="button-link">去购物</a>
+    </div>
 
-<script>
-    // 全选/取消全选
-    function toggleSelectAll(checkbox) {
-        const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(cb => {
-            cb.checked = checkbox.checked;
-        });
-        updateTotal();
-    }
-
-    // 监听单个复选框变化
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', updateTotal);
-        });
-        updateTotal();
-    });
-
-    // 更新总计
-    function updateTotal() {
-        let selectedCount = 0;
-        let totalPrice = 0;
-
-        const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                selectedCount++;
-                const price = parseFloat(cb.getAttribute('data-price'));
-                const quantity = parseInt(cb.getAttribute('data-quantity'));
-                totalPrice += price * quantity;
-            }
-        });
-
-        document.getElementById('selectedCount').textContent = String(selectedCount);
-        document.getElementById('totalPrice').textContent = String(Math.round(totalPrice)) + '元';
-    }
-
-    // 去结算
-    function goToCheckout() {
-        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
-        if (checkboxes.length === 0) {
-            alert('请先选择要结算的商品');
-            return;
+    <script>
+        // 去结算
+        function goToCheckout() {
+            alert('准备结算购物车所有商品');
+            // window.location.href = '/checkout';
         }
-        alert('准备结算 ' + checkboxes.length + ' 件商品，总价：' + document.getElementById('totalPrice').textContent);
-        // window.location.href = '/checkout';
-    }
-</script>
+    </script>
+</div>
 
 </body>
 </html>
