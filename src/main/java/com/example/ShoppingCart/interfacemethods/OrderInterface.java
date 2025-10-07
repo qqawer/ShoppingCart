@@ -34,5 +34,5 @@ public interface OrderInterface {
     Order findPaidOrder(String userId);
 
 
-
+    void cancelOrder(Order order);
 }

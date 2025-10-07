@@ -53,6 +53,13 @@ public class OrderController {
         model.addAttribute("currentPendingOrder", order);
         return "confirm-page";
     }
+    @PostMapping("/order/cancel")
+    public String cancelOrder(HttpSession session) {
+        Order order = (Order) session.getAttribute("order");
+        orderService.cancelOrder(order);
+        session.removeAttribute("order");
+        return "redirect:/product/lists";
+    }
 
     /**
      * 处理支付

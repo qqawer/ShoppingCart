@@ -91,12 +91,12 @@
             <div class="form-section">
                 <h2>Order Information</h2>
                 <p><label>Order ID: </label><span th:text="${currentPendingOrder.orderId}"></span></p>
-                <p><label>Order Generation Time: </label><span th:text="${currentPendingOrder.orderTime}"></span></p>
+                <p><label>Order Generation Time: </label><span th:text="${#dates.format(currentPendingOrder.orderTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
                 <p><label>Order Status: </label>
                     <span th:if="${currentPendingOrder.orderStatus == 0}">Pending</span>
                     <!--<span th:if="${currentPendingOrder.orderStatus == 1}">Paid</span>-->
                 </p>
-                <p><label>Total: </label>$<span th:text="${currentPendingOrder.totalAmount}"></span> SGD</p>
+                <p><label>Total: </label>$<span th:text="${#numbers.formatDecimal(currentPendingOrder.totalAmount, 2, 'POINT')}"></span> SGD</p>
             </div>
 
             <div class="form-section" th:if="${currentPendingOrder.address != null}">
@@ -121,9 +121,9 @@
                     <tbody>
                     <tr th:each="item : ${currentPendingOrder.orderItems}">
                         <td th:text="${item.productName}"></td>
-                        <td th:text="${item.productPrice}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice, 2, 'POINT')}"></td>
                         <td th:text="${item.buyQuantity}"></td>
-                        <td th:text="${item.productPrice * item.buyQuantity}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice.multiply(T(java.math.BigDecimal).valueOf(item.buyQuantity)), 2, 'POINT')}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -131,7 +131,8 @@
 
             <div class="form-section" th:if="${currentPendingOrder.orderStatus == 0}">
                 <h2>Payment</h2>
-                <input type="radio" name="paymentMethod" value="支付宝" id="alipay" checked>
+                <!-- Use backend-friendly values; labels remain user-facing -->
+                <input type="radio" name="paymentMethod" value="alipay" id="alipay" checked>
                 <label for="alipay">Alipay</label><br>
                 <input type="radio" name="paymentMethod" value="paynow" id="paynow">
                 <label for="paynow">PayNow</label><br>
@@ -139,9 +140,16 @@
                 <label for="visa">VISA</label><br>
             </div>
 
-            <div class="button-group">
+            <div class="button-group" th:if="${currentPendingOrder.orderStatus == 0 && currentPendingOrder.address != null}">
                 <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
-                <button type="submit">Confirm Payment</button>
+                <!-- Confirm submits the outer payment form (action: /checkout/order/payment) -->
+                <button type="submit">Confirm</button>
+                <!-- Cancel should post to the cancel endpoint. Use formaction to avoid nested forms and to keep this button inside the same form. -->
+                <button type="submit" th:attr="formaction=@{/checkout/order/cancel}, formmethod='post'">Cancel Order</button>
+            </div>
+
+            <div class="button-group" th:if="${currentPendingOrder.orderStatus != 0}">
+                <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
             </div>
         </form>
     </div>

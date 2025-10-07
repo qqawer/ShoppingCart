@@ -5,6 +5,8 @@ import com.example.ShoppingCart.model.*;
 import com.example.ShoppingCart.repository.*;
 
 import jakarta.transaction.Transactional;
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +49,12 @@ public class OrderImplementation implements OrderInterface {
 
         Order order = new Order();
         order.setUser(userrepo.findById(userId).orElseThrow());
-        order.setAddress(useraddressrepo.findByUser_UserId(userId));
+        // ensure user has a default address
+        UserAddress addr = useraddressrepo.findByUser_UserId(userId);
+        if (addr == null) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "address");
+        }
+        order.setAddress(addr);
         order.setTotalAmount(calculateTotalPrice(cartRecords));
         order.setOrderStatus(0);                                //pending in default
         order.setOrderTime(LocalDateTime.now());
@@ -102,9 +109,18 @@ public class OrderImplementation implements OrderInterface {
 
     @Override
     public PaymentRecord createPaymentRecord(String paymentMethod,Order order) {
-    //how to identify?
+    // validate payment method and create record
+        if (paymentMethod == null || paymentMethod.isEmpty()){
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "paymentMethod");
+        }
+        // whitelist supported payment methods
+        String pm = paymentMethod.toLowerCase();
+        if (!(pm.equals("alipay") || pm.equals("paynow") || pm.equals("visa"))){
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "paymentMethod");
+        }
+
         PaymentRecord newRecord = new PaymentRecord();
-        newRecord.setPaymentMethod(paymentMethod);
+        newRecord.setPaymentMethod(pm);
         newRecord.setPaymentAmount(order.getTotalAmount());
         newRecord.setPaymentTime(LocalDateTime.now());
         newRecord.setTradeNo(UUID.randomUUID().toString());             //不应该是前端生成
@@ -135,5 +151,9 @@ public class OrderImplementation implements OrderInterface {
        return order;
    }
 
+   @Override
+   public void cancelOrder(Order order){
+        orderrepo.delete(order);
+   }
 
 }
