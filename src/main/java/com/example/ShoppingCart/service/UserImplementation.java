@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional
@@ -20,7 +21,10 @@ public class UserImplementation implements UserInterface {
     private UserRepository userRepository;
 
     @Override
-    public UserInfoDTO login(LoginRequest request, HttpSession session) {
+    public UserInfoDTO login( LoginRequest request, HttpSession session, BindingResult bindingResult) {
+
+
+
         // 1. 先尝试用用户名查询
         User user = userRepository.findByUserName(request.getUsername());
 

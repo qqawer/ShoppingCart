@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+
+</head>
+<body>
+<h1>🎉 Payment Successful!</h1>
+
+<div th:if="${currentPaidOrder != null}">
+    <h2>Order Details</h2>
+    <p><strong>Order ID:</strong> <span th:text="${currentPaidOrder.orderId}"></span></p>
+    <p><strong>Order Time:</strong> <span th:text="${currentPaidOrder.orderTime}"></span></p>
+    <p><strong>Order Status:</strong>
+        <span th:if="${currentPaidOrder.orderStatus == 1}">Paid</span>
+        <span th:if="${currentPaidOrder.orderStatus == 2}">Shipped</span>
+        <span th:if="${currentPaidOrder.orderStatus == 3}">Completed</span>
+    </p>
+    <p><strong>Total Amount:</strong> $<span th:text="${currentPaidOrder.totalAmount}"></span> SGD</p>
+
+    <!-- Payment Information -->
+    <div th:if="${currentPaidOrder.paymentRecord != null}">
+        <h3>Payment Information</h3>
+        <p><strong>Payment Method:</strong> <span th:text="${currentPaidOrder.paymentRecord.paymentMethod}"></span></p>
+        <p><strong>Payment Time:</strong> <span th:text="${currentPaidOrder.paymentRecord.paymentTime}"></span></p>
+        <p><strong>Payment Amount:</strong> $<span th:text="${currentPaidOrder.paymentRecord.paymentAmount}"></span> SGD</p>
+        <p><strong>Transaction No.:</strong> <span th:text="${currentPaidOrder.paymentRecord.tradeNo}"></span></p>
+        <p><strong>Payment Status:</strong>
+            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 0}">Pending</span>
+            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 1}">Paid</span>
+            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 2}">Failed</span>
+        </p>
+    </div>
+
+
+
+    <div style="margin-top: 20px;">
+        <p><strong>Thank you for your purchase! We will arrange the shipment as soon as possible.</strong></p>
+        <p>If you have any questions, please contact our customer service.</p>
+    </div>
+</div>
+
+<div th:if="${currentPaidOrder == null}">
+    <p>No paid order information found.</p>
+</div>
+
+<br>
+<a th:href="@{/checkout/order/history}">View Order History</a> |
+<a th:href="@{/product/lists}">Continue Shopping</a>
+</body>
+</html>
+

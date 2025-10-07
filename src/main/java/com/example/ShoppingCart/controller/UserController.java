@@ -5,8 +5,9 @@ import com.example.ShoppingCart.pojo.dto.LoginRequest;
 import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,10 +30,15 @@ public class UserController {
      */
     @PostMapping("/api/user/login")
     @ResponseBody
-    public ResponseMessage<UserInfoDTO> login(
-            @RequestBody LoginRequest request,
-            HttpSession session) {
-        UserInfoDTO userInfo = userService.login(request, session);
+    public ResponseMessage<UserInfoDTO> login(@Valid @RequestBody LoginRequest request,
+            HttpSession session, BindingResult bindingResult) {
+
+        //后续需要添加返回页面
+        if (bindingResult.hasErrors()) {
+            return null;//return "login"
+        }
+
+        UserInfoDTO userInfo = userService.login(request, session,  bindingResult );
         return ResponseMessage.success(userInfo);
     }
 

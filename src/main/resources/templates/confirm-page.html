@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #f4f5f6;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            box-sizing: border-box;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .form-section {
+            margin-top: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+        }
+
+        button, a.button-link {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover, a.button-link:hover {
+            background-color: #0056b3;
+        }
+
+        .no-order {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Please Confirm Your Order</h1>
+
+    <div th:if="${currentPendingOrder != null}">
+        <form th:action="@{/checkout/order/payment}" method="post">
+
+            <div class="form-section">
+                <h2>Order Information</h2>
+                <p><label>Order ID: </label><span th:text="${currentPendingOrder.orderId}"></span></p>
+                <p><label>Order Generation Time: </label><span th:text="${currentPendingOrder.orderTime}"></span></p>
+                <p><label>Order Status: </label>
+                    <span th:if="${currentPendingOrder.orderStatus == 0}">Pending</span>
+                    <!--<span th:if="${currentPendingOrder.orderStatus == 1}">Paid</span>-->
+                </p>
+                <p><label>Total: </label>$<span th:text="${currentPendingOrder.totalAmount}"></span> SGD</p>
+            </div>
+
+            <div class="form-section" th:if="${currentPendingOrder.address != null}">
+                <h2>Delivery Address</h2>
+                <p><label>Consignee: </label><span th:text="${currentPendingOrder.address.receiverName}"></span></p>
+                <p><label>Contact Number: </label><span th:text="${currentPendingOrder.address.phone}"></span></p>
+                <p><label>Region: </label><span th:text="${currentPendingOrder.address.region}"></span></p>
+                <p><label>Detailed Address: </label><span th:text="${currentPendingOrder.address.detailAddress}"></span></p>
+            </div>
+
+            <div class="form-section" th:if="${currentPendingOrder.orderItems != null and !currentPendingOrder.orderItems.isEmpty()}">
+                <h2>Item List</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${currentPendingOrder.orderItems}">
+                        <td th:text="${item.productName}"></td>
+                        <td th:text="${item.productPrice}"></td>
+                        <td th:text="${item.buyQuantity}"></td>
+                        <td th:text="${item.productPrice * item.buyQuantity}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-section" th:if="${currentPendingOrder.orderStatus == 0}">
+                <h2>Payment</h2>
+                <input type="radio" name="paymentMethod" value="支付宝" id="alipay" checked>
+                <label for="alipay">Alipay</label><br>
+                <input type="radio" name="paymentMethod" value="paynow" id="paynow">
+                <label for="paynow">PayNow</label><br>
+                <input type="radio" name="paymentMethod" value="visa" id="visa">
+                <label for="visa">VISA</label><br>
+            </div>
+
+            <div class="button-group">
+                <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
+                <button type="submit">Confirm Payment</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="no-order" th:if="${currentPendingOrder == null}">
+        <p>No pending orders found.</p>
+
+    </div>
+</div>
+</body>
+</html>
