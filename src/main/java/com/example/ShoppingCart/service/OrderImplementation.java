@@ -134,35 +134,6 @@ public class OrderImplementation implements OrderInterface {
        }
        return order;
    }
-    @Override
-    //通过userid去找其所有的order
-    public List<Order> getOrdersByUserId(String userId) {
-        return orderrepo.findByUserId(userId);
-    }
-
-    @Override
-    //通过orderid找order id其下对应的所有的orderitem
-    public List<OrderItem> getOrderItemsByOrderId(String orderId) {
-        return orderitemrepo.findOrderItemByOrderId(orderId);
-    }
-
-    @Override
-    //通过order item id调用其所属的product id
-    public Product getProductByOrderItemId(String orderItemId) {
-        // 修正了变量名不一致的问题（itemrepo → orderItemRepo）
-        Optional<OrderItem> orderItemOpt = orderitemrepo.findByOrderItemId(orderItemId);
-        if (orderItemOpt.isPresent()) {
-            return orderItemOpt.get().getProduct(); //  从OrderItem中获取关联的Product
-        } else {
-            throw new RuntimeException("OrderItem not found with id: " + orderItemId);
-        }
-    }
-
-    @Override
-    //通过order id 调用 payment record
-    public PaymentRecord getPaymentRecordByOrderId(String orderId) {
-        return paymentrepo.findByOrderId(orderId);
-    }
 
 
 }

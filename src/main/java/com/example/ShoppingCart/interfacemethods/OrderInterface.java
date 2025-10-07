@@ -33,16 +33,6 @@ public interface OrderInterface {
 
     Order findPaidOrder(String userId);
 
-    // 获取用户所有订单
-    List<Order> getOrdersByUserId(String userId);
 
-    // 获取订单项列表
-    List<OrderItem> getOrderItemsByOrderId(String orderId);
-
-    // 获取订单项关联的产品
-    Product getProductByOrderItemId(String orderItemId);
-
-    // 获取订单支付记录
-    PaymentRecord getPaymentRecordByOrderId(String orderId);
 
 }
