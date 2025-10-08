@@ -2,9 +2,11 @@ package com.example.ShoppingCart.controller;
 
 import com.example.ShoppingCart.exception.BusinessException;
 import com.example.ShoppingCart.exception.errorcode.ErrorCode;
+import com.example.ShoppingCart.model.SessionConstant;
 import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.model.Product;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +25,16 @@ public class ProductController {
 
     //Query all products.
     @GetMapping("/lists")
-    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable, Model model) {
+    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable,
+                                 HttpSession session, Model model) {
         Page<Product> products=pservice.getAllProducts(pageable);
 //        if (products.isEmpty()) {
 //            throw new BusinessException(ErrorCode.PRODUCT_LIST_EMPTY);
 //        }
+
+        // 获取当前登录用户ID，如果未登录则提示登录
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        model.addAttribute("userId", userId);
         model.addAttribute("page", products);
         return "product/lists";
     }
