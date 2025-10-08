@@ -18,6 +18,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(4101, "用户不存在"),
     USER_NAME_DUPLICATE(4102, "用户名已被占用"),
     PASSWORD_ERROR(4103, "密码错误"),
+    PHONE_NUMBER_DUPLICATE(4104, "手机号已被注册"),
+    PASSWORD_NOT_MATCH(4105, "两次输入的密码不一致"),
+    OLD_PASSWORD_ERROR(4106, "原密码错误"),
 
     // 订单模块错误（42xx）
     ORDER_NOT_FOUND(4201, "订单不存在"),
