@@ -12,13 +12,13 @@ public class Product {
     @Column(length = 36)
     private String productId;
 
-    @Column(length = 200)
+    @Column(length = 200, nullable = false, unique = true)
     private String productName;
 
-    @Column(precision = 10, scale = 2) // Selling price, 10-digit precision, 2 decimal places
+    @Column(precision = 10, scale = 2, nullable = false) // Selling price, 10-digit precision, 2 decimal places
     private BigDecimal price;
 
-    @Column(length = 100) // Inventory Quantity
+    @Column(length = 100, nullable = false) // Inventory Quantity
     private Integer stock;
 
     @Column(columnDefinition = "TEXT")

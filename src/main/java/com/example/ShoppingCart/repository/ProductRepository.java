@@ -12,5 +12,8 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     Product findByProductId(String productId); // 返回实体而非 Optional
     Page<Product> findByProductNameContaining(String productName,Pageable pageable); // 模糊查询
 
+    void deleteProductByProductId(String productId);
+    Page<Product> findByStatus(Integer status, Pageable pageable);
+    boolean existsByProductName(String productName);
 
 }
