@@ -1,37 +1,38 @@
 package com.example.ShoppingCart.pojo.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
     /**
-     * 用户名或手机号
+     * 手机号
      */
-    @NotBlank(message = "Please enter Phone Number")
-    @Size(min = 3, max = 12, message = "Code must be between 3-12 characters")
-    private String username;
+    @NotBlank(message = "请输入手机号")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    private String phoneNumber;
 
     /**
      * 密码（明文）
      */
-    @NotBlank(message = "Please enter correct password")
-    @Size(min = 8, max = 30, message = "Code must be between 8-20 characters")
+    @NotBlank(message = "请输入密码")
+    @Size(min = 8, max = 30, message = "密码长度必须在8-30位之间")
     private String password;
 
     public LoginRequest() {
     }
 
-    public LoginRequest(String username, String password) {
-        this.username = username;
+    public LoginRequest(String phoneNumber, String password) {
+        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {
@@ -45,7 +46,7 @@ public class LoginRequest {
     @Override
     public String toString() {
         return "LoginRequest{" +
-                "username='" + username + '\'' +
+                "phoneNumber='" + phoneNumber + '\'' +
                 ", password='[PROTECTED]'" +
                 '}';
     }

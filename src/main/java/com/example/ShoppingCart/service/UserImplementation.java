@@ -21,34 +21,27 @@ public class UserImplementation implements UserInterface {
     private UserRepository userRepository;
 
     @Override
-    public UserInfoDTO login( LoginRequest request, HttpSession session, BindingResult bindingResult) {
+    public UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult) {
 
+        // 1. 通过手机号查询用户
+        User user = userRepository.findByPhoneNumber(request.getPhoneNumber());
 
-
-        // 1. 先尝试用用户名查询
-        User user = userRepository.findByUserName(request.getUsername());
-
-        // 2. 如果用户名查不到，再用手机号查询
-        if (user == null) {
-            user = userRepository.findByPhoneNumber(request.getUsername());
-        }
-
-        // 3. 如果还是查不到，说明用户不存在
+        // 2. 如果查不到，说明用户不存在
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
 
-        // 4. 验证密码（简化版：直接比较明文）
+        // 3. 验证密码（简化版：直接比较明文）
         if (!request.getPassword().equals(user.getPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_ERROR);
         }
 
-        // 5. 登录成功，将用户信息存入 Session
+        // 4. 登录成功，将用户信息存入 Session
         session.setAttribute(SessionConstant.USER_ID, user.getUserId());
         UserInfoDTO userInfo = new UserInfoDTO(user);
         session.setAttribute(SessionConstant.CURRENT_USER, userInfo);
 
-        // 6. 返回用户信息
+        // 5. 返回用户信息
         return userInfo;
     }
 

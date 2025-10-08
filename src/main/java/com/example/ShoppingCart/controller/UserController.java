@@ -2,15 +2,16 @@ package com.example.ShoppingCart.controller;
 
 import com.example.ShoppingCart.interfacemethods.UserInterface;
 import com.example.ShoppingCart.pojo.dto.LoginRequest;
-import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 public class UserController {
     @Autowired
     private UserInterface userService;
@@ -20,58 +21,58 @@ public class UserController {
      * GET /login
      */
     @GetMapping("/login")
-    public String loginPage() {
-        return "login"; // 返回 login.html 模板
+    public String loginPage(Model model) {
+        model.addAttribute("loginRequest", new LoginRequest());
+        return "product/login";
     }
 
     /**
      * 用户登录
-     * POST /api/user/login
+     * POST /login
      */
-    @PostMapping("/api/user/login")
-    @ResponseBody
-    public ResponseMessage<UserInfoDTO> login(@Valid @RequestBody LoginRequest request,
-            HttpSession session, BindingResult bindingResult) {
+    @PostMapping("/login")
+    public String login(@Valid @ModelAttribute LoginRequest request,
+                        BindingResult bindingResult,
+                        HttpSession session,
+                        Model model) {
 
-        //后续需要添加返回页面
         if (bindingResult.hasErrors()) {
-            return null;//return "login"
+            model.addAttribute("error", "输入信息有误，请检查");
+            return "product/login";
         }
 
-        UserInfoDTO userInfo = userService.login(request, session,  bindingResult );
-        return ResponseMessage.success(userInfo);
+        try {
+            UserInfoDTO userInfo = userService.login(request, session, bindingResult);
+            // 登录成功，重定向到商品列表页面
+            return "redirect:/products";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "product/login";
+        }
     }
 
     /**
      * 用户登出
-     * POST /api/user/logout
+     * GET /logout
      */
-    @PostMapping("/api/user/logout")
-    @ResponseBody
-    public ResponseMessage<Void> logout(HttpSession session) {
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
         userService.logout(session);
-        return new ResponseMessage<>(200, "登出成功", null);
+        return "redirect:/login";
     }
 
     /**
-     * 获取当前登录用户信息
-     * GET /api/user/me
+     * 显示用户信息页面
+     * GET /user/profile
      */
-    @GetMapping("/api/user/me")
-    @ResponseBody
-    public ResponseMessage<UserInfoDTO> getCurrentUser(HttpSession session) {
-        UserInfoDTO userInfo = userService.getCurrentUser(session);
-        return ResponseMessage.success(userInfo);
-    }
-
-    /**
-     * 检查登录状态
-     * GET /api/user/check
-     */
-    @GetMapping("/api/user/check")
-    @ResponseBody
-    public ResponseMessage<Boolean> checkLogin(HttpSession session) {
-        boolean isLoggedIn = userService.isLoggedIn(session);
-        return ResponseMessage.success(isLoggedIn);
+    @GetMapping("/user/profile")
+    public String getUserProfile(HttpSession session, Model model) {
+        try {
+            UserInfoDTO userInfo = userService.getCurrentUser(session);
+            model.addAttribute("userInfo", userInfo);
+            return "product/profile";
+        } catch (Exception e) {
+            return "redirect:/login";
+        }
     }
 }
