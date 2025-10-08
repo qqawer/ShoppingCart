@@ -26,7 +26,7 @@ public class UserImplementation implements UserInterface {
     public UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult) {
 
         // 1. 通过手机号查询用户
-        User user = userRepository.findByPhoneNumber(request.getPhoneNumber());
+        User user = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
 
         // 2. 如果查不到，说明用户不存在
         if (user == null) {
@@ -34,7 +34,7 @@ public class UserImplementation implements UserInterface {
         }
 
         // 3. 验证密码（明文比较）
-        if (!request.getPassword().equals(user.getPassword())) {
+        if (!request.getPassword().trim().equals(user.getPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_ERROR);
         }
 
@@ -79,23 +79,23 @@ public class UserImplementation implements UserInterface {
         }
 
         // 2. 检查手机号是否已被注册
-        User existingUser = userRepository.findByPhoneNumber(request.getPhoneNumber());
+        User existingUser = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
         if (existingUser != null) {
             throw new BusinessException(ErrorCode.PHONE_NUMBER_DUPLICATE);
         }
 
         // 3. 检查用户名是否已被占用
-        User existingUserName = userRepository.findByUserName(request.getUserName());
+        User existingUserName = userRepository.findByUserName(request.getUserName().trim());
         if (existingUserName != null) {
             throw new BusinessException(ErrorCode.USER_NAME_DUPLICATE);
         }
 
         // 4. 创建新用户
         User newUser = new User();
-        newUser.setUserName(request.getUserName());
-        newUser.setPhoneNumber(request.getPhoneNumber());
-        // 5. 设置密码（明文存储）
-        newUser.setPassword(request.getPassword());
+        newUser.setUserName(request.getUserName().trim());
+        newUser.setPhoneNumber(request.getPhoneNumber().trim());
+        // 5. 设置密码（明文存储，去除前后空格）
+        newUser.setPassword(request.getPassword().trim());
 
         // 6. 保存到数据库
         User savedUser = userRepository.save(newUser);
