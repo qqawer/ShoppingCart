@@ -39,7 +39,7 @@ public class ProductController {
         }
         Product product= pservice.getProductById(productId);
         model.addAttribute("product",product);
-        return "product/detail";
+        return "product/product-detail";
     }
 
     // Perform a fuzzy search based on the product name

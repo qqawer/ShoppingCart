@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.productName} + ' - 产品详情'">产品详情</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #ececec;
+            color: #232323;
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+        }
+        .navbar {
+            background: #232323;
+            color: #fff;
+            padding: 18px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .navbar-brand {
+            font-size: 26px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 48px 36px;
+        }
+        .product-main {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .product-image {
+            flex: 1 1 320px;
+            min-width: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-image img {
+            max-width: 320px;
+            max-height: 320px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            background: #f2f2f2;
+            border: 1px solid #e0e0e0;
+        }
+        .product-info {
+            flex: 2 1 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .brand-badge {
+            display: inline-block;
+            background: #e0e0e0;
+            color: #232323;
+            padding: 6px 18px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .product-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #232323;
+            margin-bottom: 8px;
+        }
+        .price-section {
+            background: #f6f6f6;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid #232323;
+            font-size: 24px;
+            color: #232323;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .stock-info {
+            font-size: 16px;
+            color: #555;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            border-left: 4px solid #bdbdbd;
+            margin-bottom: 10px;
+        }
+        .desc-section {
+            font-size: 16px;
+            color: #444;
+            background: #f7f7f7;
+            border-radius: 8px;
+            padding: 18px;
+            border: 1px solid #e0e0e0;
+        }
+        .btn-back {
+            margin-top: 32px;
+            background: #232323;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 28px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn-back:hover {
+            background: #444;
+            color: #fff;
+        }
+        @media (max-width: 900px) {
+            .product-main {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <a class="navbar-brand" href="/cart">🛒 购物系统</a>
+<!--        <div>-->
+<!--            <a href="/" style="color:white;text-decoration:none;">返回首页</a>-->
+<!--        </div>-->
+    </div>
+
+    <div class="container">
+        <div class="product-main">
+            <div class="product-image">
+                <img th:src="${product.mainImage != null ? product.mainImage : '/static/images/default-product.png'}" alt="产品图片">
+            </div>
+            <div class="product-info">
+                <span class="brand-badge" th:text="${product.brand}">品牌</span>
+                <div class="product-title" th:text="${product.productName}">产品名称</div>
+                <div class="price-section">
+                    <span>¥</span><span th:text="${product.price}">价格</span>
+                </div>
+                <div class="stock-info">
+                    <span th:text="'库存：' + ${product.stock} + ' 件'">库存信息</span>
+                </div>
+                <div class="desc-section" th:text="${product.description}">产品描述</div>
+            </div>
+        </div>
+        <a href="/products/lists#" class="btn btn-secondary btn-back">返回商品列表</a>
+    </div>
+</body>
+</html>

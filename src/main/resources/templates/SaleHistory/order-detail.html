@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - 购物系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        background: #f4f5f6;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+/* 
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 40px;
+    } */
+
+    .container {
+        max-width: 800px;
+        width: 90%;
+        background: #fff;
+        padding: 32px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        box-sizing: border-box;
+    }
+
+    h1, h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+
+    th, td {
+        border: 1px solid #e0e0e0;
+        padding: 10px;
+        text-align: center;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    .form-section {
+        margin-top: 24px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 28px;
+    }
+
+    button, a.button-link {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    button:hover, a.button-link:hover {
+        background-color: #0056b3;
+    }
+
+    .no-order {
+        text-align: center;
+        color: #555;
+    }
+
+    footer.bg-dark {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        z-index: 100;
+        font-size: 15px;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    body {
+        padding-bottom: 70px; /* 给body底部留出footer高度，避免内容被遮挡 */
+    }
+    footer.bg-dark h5 {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+    footer.bg-dark p {
+        margin-bottom: 2px;
+    }
+    
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>订单详情</h2>
+    <p>订单号：<span th:text="${orderId}"></span></p>
+
+    <h4>支付信息</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>支付状态</th>
+            <td th:text="${payment != null ? (payment.payStatus == 1 ? '已支付' : '未支付') : '无'}"></td>
+        </tr>
+        <tr>
+            <th>支付金额</th>
+            <td th:text="${payment != null ? payment.paymentAmount : '无'}"></td>
+        </tr>
+        <tr>
+            <th>支付方式</th>
+            <td th:text="${payment != null ? payment.paymentMethod : '无'}"></td>
+        </tr>
+        <tr>
+            <th>支付时间</th>
+            <td th:text="${payment != null && payment.paymentTime != null ? #temporals.format(payment.paymentTime, 'yyyy-MM-dd HH:mm:ss') : '无'}"></td>
+        </tr>
+        <tr>
+            <th>交易号</th>
+            <td th:text="${payment != null ? payment.tradeNo : '无'}"></td>
+        </tr>
+    </table>
+
+    <h4>订单商品</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>小计</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${orderItems}">
+                <td th:text="${item.productName}"></td>
+                <td th:text="${item.productPrice}"></td>
+                <td th:text="${item.buyQuantity}"></td>
+                <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity, 1, 2)}"></td>
+                <td>
+                    <a th:href="@{/SaleHistory/products/{orderItemId}(orderItemId=${item.itemId})}" class="btn btn-sm btn-outline-primary">查看物品详情</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/SaleHistory/menu}" class="btn btn-secondary">返回订单历史</a>
+</div>
+<footer class="bg-dark text-light py-2 mt-5">
+    <div class="row mx-0">
+        <div class="col-md-6">
+            <h5>购物系统</h5>
+            <p>为您提供优质的商品和便捷的购物体验</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <p>&copy; 2025 购物系统. 保留所有权利.</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

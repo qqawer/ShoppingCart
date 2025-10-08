@@ -1,10 +1,7 @@
 package com.example.ShoppingCart.controller;
 
-import com.example.ShoppingCart.exception.BusinessException;
-import com.example.ShoppingCart.exception.errorcode.ErrorCode;
-import com.example.ShoppingCart.interfacemethods.SaleHistoryInterface;
-import com.example.ShoppingCart.model.*;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +9,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
+import com.example.ShoppingCart.interfacemethods.SaleHistoryInterface;
+import com.example.ShoppingCart.model.Order;
+import com.example.ShoppingCart.model.OrderItem;
+import com.example.ShoppingCart.model.PaymentRecord;
+import com.example.ShoppingCart.model.Product;
+import com.example.ShoppingCart.model.SessionConstant;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/SaleHistory")
@@ -24,9 +30,10 @@ public class SaleHistoryController {
     @GetMapping("/menu") //历史菜单
     public String getUserOrderHistory(HttpSession session, Model model) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        System.out.println("Session userId: " + userId);
         List<Order> orders = SaleHistoryService.getOrdersByUserId(userId);
         model.addAttribute("orders", orders);
-        return "order-history"; // 对应templates/order-history.html
+        return "SaleHistory/order-history"; // 对应SaleHistory/order-history.html
     }
 
     @GetMapping("/menu/{orderId}/detail") //order detail
@@ -40,10 +47,10 @@ public class SaleHistoryController {
         model.addAttribute("payment", payment);
         model.addAttribute("orderId", orderId);
 
-        return "order-detail"; // 对应templates/order-detail.html
+        return "SaleHistory/order-detail"; // 对应SaleHistory/order-detail.html
     }
 
-    @GetMapping("/menu/items/{orderItemId}/product") //通过order detail找product
+    @GetMapping("/products/{orderItemId}") //通过order detail找product
     public String viewOrderItemProduct(@PathVariable String orderItemId, Model model) {
         Product product = SaleHistoryService.getProductByOrderItemId(orderItemId);
 
@@ -52,7 +59,7 @@ public class SaleHistoryController {
         }
 
         model.addAttribute("product", product);
-        return "product-detail"; // 对应templates/product-detail.html
+        return "product/product-detail"; // 对应product-detail.html
     }
 }
 
