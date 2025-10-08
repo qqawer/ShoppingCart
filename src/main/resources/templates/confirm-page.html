@@ -145,7 +145,7 @@
                 <!-- Confirm submits the outer payment form (action: /checkout/order/payment) -->
                 <button type="submit">Confirm</button>
                 <!-- Cancel should post to the cancel endpoint. Use formaction to avoid nested forms and to keep this button inside the same form. -->
-                <button type="submit" th:attr="formaction=@{/checkout/order/cancel}, formmethod='post'">Cancel Order</button>
+                <button type="submit" th:formaction="@{/checkout/order/cancel}" th:formmethod="post">Cancel Order</button>
             </div>
 
             <div class="button-group" th:if="${currentPendingOrder.orderStatus != 0}">

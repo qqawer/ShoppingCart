@@ -4,51 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Successful</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #f4f5f6;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            box-sizing: border-box;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .form-section {
+            margin-top: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+        }
+
+        button, a.button-link {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover, a.button-link:hover {
+            background-color: #0056b3;
+        }
+
+        .no-order {
+            text-align: center;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-<h1>🎉 Payment Successful!</h1>
+<div class="container">
+    <h1>🎉 Payment Successful!</h1>
 
-<div th:if="${currentPaidOrder != null}">
-    <h2>Order Details</h2>
-    <p><strong>Order ID:</strong> <span th:text="${currentPaidOrder.orderId}"></span></p>
-    <p><strong>Order Time:</strong> <span th:text="${currentPaidOrder.orderTime}"></span></p>
-    <p><strong>Order Status:</strong>
-        <span th:if="${currentPaidOrder.orderStatus == 1}">Paid</span>
-        <span th:if="${currentPaidOrder.orderStatus == 2}">Shipped</span>
-        <span th:if="${currentPaidOrder.orderStatus == 3}">Completed</span>
-    </p>
-    <p><strong>Total Amount:</strong> $<span th:text="${currentPaidOrder.totalAmount}"></span> SGD</p>
+    <div th:if="${currentPaidOrder != null}">
+        <div class="form-section">
+            <h2>Order Summary</h2>
+            <p><label>Order ID: </label> <span th:text="${currentPaidOrder.orderId}"></span></p>
+            <p><label>Order Time: </label> <span th:text="${#dates.format(currentPaidOrder.orderTime,'yyyy-MM-dd HH:mm:ss')}"></span></p>
+            <p><label>Order Status: </label>
+                <span th:if="${currentPaidOrder.orderStatus == 1}">Paid</span>
+                <span th:if="${currentPaidOrder.orderStatus == 2}">Shipped</span>
+                <span th:if="${currentPaidOrder.orderStatus == 3}">Completed</span>
+            </p>
+            <p><label>Total Amount: </label> $<span th:text="${#numbers.formatDecimal(currentPaidOrder.totalAmount,2,'POINT')}"></span> SGD</p>
+        </div>
 
-    <!-- Payment Information -->
-    <div th:if="${currentPaidOrder.paymentRecord != null}">
-        <h3>Payment Information</h3>
-        <p><strong>Payment Method:</strong> <span th:text="${currentPaidOrder.paymentRecord.paymentMethod}"></span></p>
-        <p><strong>Payment Time:</strong> <span th:text="${currentPaidOrder.paymentRecord.paymentTime}"></span></p>
-        <p><strong>Payment Amount:</strong> $<span th:text="${currentPaidOrder.paymentRecord.paymentAmount}"></span> SGD</p>
-        <p><strong>Transaction No.:</strong> <span th:text="${currentPaidOrder.paymentRecord.tradeNo}"></span></p>
-        <p><strong>Payment Status:</strong>
-            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 0}">Pending</span>
-            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 1}">Paid</span>
-            <span th:if="${currentPaidOrder.paymentRecord.payStatus == 2}">Failed</span>
-        </p>
+        <div class="form-section">
+            <h2>Items</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${currentPaidOrder.orderItems}">
+                    <td th:text="${item.productName}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.productPrice,2,'POINT')}"></td>
+                    <td th:text="${item.buyQuantity}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.productPrice.multiply(T(java.math.BigDecimal).valueOf(item.buyQuantity)),2,'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-section">
+            <h2>Payment Information</h2>
+            <p><label>Method: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.paymentMethod : '—'}"></span></p>
+            <p><label>Payment Time: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? #dates.format(currentPaidOrder.paymentRecord.paymentTime,'yyyy-MM-dd HH:mm:ss') : '—'}"></span></p>
+            <p><label>Payment Amount: </label> $<span th:text="${currentPaidOrder.paymentRecord != null ? #numbers.formatDecimal(currentPaidOrder.paymentRecord.paymentAmount,2,'POINT') : '—'}"></span> SGD</p>
+            <p><label>Transaction No.: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.tradeNo : '—'}"></span></p>
+            <p><label>Payment Status: </label>
+                <span th:if="${currentPaidOrder.paymentRecord != null and currentPaidOrder.paymentRecord.payStatus == 0}">Pending</span>
+                <span th:if="${currentPaidOrder.paymentRecord != null and currentPaidOrder.paymentRecord.payStatus == 1}">Paid</span>
+                <span th:if="${currentPaidOrder.paymentRecord != null and currentPaidOrder.paymentRecord.payStatus == 2}">Failed</span>
+            </p>
+        </div>
+
+        <div class="form-section">
+            <p><strong>Thank you for your purchase! We will arrange shipment as soon as possible.</strong></p>
+        </div>
+
+        <div class="button-group">
+            <a th:href="@{/product/lists}" class="button-link">Continue Shopping</a>
+            <a th:href="@{/checkout/order/history}" class="button-link">View Order History</a>
+        </div>
     </div>
 
-
-
-    <div style="margin-top: 20px;">
-        <p><strong>Thank you for your purchase! We will arrange the shipment as soon as possible.</strong></p>
-        <p>If you have any questions, please contact our customer service.</p>
+    <div class="no-order" th:if="${currentPaidOrder == null}">
+        <p>No paid order information found.</p>
+        <div class="button-group">
+            <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
+        </div>
     </div>
 </div>
-
-<div th:if="${currentPaidOrder == null}">
-    <p>No paid order information found.</p>
-</div>
-
-<br>
-<a th:href="@{/checkout/order/history}">View Order History</a> |
-<a th:href="@{/product/lists}">Continue Shopping</a>
 </body>
 </html>
 

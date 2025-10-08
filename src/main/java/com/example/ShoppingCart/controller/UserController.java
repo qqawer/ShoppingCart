@@ -47,12 +47,14 @@ public class UserController {
         try {
             userService.login(request, session, bindingResult);
             // 登录成功，重定向到商品列表页面
-            return "redirect:/products";
+            return "redirect:/products/lists";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "product/login";
         }
     }
+    
+
 
     /**
      * 用户登出
