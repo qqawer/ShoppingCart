@@ -4,7 +4,7 @@ import com.example.ShoppingCart.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
 
 
 public interface ProductRepository extends JpaRepository<Product,String> {
@@ -15,5 +15,7 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     void deleteProductByProductId(String productId);
     Page<Product> findByStatus(Integer status, Pageable pageable);
     boolean existsByProductName(String productName);
+    @Query("SELECT p FROM Product p WHERE p.status = 1 AND p.stock > 0")
+    Page<Product> findAvailableProducts(Pageable pageable);
 
 }

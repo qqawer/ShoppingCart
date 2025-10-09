@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 
 
 @Service
@@ -53,35 +54,80 @@ public class ProductImplementation implements ProductInterface {
         product.setBrand(dto.getBrand());
         product.setMainImage(dto.getMainImage());
         product.setDescription(dto.getDescription());
-        product.setStatus(dto.getStatus() != null ? dto.getStatus() : 1); // 默认1
 
+        Integer status = dto.getStatus();
+        if (status == null) {
+            product.setStatus(0);
+        } else {
+            //If set to shelf status but inventory is 0, refuse to create
+            if (status == 1 && product.getStock() <= 0) {
+                throw new BusinessException(ErrorCode.PARAM_ERROR, "Inventory is 0, unable to set to shelf status");
+            }
+            product.setStatus(status);
+        }
         return prepo.save(product);
     }
 
     @Override
     public Page<Product> getAllProductsByStatus(Pageable pageable) {
-        return prepo.findByStatus(1, pageable);
+        return prepo.findAvailableProducts(pageable);
     }
 
     @Override
     public Product updateProduct(ProductUpdateDTO dto) {
         String productId=dto.getProductId();
-        if (productId==null){
+        if (productId == null || productId.trim().isEmpty()) {
             throw new BusinessException(ErrorCode.PARAM_CANNOT_BE_NULL);
         }
         Product product=prepo.findByProductId(productId);
         if (product == null) {
             throw new BusinessException(ErrorCode. PRODUCT_NOT_EXIST, productId);
         }
+
+        if (dto.getProductName() != null) {
+            String newProductName = dto.getProductName().trim();
+
+            //If the new name is the same as the old name, there is no need to check for duplicates
+
+            if (!newProductName.equals(product.getProductName())) {
+                //Check if there are other products using the same name
+                if (prepo.existsByProductName(newProductName)) {
+                    throw new BusinessException(ErrorCode.PRODUCT_NAME_DUPLICATE, newProductName);
+                }
+                //Update product name
+                product.setProductName(newProductName);
+            }
+        }
+
         if (dto.getProductName() != null) {
             product.setProductName(dto.getProductName());
         }
         if (dto.getPrice() != null) {
+            if (dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException(ErrorCode. PARAM_ERROR, "The price must be greater than 0");
+            }
             product.setPrice(dto.getPrice());
         }
         if (dto.getStock() != null) {
+            if (dto.getStock() < 0) {
+                throw new BusinessException(ErrorCode.PARAM_ERROR, "Inventory cannot be negative");
+            }
+
+        }
+        if (dto.getStatus() != null) {
+            //If set to shelf status but inventory is 0, refuse to update
+            if (dto.getStatus() == 1 && dto.getStock() <= 0) {
+                throw new BusinessException(ErrorCode.PARAM_ERROR, "Inventory is 0, unable to set to shelf status");
+            }
+        }
+        if (dto.getStock()==0){
+            product.setStatus(0);
+            product.setStock(dto.getStock());
+        }else{
+            product.setStatus(dto.getStatus());
             product.setStock(dto.getStock());
         }
+
         if (dto.getBrand() != null) {
             product.setBrand(dto.getBrand());
         }
@@ -91,9 +137,7 @@ public class ProductImplementation implements ProductInterface {
         if (dto.getDescription() != null) {
             product.setDescription(dto.getDescription());
         }
-        if (dto.getStatus() != null) {
-            product.setStatus(dto.getStatus());
-        }
+
 
         return prepo.save(product);
     }
