@@ -23,8 +23,14 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/SaleHistory/menu}">订单历史</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/user/profile}">👤 个人中心</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/login}">登录</a></li>
+                <!-- 已登录时显示个人中心 -->
+                <li class="nav-item" th:if="${session.currentUser != null}">
+                    <a class="nav-link" th:href="@{/user/profile}">👤 个人中心</a>
+                </li>
+                <!-- 未登录时显示登录按钮 -->
+                <li class="nav-item" th:if="${session.currentUser == null}">
+                    <a class="nav-link" th:href="@{/login}">登录</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/cart">🛒<span class="badge bg-danger" th:text="${cartCount}">0</span></a></li>
             </ul>
         </div>
