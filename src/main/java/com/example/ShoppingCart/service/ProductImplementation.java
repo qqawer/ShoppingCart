@@ -3,6 +3,8 @@ package com.example.ShoppingCart.service;
 import com.example.ShoppingCart.exception.BusinessException;
 import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
+import com.example.ShoppingCart.model.Order;
+import com.example.ShoppingCart.model.OrderItem;
 import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.pojo.dto.ProductCreateDTO;
 import com.example.ShoppingCart.pojo.dto.ProductUpdateDTO;
@@ -148,5 +150,16 @@ public class ProductImplementation implements ProductInterface {
         prepo.deleteProductByProductId(productId);
     }
 
-
+    @Override
+    public void updateStockAfterPayment(Order order) {
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = prepo.findById(item.getProduct().getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            if (product.getStock() < item.getBuyQuantity()) {
+                throw new BusinessException(ErrorCode.PARAM_ERROR, "Insufficient stock");
+            }
+            product.setStock(product.getStock() - item.getBuyQuantity());
+            prepo.save(product);
+        }
+    }
 }

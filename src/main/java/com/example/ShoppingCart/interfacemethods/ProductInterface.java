@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.interfacemethods;
 
+import com.example.ShoppingCart.model.Order;
 import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.pojo.dto.ProductCreateDTO;
 import com.example.ShoppingCart.pojo.dto.ProductUpdateDTO;
@@ -25,4 +26,6 @@ public interface ProductInterface {
     Product updateProduct(ProductUpdateDTO product);
 
     void deleteProduct(String productId);
+
+    void updateStockAfterPayment(Order order);
 }

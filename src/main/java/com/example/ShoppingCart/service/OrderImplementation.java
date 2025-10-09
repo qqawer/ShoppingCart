@@ -32,7 +32,8 @@ public class OrderImplementation implements OrderInterface {
     private OrderItemRepository orderitemrepo;
     @Autowired
     private UserAddressRepository useraddressrepo;
-
+    @Autowired
+    private ProductImplementation productImplementation;
     @Override
     public Order createOrder(String userId) {
         //先判断是否已存在订单，且不能为空购物车，如果订单存在使用原来订单，如果不存在建立新订单并且删除购物车里的物品
@@ -127,6 +128,7 @@ public class OrderImplementation implements OrderInterface {
         order.setPaymentRecord(newRecord);
         newRecord=paymentrepo.save(newRecord);
         orderrepo.save(order);
+        productImplementation.updateStockAfterPayment(order);
         return  newRecord;
     }
 
