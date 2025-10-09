@@ -31,6 +31,7 @@ public enum ErrorCode {
     PRODUCT_LIST_EMPTY(4302, "There are currently no products available"),
     PARAM_CANNOT_BE_NULL (4303, "Request parameter cannot be empty:%s"),
     PRODUCT_NAME_DUPLICATE(4304, "Product name already exists:%s"),
+    PRODUCT_STOCK_NOT_ENOUGH(4305, "商品库存不足，当前库存：%s"),
 
     // 服务端错误（5xxx）
     DB_ERROR(5001, "数据库操作失败"),

@@ -115,6 +115,16 @@
 <div class="container">
     <h2>我的购物车</h2>
 
+    <!-- 错误消息提示 -->
+    <div th:if="${errorMessage}" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+        <strong>错误：</strong><span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- 成功消息提示 -->
+    <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+        <strong>成功：</strong><span th:text="${successMessage}"></span>
+    </div>
+
     <div th:if="${cartItems != null and !cartItems.isEmpty()}">
         <input type="hidden" name="userId" th:value="${userId}">
 
@@ -142,21 +152,21 @@
                 <td th:text="${item.product.price + '元'}">0元</td>
                 <td>
                     <div class="quantity-control">
-                        <a th:href="@{/cart/decrease(userId=${userId}, productId=${item.product.productId})}">
+                        <a th:href="@{/cart/decrease(productId=${item.product.productId})}">
                             <button type="button">-</button>
                         </a>
                         <input type="text"
                                th:value="${item.quantity}"
                                readonly
                                style="width: 50px; text-align: center;">
-                        <a th:href="@{/cart/increase(userId=${userId}, productId=${item.product.productId})}">
+                        <a th:href="@{/cart/increase(productId=${item.product.productId})}">
                             <button type="button">+</button>
                         </a>
                     </div>
                 </td>
                 <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2) + '元'}">0.00元</td>
                 <td>
-                    <a th:href="@{/cart/remove(userId=${userId}, productId=${item.product.productId})}"
+                    <a th:href="@{/cart/remove(productId=${item.product.productId})}"
                        onclick="return confirm('确定要删除该商品吗？')">
                         <button type="button">×</button>
                     </a>

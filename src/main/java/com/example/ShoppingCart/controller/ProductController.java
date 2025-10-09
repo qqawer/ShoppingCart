@@ -6,7 +6,10 @@ import com.example.ShoppingCart.pojo.dto.ProductCreateDTO;
 import com.example.ShoppingCart.pojo.dto.ProductUpdateDTO;
 import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
+import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.Product;
+import com.example.ShoppingCart.model.SessionConstant;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,11 +26,23 @@ public class ProductController {
     @Autowired
     private ProductInterface pservice;
 
+    @Autowired
+    private CartInterface cartInterface;
+
     //Query all products.
     @GetMapping("products/lists")
-    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable, Model model) {
+    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable, Model model, HttpSession session) {
         Page<Product> products=pservice.getAllProductsByStatus(pageable);
         model.addAttribute("page", products);
+
+        // 获取购物车商品数量
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        int cartCount = 0;
+        if (userId != null) {
+            cartCount = cartInterface.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
+
         return "product/lists";
     }
 

@@ -55,6 +55,12 @@ public class CartImplementation implements CartInterface {
             return null;
         }
 
+        // 检查库存是否充足
+        Product product = existingCartRecord.getProduct();
+        if (product.getStock() < newQuantity) {
+            throw new BusinessException(ErrorCode.PRODUCT_STOCK_NOT_ENOUGH, product.getStock());
+        }
+
         existingCartRecord.setQuantity(newQuantity);
         return cartRepository.save(existingCartRecord);
     }
@@ -76,6 +82,11 @@ public class CartImplementation implements CartInterface {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_EXIST));
+
+        // 检查库存是否充足
+        if (product.getStock() < quantity) {
+            throw new BusinessException(ErrorCode.PRODUCT_STOCK_NOT_ENOUGH, product.getStock());
+        }
 
         CartRecord newCartRecord = new CartRecord();
         newCartRecord.setUser(user);
