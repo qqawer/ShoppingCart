@@ -37,7 +37,7 @@ public class OrderController {
         //需要添加异常处理
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         Order order = orderService.createOrder(userId);
-        session.setAttribute("order", order);
+        session.setAttribute("orderId", order.getOrderId());
         return "redirect:/checkout/order/confirm";
     }
 
@@ -49,13 +49,15 @@ public class OrderController {
     public String confirm(Model model, HttpSession session) {
         //补全拦截器
         //session 存order
-        Order order = (Order) session.getAttribute("order");
+        String orderId = (String) session.getAttribute("orderId");
+        Order order = orderService.findByOrderId(orderId);
         model.addAttribute("currentPendingOrder", order);
         return "confirm-page";
     }
     @PostMapping("/order/cancel")
     public String cancelOrder(HttpSession session) {
-        Order order = (Order) session.getAttribute("order");
+        String orderId = (String) session.getAttribute("orderId");
+        Order order = orderService.findByOrderId(orderId);
         orderService.cancelOrder(order);
         session.removeAttribute("order");
         return "redirect:/product/lists";
@@ -67,9 +69,12 @@ public class OrderController {
      */
     @PostMapping("/order/payment")
     public String payment(HttpSession session, @RequestParam String paymentMethod) {
-        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
-        Order order = orderService.findPendingOrder(userId);
+
+        String orderId = (String) session.getAttribute("orderId");
+        Order order = orderService.findByOrderId(orderId);
         orderService.createPaymentRecord(paymentMethod, order);
+        // 支付成功后移除 session 中的 orderId
+        session.removeAttribute("orderId");
         return "redirect:/checkout/order/payment/success";
     }
 

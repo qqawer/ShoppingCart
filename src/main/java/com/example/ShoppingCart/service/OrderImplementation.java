@@ -155,4 +155,11 @@ public class OrderImplementation implements OrderInterface {
         orderrepo.delete(order);
     }
 
+    @Override
+    public Order findByOrderId(String orderId) {
+        if (orderId == null || orderId.trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "orderId");
+        }
+        return orderrepo.findById(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PARAM_ERROR, "order"));
+    }
 }

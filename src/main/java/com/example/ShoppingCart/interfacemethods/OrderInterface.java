@@ -35,4 +35,6 @@ public interface OrderInterface {
 
 
     void cancelOrder(Order order);
+
+    Order findByOrderId(String orderId);
 }
