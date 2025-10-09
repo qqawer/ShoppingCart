@@ -24,6 +24,10 @@ public class User {
 
     @Column(columnDefinition = "TEXT")
     private String avatar;
+
+    @Column(nullable = false, length = 20)
+    private String role = "CUSTOMER"; // CUSTOMER or ADMIN
+
     @CreationTimestamp // Automatically fill in creation time
     @Column(updatable = false) // Cannot be updated
     private LocalDateTime createTime;
@@ -107,5 +111,13 @@ public class User {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

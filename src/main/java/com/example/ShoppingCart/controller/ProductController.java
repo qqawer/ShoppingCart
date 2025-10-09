@@ -5,6 +5,7 @@ import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import com.example.ShoppingCart.pojo.dto.ProductCreateDTO;
 import com.example.ShoppingCart.pojo.dto.ProductUpdateDTO;
 import com.example.ShoppingCart.pojo.dto.ResponseMessage;
+import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
 import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.Product;
@@ -114,5 +115,24 @@ public class ProductController {
         return ResponseMessage.success(productId);
     }
 
+    // 管理员商品管理页面
+    @GetMapping("/admin/products")
+    public String adminProductsPage(@PageableDefault(size = 10) Pageable pageable, Model model, HttpSession session) {
+        // 检查用户是否登录
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        // 检查用户是否为管理员
+        UserInfoDTO currentUser = (UserInfoDTO) session.getAttribute(SessionConstant.CURRENT_USER);
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            // 不是管理员,拒绝访问,跳转到商品列表页面
+            return "redirect:/products/lists";
+        }
+
+        // 是管理员,跳转到百度
+        return "redirect:http://www.baidu.com";
+    }
 
 }

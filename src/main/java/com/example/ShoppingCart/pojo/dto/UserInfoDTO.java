@@ -12,6 +12,7 @@ public class UserInfoDTO implements Serializable {
     private String userName;
     private String phoneNumber;
     private String avatar;
+    private String role;
     private LocalDateTime createTime;
 
     public UserInfoDTO() {
@@ -22,6 +23,7 @@ public class UserInfoDTO implements Serializable {
         this.userName = user.getUserName();
         this.phoneNumber = user.getPhoneNumber();
         this.avatar = user.getAvatar();
+        this.role = user.getRole();
         this.createTime = user.getCreateTime();
     }
 
@@ -65,6 +67,14 @@ public class UserInfoDTO implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "UserInfoDTO{" +
@@ -72,6 +82,7 @@ public class UserInfoDTO implements Serializable {
                 ", userName='" + userName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", avatar='" + avatar + '\'' +
+                ", role='" + role + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }

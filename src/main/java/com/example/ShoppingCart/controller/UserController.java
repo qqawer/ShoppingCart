@@ -45,15 +45,21 @@ public class UserController {
         }
 
         try {
-            userService.login(request, session, bindingResult);
-            // 登录成功，重定向到商品列表页面
-            return "redirect:/products/lists";
+            UserInfoDTO userInfo = userService.login(request, session, bindingResult);
+            // 根据用户角色跳转不同页面
+            if ("ADMIN".equals(userInfo.getRole())) {
+                // 管理员跳转到百度
+                return "redirect:http://www.baidu.com";
+            } else {
+                // 顾客跳转到商品列表页面
+                return "redirect:/products/lists";
+            }
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "product/login";
         }
     }
-    
+
 
 
     /**

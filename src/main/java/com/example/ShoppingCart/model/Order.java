@@ -93,7 +93,7 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)  // 允许地址为空，可以在确认页面添加
     @JoinColumn(name = "address_id")
     private UserAddress address;
 

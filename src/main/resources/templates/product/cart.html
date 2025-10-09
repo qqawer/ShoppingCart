@@ -179,9 +179,12 @@
         <div class="summary">
             <p>商品总数：<span th:text="${cartItems.size()}">0</span> 件</p>
             <p class="total-price">合计：<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + '元'}">0元</span></p>
-            <form th:action="@{/checkout/order}" method="post">
-                <button type="submit">去结算</button>
-            </form>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <a href="/products/lists" class="button-link">继续购物</a>
+                <form th:action="@{/checkout/order}" method="post">
+                    <button type="submit">去结算</button>
+                </form>
+            </div>
         </div>
     </div>
 

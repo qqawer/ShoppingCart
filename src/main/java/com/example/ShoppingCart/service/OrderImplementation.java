@@ -49,12 +49,9 @@ public class OrderImplementation implements OrderInterface {
 
         Order order = new Order();
         order.setUser(userrepo.findById(userId).orElseThrow());
-        // ensure user has a default address
+        // 允许创建没有地址的订单，地址可以在确认页面添加
         UserAddress addr = useraddressrepo.findByUser_UserId(userId);
-        if (addr == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR, "address");
-        }
-        order.setAddress(addr);
+        order.setAddress(addr);  // 可以为 null
         order.setTotalAmount(calculateTotalPrice(cartRecords));
         order.setOrderStatus(0);                                //pending in default
         order.setOrderTime(LocalDateTime.now());
@@ -90,9 +87,9 @@ public class OrderImplementation implements OrderInterface {
         BigDecimal total = BigDecimal.ZERO;
 
         for (CartRecord record :cartRecord) {
-          BigDecimal itemTotal = record.getProduct().getPrice()
+            BigDecimal itemTotal = record.getProduct().getPrice()
                     .multiply(BigDecimal.valueOf(record.getQuantity()));
-          total = total.add(itemTotal);
+            total = total.add(itemTotal);
         }
 
         return total;
@@ -109,7 +106,7 @@ public class OrderImplementation implements OrderInterface {
 
     @Override
     public PaymentRecord createPaymentRecord(String paymentMethod,Order order) {
-    // validate payment method and create record
+        // validate payment method and create record
         if (paymentMethod == null || paymentMethod.isEmpty()){
             throw new BusinessException(ErrorCode.PARAM_ERROR, "paymentMethod");
         }
@@ -142,18 +139,18 @@ public class OrderImplementation implements OrderInterface {
         return order;
     }
 
-   @Override
+    @Override
     public Order findPaidOrder(String userId){
-       Order order= orderrepo.findFirstByUser_UserIdAndOrderStatusOrderByOrderTimeDesc(userId,1);
-       if(order==null){
-           throw new IllegalStateException("PaidOrder is empty");
-       }
-       return order;
-   }
+        Order order= orderrepo.findFirstByUser_UserIdAndOrderStatusOrderByOrderTimeDesc(userId,1);
+        if(order==null){
+            throw new IllegalStateException("PaidOrder is empty");
+        }
+        return order;
+    }
 
-   @Override
-   public void cancelOrder(Order order){
+    @Override
+    public void cancelOrder(Order order){
         orderrepo.delete(order);
-   }
+    }
 
 }
