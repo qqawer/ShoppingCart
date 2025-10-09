@@ -179,7 +179,9 @@
         <div class="summary">
             <p>商品总数：<span th:text="${cartItems.size()}">0</span> 件</p>
             <p class="total-price">合计：<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + '元'}">0元</span></p>
-            <button onclick="goToCheckout()">去结算</button>
+            <form th:action="@{/checkout/order}" method="post">
+                <button type="submit">去结算</button>
+            </form>
         </div>
     </div>
 
@@ -188,14 +190,6 @@
         <p>购物车是空的，快去选购商品吧！</p>
         <a href="/products/lists" class="button-link">去购物</a>
     </div>
-
-    <script>
-        // 去结算
-        function goToCheckout() {
-            alert('准备结算购物车所有商品');
-            // window.location.href = '/checkout';
-        }
-    </script>
 </div>
 
 </body>

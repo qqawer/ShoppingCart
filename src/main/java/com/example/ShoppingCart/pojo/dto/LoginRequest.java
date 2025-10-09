@@ -16,7 +16,7 @@ public class LoginRequest {
      * 密码（明文）
      */
     @NotBlank(message = "请输入密码")
-    @Size(min = 8, max = 30, message = "密码长度必须在8-30位之间")
+    @Size(min = 6, max = 20, message = "密码长度必须在6-20位之间")
     private String password;
 
     public LoginRequest() {
