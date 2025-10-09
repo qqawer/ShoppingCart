@@ -89,13 +89,13 @@
         <div class="form-section">
             <h2>Order Summary</h2>
             <p><label>Order ID: </label> <span th:text="${currentPaidOrder.orderId}"></span></p>
-            <p><label>Order Time: </label> <span th:text="${#dates.format(currentPaidOrder.orderTime,'yyyy-MM-dd HH:mm:ss')}"></span></p>
+            <p><label>Order Time: </label> <span th:text="${#temporals.format(currentPaidOrder.orderTime,'yyyy-MM-dd HH:mm:ss')}"></span></p>
             <p><label>Order Status: </label>
                 <span th:if="${currentPaidOrder.orderStatus == 1}">Paid</span>
                 <span th:if="${currentPaidOrder.orderStatus == 2}">Shipped</span>
                 <span th:if="${currentPaidOrder.orderStatus == 3}">Completed</span>
             </p>
-            <p><label>Total Amount: </label> $<span th:text="${#numbers.formatDecimal(currentPaidOrder.totalAmount,2,'POINT')}"></span> SGD</p>
+            <p><label>Total Amount: </label> $<span th:text="${#numbers.formatDecimal(currentPaidOrder.totalAmount,1,2,'POINT')}"></span> SGD</p>
         </div>
 
         <div class="form-section">
@@ -112,9 +112,9 @@
                 <tbody>
                 <tr th:each="item : ${currentPaidOrder.orderItems}">
                     <td th:text="${item.productName}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.productPrice,2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.productPrice,1,2,'POINT')}"></td>
                     <td th:text="${item.buyQuantity}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.productPrice.multiply(T(java.math.BigDecimal).valueOf(item.buyQuantity)),2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity,1,2,'POINT')}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -123,8 +123,8 @@
         <div class="form-section">
             <h2>Payment Information</h2>
             <p><label>Method: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.paymentMethod : '—'}"></span></p>
-            <p><label>Payment Time: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? #dates.format(currentPaidOrder.paymentRecord.paymentTime,'yyyy-MM-dd HH:mm:ss') : '—'}"></span></p>
-            <p><label>Payment Amount: </label> $<span th:text="${currentPaidOrder.paymentRecord != null ? #numbers.formatDecimal(currentPaidOrder.paymentRecord.paymentAmount,2,'POINT') : '—'}"></span> SGD</p>
+            <p><label>Payment Time: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? #temporals.format(currentPaidOrder.paymentRecord.paymentTime,'yyyy-MM-dd HH:mm:ss') : '—'}"></span></p>
+            <p><label>Payment Amount: </label> $<span th:text="${currentPaidOrder.paymentRecord != null ? #numbers.formatDecimal(currentPaidOrder.paymentRecord.paymentAmount,1,2,'POINT') : '—'}"></span> SGD</p>
             <p><label>Transaction No.: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.tradeNo : '—'}"></span></p>
             <p><label>Payment Status: </label>
                 <span th:if="${currentPaidOrder.paymentRecord != null and currentPaidOrder.paymentRecord.payStatus == 0}">Pending</span>
@@ -138,15 +138,15 @@
         </div>
 
         <div class="button-group">
-            <a th:href="@{/product/lists}" class="button-link">Continue Shopping</a>
-            <a th:href="@{/checkout/order/history}" class="button-link">View Order History</a>
+            <a th:href="@{/products/lists}" class="button-link">Continue Shopping</a>
+            <a th:href="@{/SaleHistory/menu}" class="button-link">View Order History</a>
         </div>
     </div>
 
     <div class="no-order" th:if="${currentPaidOrder == null}">
         <p>No paid order information found.</p>
         <div class="button-group">
-            <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
+            <a th:href="@{/products/lists}" class="button-link">Back to Product List</a>
         </div>
     </div>
 </div>

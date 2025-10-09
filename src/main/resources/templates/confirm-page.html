@@ -143,15 +143,15 @@
             </div>
 
             <div class="button-group" th:if="${currentPendingOrder.orderStatus == 0 && currentPendingOrder.address != null}">
-                <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
+                <a th:href="@{/products/lists}" class="button-link">Back to Product List</a>
                 <!-- Confirm submits the outer payment form (action: /checkout/order/payment) -->
                 <button type="submit">Confirm</button>
                 <!-- Cancel should post to the cancel endpoint. Use formaction to avoid nested forms and to keep this button inside the same form. -->
-                <button type="submit" th:formaction="@{/checkout/order/cancel}" th:formmethod="post">Cancel Order</button>
+                <button type="submit" th:formaction="@{/checkout/order/cancel}" formmethod="post">Cancel Order</button>
             </div>
 
             <div class="button-group" th:if="${currentPendingOrder.orderStatus != 0}">
-                <a th:href="@{/product/lists}" class="button-link">Back to Product List</a>
+                <a th:href="@{/products/lists}" class="button-link">Back to Product List</a>
             </div>
         </form>
     </div>

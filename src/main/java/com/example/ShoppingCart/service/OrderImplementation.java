@@ -36,10 +36,11 @@ public class OrderImplementation implements OrderInterface {
     private ProductImplementation productImplementation;
     @Override
     public Order createOrder(String userId) {
-        //先判断是否已存在订单，且不能为空购物车，如果订单存在使用原来订单，如果不存在建立新订单并且删除购物车里的物品
+        //先判断是否已存在订单，且不能为空购物车，如果订单存在删除旧订单，重新创建新订单
         Optional<Order> pendingorder = orderrepo.findByUser_UserIdAndOrderStatus(userId,0);
         if(pendingorder.isPresent()){
-            return pendingorder.get();
+            // 删除旧的 Pending 订单，使用当前购物车内容创建新订单
+            orderrepo.delete(pendingorder.get());
         }
         List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
         //验证是否为空
@@ -77,8 +78,8 @@ public class OrderImplementation implements OrderInterface {
         order.setOrderItems(orderItems);
         //save orderItems
         orderitemrepo.saveAll(orderItems);
-        //清空购物车防止反复下单
-        cartrepo.deleteAll(cartRecords);
+        // 注意：不在这里清空购物车，而是在支付成功后清空
+        // 这样用户可以在确认页面点击 Back 返回，购物车内容仍然保留
 
         return order;
     }
@@ -129,6 +130,14 @@ public class OrderImplementation implements OrderInterface {
         newRecord=paymentrepo.save(newRecord);
         orderrepo.save(order);
         productImplementation.updateStockAfterPayment(order);
+
+        // 支付成功后清空购物车
+        String userId = order.getUser().getUserId();
+        List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
+        if (!cartRecords.isEmpty()) {
+            cartrepo.deleteAll(cartRecords);
+        }
+
         return  newRecord;
     }
 

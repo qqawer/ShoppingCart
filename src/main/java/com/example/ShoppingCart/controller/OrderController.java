@@ -1,8 +1,8 @@
 package com.example.ShoppingCart.controller;
 
-import com.example.ShoppingCart.exception.BusinessException;
-import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import com.example.ShoppingCart.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import com.example.ShoppingCart.interfacemethods.OrderInterface;
 
@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/checkout")
 public class OrderController {
+    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+
     @Autowired
     private OrderInterface orderService;
 
@@ -50,17 +50,32 @@ public class OrderController {
         //补全拦截器
         //session 存order
         String orderId = (String) session.getAttribute("orderId");
+        if (orderId == null) {
+            log.warn("orderId is null in session, redirecting to products list");
+            return "redirect:/products/lists";
+        }
         Order order = orderService.findByOrderId(orderId);
         model.addAttribute("currentPendingOrder", order);
         return "confirm-page";
     }
+
     @PostMapping("/order/cancel")
     public String cancelOrder(HttpSession session) {
-        String orderId = (String) session.getAttribute("orderId");
-        Order order = orderService.findByOrderId(orderId);
-        orderService.cancelOrder(order);
-        session.removeAttribute("order");
-        return "redirect:/product/lists";
+        try {
+            String orderId = (String) session.getAttribute("orderId");
+            if (orderId == null) {
+                log.warn("orderId is null when canceling order");
+                return "redirect:/products/lists";
+            }
+            log.info("Canceling order: {}", orderId);
+            Order order = orderService.findByOrderId(orderId);
+            orderService.cancelOrder(order);
+            session.removeAttribute("orderId");
+            return "redirect:/products/lists";
+        } catch (Exception e) {
+            log.error("Error canceling order", e);
+            throw e;
+        }
     }
 
     /**
@@ -68,14 +83,34 @@ public class OrderController {
      * POST /checkout/order/payment
      */
     @PostMapping("/order/payment")
-    public String payment(HttpSession session, @RequestParam String paymentMethod) {
+    public String payment(HttpSession session, @RequestParam(required = false) String paymentMethod, Model model) {
+        try {
+            String orderId = (String) session.getAttribute("orderId");
+            if (orderId == null) {
+                log.warn("orderId is null when processing payment");
+                return "redirect:/products/lists";
+            }
 
-        String orderId = (String) session.getAttribute("orderId");
-        Order order = orderService.findByOrderId(orderId);
-        orderService.createPaymentRecord(paymentMethod, order);
-        // 支付成功后移除 session 中的 orderId
-        session.removeAttribute("orderId");
-        return "redirect:/checkout/order/payment/success";
+            if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+                log.warn("paymentMethod is null or empty");
+                model.addAttribute("errorMessage", "Please select a payment method");
+                Order order = orderService.findByOrderId(orderId);
+                model.addAttribute("currentPendingOrder", order);
+                return "confirm-page";
+            }
+
+            log.info("Processing payment for order: {}, method: {}", orderId, paymentMethod);
+            Order order = orderService.findByOrderId(orderId);
+            orderService.createPaymentRecord(paymentMethod, order);
+            // 支付成功后移除 session 中的 orderId
+            session.removeAttribute("orderId");
+            return "redirect:/checkout/order/payment/success";
+        } catch (Exception e) {
+            log.error("Error processing payment", e);
+            // 出错时不抛出异常，而是重定向到商品列表
+            session.removeAttribute("orderId");
+            return "redirect:/products/lists";
+        }
     }
 
     /**
