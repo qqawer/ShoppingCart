@@ -53,6 +53,9 @@ public class ProductController {
             throw new BusinessException(ErrorCode.PARAM_CANNOT_BE_NULL,"productId can not be null");
         }
         Product product= pservice.getProductById(productId);
+        if (product == null) {
+            throw new BusinessException(ErrorCode.PRODUCT_NOT_EXIST, productId);
+        }
         model.addAttribute("product",product);
         return "product/product-detail";
     }
