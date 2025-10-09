@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -111,11 +112,11 @@ public class Product {
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
-
+    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartRecord> cartRecords;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 }

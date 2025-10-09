@@ -49,7 +49,7 @@ public class UserController {
             // 根据用户角色跳转不同页面
             if ("ADMIN".equals(userInfo.getRole())) {
                 // 管理员跳转到百度
-                return "redirect:http://www.baidu.com";
+                return "redirect:http://localhost:5173/products";
             } else {
                 // 顾客跳转到商品列表页面
                 return "redirect:/products/lists";
