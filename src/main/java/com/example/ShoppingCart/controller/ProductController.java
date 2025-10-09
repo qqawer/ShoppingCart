@@ -61,17 +61,35 @@ public class ProductController {
         return "product/product-detail";
     }
 
-    // Perform a fuzzy search based on the product name
+    // Search products by name
     @GetMapping("/products/search")
-    public ResponseMessage<Page<Product>> searchProductsByName(@RequestParam(required = false) String productName,Pageable pageable) {
-        if (productName == null || productName.isEmpty()) {
-            throw new BusinessException(ErrorCode.PARAM_CANNOT_BE_NULL);
+    public String searchProductsByName(@RequestParam(required = false) String productName,
+                                       @PageableDefault(size = 12) Pageable pageable,
+                                       Model model,
+                                       HttpSession session) {
+        // 保持购物车数量显示
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        int cartCount = 0;
+        if (userId != null) {
+            cartCount = cartInterface.getCartItemsByUserId(userId).size();
         }
-        productName = productName.strip();
-        Page<Product> products=pservice.searchProductsByName(productName,pageable);
+        model.addAttribute("cartCount", cartCount);
 
-        return ResponseMessage.success(products);
+        Page<Product> products;
+        if (productName == null || productName.isEmpty()) {
+            model.addAttribute("errorMessage", "请输入商品名称！");
+            // 这里获取所有商品
+            products = pservice.getAllProductsByStatus(pageable);
+        } else {
+            productName = productName.strip();
+            products = pservice.searchProductsByName(productName, pageable);
+        }
+        model.addAttribute("page", products);
+        model.addAttribute("searchKeyword", productName);
+
+        return "product/lists";
     }
+
     @GetMapping("/api/products/lists")
     @ResponseBody
     public ResponseMessage<Page<Product>> getApiProduct(@PageableDefault(size = 5) Pageable pageable){

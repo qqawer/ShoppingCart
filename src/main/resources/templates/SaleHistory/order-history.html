@@ -103,31 +103,23 @@
 <!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            <i class="bi bi-cart3 me-2"></i>购物系统
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <a class="navbar-brand" href="#">电商购物车系统</a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/products/lists">商品浏览</a></li>
                 <li class="nav-item">
-                    <a class="nav-link"  href="/products/lists#">首页</a>
+                    <a class="nav-link active" th:href="@{/SaleHistory/menu}">订单历史</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart">购物车</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/order/history">订单历史</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/login}">登录</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart">🛒<span class="badge bg-danger" th:text="${cartCount}">0</span></a></li>
             </ul>
-            <div class="d-flex align-items-center">
-                <span class="text-light me-3">欢迎，用户</span>
-                <a href="/logout" class="btn btn-outline-light btn-sm">退出</a>
-            </div>
         </div>
     </div>
 </nav>
+
 
 <div class="container py-5">
     <div class="row mb-4">
