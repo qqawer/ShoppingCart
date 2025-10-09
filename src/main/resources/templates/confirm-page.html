@@ -91,12 +91,16 @@
             <div class="form-section">
                 <h2>Order Information</h2>
                 <p><label>Order ID: </label><span th:text="${currentPendingOrder.orderId}"></span></p>
-                <p><label>Order Generation Time: </label><span th:text="${#dates.format(currentPendingOrder.orderTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+                <span th:text="${#temporals.format(currentPendingOrder.orderTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+
                 <p><label>Order Status: </label>
                     <span th:if="${currentPendingOrder.orderStatus == 0}">Pending</span>
                     <!--<span th:if="${currentPendingOrder.orderStatus == 1}">Paid</span>-->
                 </p>
-                <p><label>Total: </label>$<span th:text="${#numbers.formatDecimal(currentPendingOrder.totalAmount, 2, 'POINT')}"></span> SGD</p>
+                <p>
+                    <label>Total: </label>$
+                    <span th:text="${#numbers.formatDecimal(currentPendingOrder.totalAmount, 1, 2, 'POINT')}"></span> SGD
+                </p>
             </div>
 
             <div class="form-section" th:if="${currentPendingOrder.address != null}">
@@ -121,11 +125,9 @@
                     <tbody>
                     <tr th:each="item : ${currentPendingOrder.orderItems}">
                         <td th:text="${item.productName}"></td>
-                        <td th:text="${#numbers.formatDecimal(item.productPrice, 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice, 1, 2, 'POINT')}"></td>
                         <td th:text="${item.buyQuantity}"></td>
-                        <td th:text="${#numbers.formatDecimal(item.productPrice.multiply(T(java.math.BigDecimal).valueOf(item.buyQuantity)), 2, 'POINT')}"></td>
-                    </tr>
-                    </tbody>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity , 1, 2, 'POINT')}"></td>
                 </table>
             </div>
 
