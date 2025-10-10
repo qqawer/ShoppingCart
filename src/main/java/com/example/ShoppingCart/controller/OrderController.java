@@ -55,6 +55,13 @@ public class OrderController {
             return "redirect:/products/lists";
         }
         Order order = orderService.findByOrderId(orderId);
+
+        //如果userAddress为空，提示跳转userprofile
+        if(order.getAddress() == null) {
+            log.warn("address is null, redirecting to products list");
+            model.addAttribute("error", "请先填写收货地址。");
+        }
+
         model.addAttribute("currentPendingOrder", order);
         return "confirm-page";
     }
