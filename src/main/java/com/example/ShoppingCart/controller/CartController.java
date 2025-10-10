@@ -76,7 +76,7 @@ public class CartController {
         }
 
         CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
-        if (existingCartRecord != null) {
+        if ((existingCartRecord != null) && (existingCartRecord.getQuantity() != 1)) {
             cartInterface.updateQuantity(existingCartRecord, -1);
         }
         return "redirect:/cart";
