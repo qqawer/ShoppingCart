@@ -147,6 +147,11 @@ public class UserController {
                                 Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "输入信息有误，请检查");
+            // 保证返回页面时存在模板依赖的数据
+            try {
+                model.addAttribute("userInfo", userService.getCurrentUser(session));
+            } catch (Exception ignored) {}
+            model.addAttribute("updateRequest", request);
             return "product/edit-profile";
         }
 
@@ -159,6 +164,10 @@ public class UserController {
             return "redirect:/user/profile";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+            try {
+                model.addAttribute("userInfo", userService.getCurrentUser(session));
+            } catch (Exception ignored) {}
+            model.addAttribute("updateRequest", request);
             return "product/edit-profile";
         }
     }

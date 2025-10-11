@@ -126,7 +126,7 @@
         <span th:text="${error}"></span>
         <a th:href="@{/user/edit}" class="button-link">Add address</a>
     </div>
-    <h1>Please Confirm Your Order</h1>
+    <h1 th:if="${error==null}">Please Confirm Your Order</h1>
 
     <div th:if="${currentPendingOrder != null}">
         <form th:action="@{/checkout/order/payment}" method="post">

@@ -14,6 +14,12 @@ public class UpdateUserRequest {
 
     private String oldPassword;
 
+    // Address fields (optional) - minimal addition to allow saving a single address via profile edit
+    private String receiverName;
+    private String phone;
+    private String region;
+    private String detailAddress;
+
     public String getUserName() {
         return userName;
     }
@@ -42,7 +48,39 @@ public class UpdateUserRequest {
         return oldPassword;
     }
 
-    public void setOldPassword(String oldPassword) {
+public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getDetailAddress() {
+        return detailAddress;
+    }
+
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
     }
 }

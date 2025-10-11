@@ -202,6 +202,30 @@
                 </div>
             </div>
 
+            <div class="form-section">
+                <h3>收货地址（可选）</h3>
+
+                <div class="form-group">
+                    <label for="receiverName">收件人姓名</label>
+                    <input type="text" id="receiverName" th:field="*{receiverName}" placeholder="例如：张三">
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneAddr">联系电话</label>
+                    <input type="text" id="phoneAddr" th:field="*{phone}" placeholder="例如：13812345678">
+                </div>
+
+                <div class="form-group">
+                    <label for="region">省市区</label>
+                    <input type="text" id="region" th:field="*{region}" placeholder="例如：广东-深圳-南山区">
+                </div>
+
+                <div class="form-group">
+                    <label for="detailAddress">详细地址</label>
+                    <input type="text" id="detailAddress" th:field="*{detailAddress}" placeholder="例如：某某小区1号楼101室">
+                </div>
+            </div>
+
             <div class="button-group">
                 <button type="submit">保存修改</button>
                 <a th:href="@{/user/profile}" class="button-link">取消</a>

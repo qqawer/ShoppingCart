@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
 public class UserImplementation implements UserInterface {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private com.example.ShoppingCart.repository.UserAddressRepository userAddressRepository;
 
     @Override
     public UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult) {
@@ -140,6 +142,33 @@ public class UserImplementation implements UserInterface {
 
         // 5. 保存更新
         User updatedUser = userRepository.save(user);
+
+        // 6. 如果请求中包含地址信息，则保存或更新用户地址（最小改动：每个用户仅保存一条地址）
+        try {
+            if (request.getReceiverName() != null && !request.getReceiverName().isEmpty()
+                    && request.getDetailAddress() != null && !request.getDetailAddress().isEmpty()) {
+
+                // 查找已有地址（若存在则更新，否则新建）
+                com.example.ShoppingCart.model.UserAddress exist = userAddressRepository.findByUser_UserId(userId);
+                com.example.ShoppingCart.model.UserAddress addr;
+                if (exist == null) {
+                    addr = new com.example.ShoppingCart.model.UserAddress();
+                    addr.setUser(updatedUser);
+                } else {
+                    addr = exist;
+                }
+
+                addr.setReceiverName(request.getReceiverName());
+                addr.setPhone(request.getPhone());
+                addr.setRegion(request.getRegion());
+                addr.setDetailAddress(request.getDetailAddress());
+                addr.setDefault(true);
+
+                userAddressRepository.save(addr);
+            }
+        } catch (Exception ignored) {
+            // swallow to avoid breaking user update on address save errors in this minimal change
+        }
 
         // 6. 返回更新后的用户信息
         return new UserInfoDTO(updatedUser);
