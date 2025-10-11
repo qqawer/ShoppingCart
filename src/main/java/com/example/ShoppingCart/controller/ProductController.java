@@ -83,6 +83,15 @@ public class ProductController {
         } else {
             productName = productName.strip();
             products = pservice.searchProductsByName(productName, pageable);
+            if (products.isEmpty()) {
+                model.addAttribute("errorMessage", "抱歉，没有找到与 '" + productName + "' 相关的商品");
+                // 可以选择显示所有商品或空列表
+                // products = Page.empty(pageable); // 显示空列表
+                products = pservice.getAllProductsByStatus(pageable); // 显示所有商品
+            }
+            else {
+                model.addAttribute("successMessage", "找到 " + products.getTotalElements() + " 个相关商品");
+            }
         }
         model.addAttribute("page", products);
         model.addAttribute("searchKeyword", productName);
@@ -148,7 +157,6 @@ public class ProductController {
             // 不是管理员,拒绝访问,跳转到商品列表页面
             return "redirect:/products/lists";
         }
-
         // 是管理员,跳转到百度
         return "redirect:http://www.baidu.com";
     }

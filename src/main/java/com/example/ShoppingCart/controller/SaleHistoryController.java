@@ -3,6 +3,10 @@ package com.example.ShoppingCart.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,7 @@ import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.model.SessionConstant;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/SaleHistory")
@@ -28,11 +33,17 @@ public class SaleHistoryController {
     private SaleHistoryInterface SaleHistoryService;
 
     @GetMapping("/menu") //历史菜单
-    public String getUserOrderHistory(HttpSession session, Model model) {
+    public String getUserOrderHistory(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,HttpSession session, Model model) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
-        System.out.println("Session userId: " + userId);
-        List<Order> orders = SaleHistoryService.getOrdersByUserId(userId);
-        model.addAttribute("orders", orders);
+//        System.out.println("Session userId: " + userId);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderTime"));
+        Page<Order> OrderRecords = SaleHistoryService.getUserOrders(userId, pageable);
+//        List<Order> orders = SaleHistoryService.getOrdersByUserId(userId);
+        model.addAttribute("orders", OrderRecords);
+        System.out.println("pages:" + OrderRecords.getTotalPages());
+//        System.out.println("first:" + OrderRecords.stream().findFirst());
+//        System.out.println("last:" + OrderRecords.nextOrLastPageable());
         return "SaleHistory/order-history"; // 对应SaleHistory/order-history.html
     }
 

@@ -8,6 +8,8 @@ import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,4 +56,8 @@ public class SaleHistoryImplementation implements SaleHistoryInterface {
         return paymentrepo.findByOrderId(orderId);
     }
 
+    @Override
+    public Page<Order> getUserOrders(String userId, Pageable pageable) {
+        return orderrepo.findUserOrders(userId, pageable);
+    }
 }

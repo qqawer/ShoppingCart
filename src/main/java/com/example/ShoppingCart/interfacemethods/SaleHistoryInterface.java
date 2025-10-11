@@ -9,6 +9,8 @@ import java.util.List;
 
 
 import com.example.ShoppingCart.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 public interface SaleHistoryInterface {
@@ -23,4 +25,6 @@ public interface SaleHistoryInterface {
 
     // 获取订单支付记录
     PaymentRecord getPaymentRecordByOrderId(String orderId);
+
+    Page<Order> getUserOrders(String userId, Pageable pageable);
 }
