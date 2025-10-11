@@ -14,14 +14,14 @@
         .navbar {
             background: #232323;
             color: #fff;
-            padding: 18px 36px;
+            padding: 10px 36px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 2px rgba(0,0,0,0.04);
         }
         .navbar-brand {
-            font-size: 26px;
+            font-size: 20px;
             font-weight: bold;
             color: #fff;
             text-decoration: none;
@@ -140,17 +140,24 @@
 <!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">电商购物车系统</a>
+        <a class="navbar-brand" href="#">Ecommerce Platform</a>
         <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/products/lists">商品浏览</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/products/lists">商品浏览</a></li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/SaleHistory/menu}">订单历史</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/login}">登录</a></li>
+                <!-- 已登录时显示个人中心 -->
+                <li class="nav-item" th:if="${session.currentUser != null}">
+                    <a class="nav-link" th:href="@{/user/profile}">👤 个人中心</a>
+                </li>
+                <!-- 未登录时显示登录按钮 -->
+                <li class="nav-item" th:if="${session.currentUser == null}">
+                    <a class="nav-link" th:href="@{/login}">登录</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/cart">🛒<span class="badge bg-danger" th:text="${cartCount}">0</span></a></li>
             </ul>
         </div>

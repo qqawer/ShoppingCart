@@ -132,6 +132,14 @@
             <th>交易号</th>
             <td th:text="${payment != null ? payment.tradeNo : '无'}"></td>
         </tr>
+        <tr>
+            <th>用户地址</th>
+            <td th:text="${payment != null ? payment.order.address.detailAddress : '无'}"></td>
+        </tr>
+        <tr>
+            <th>用户联系方式</th>
+            <td th:text="${payment != null ? payment.order.address.phone : '无'}"></td>
+        </tr>
     </table>
 
     <h4>订单商品</h4>
