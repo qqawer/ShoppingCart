@@ -15,7 +15,6 @@ public class Order {
     @Column(length = 36)
     private String orderId;
 
-
     @CreationTimestamp // Automatically fill in the order time
     @Column(updatable = false)
     private LocalDateTime orderTime;
@@ -24,6 +23,10 @@ public class Order {
     private BigDecimal totalAmount;
 
     private Integer orderStatus = 0;//Order status: 0= Pending payment, 1= Paid, 2= Dispatched, 3= Completed, 4= Cancelled
+
+    private String phone;
+
+    private String addressdetail;
 
     public String getOrderId() {
         return orderId;
@@ -88,6 +91,23 @@ public class Order {
     public void setPaymentRecord(PaymentRecord paymentRecord) {
         this.paymentRecord = paymentRecord;
     }
+
+    public String getAddressdetail() {
+        return addressdetail;
+    }
+
+    public void setAddressdetail(String addressdetail) {
+        this.addressdetail = addressdetail;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")

@@ -53,7 +53,9 @@ public class OrderImplementation implements OrderInterface {
         order.setUser(userrepo.findById(userId).orElseThrow());
         // 允许创建没有地址的订单，地址可以在确认页面添加
         UserAddress addr = useraddressrepo.findByUser_UserId(userId);
-        order.setAddress(addr);  // 可以为 null
+        order.setAddressdetail(addr.getDetailAddress());   //简单方案创建地址和phone
+        order.setPhone(addr.getPhone());
+        order.setAddress(addr);// 可以为 null
         order.setTotalAmount(calculateTotalPrice(cartRecords));
         order.setOrderStatus(0);                                //pending in default
         order.setOrderTime(LocalDateTime.now());
