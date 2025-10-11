@@ -143,7 +143,7 @@ public class UserImplementation implements UserInterface {
         // 5. 保存更新
         User updatedUser = userRepository.save(user);
 
-        // 6. 如果请求中包含地址信息，则保存或更新用户地址（最小改动：每个用户仅保存一条地址）
+//        // 6. 如果请求中包含地址信息，则保存或更新用户地址（最小改动：每个用户仅保存一条地址）
         try {
             if (request.getReceiverName() != null && !request.getReceiverName().isEmpty()
                     && request.getDetailAddress() != null && !request.getDetailAddress().isEmpty()) {
@@ -169,7 +169,6 @@ public class UserImplementation implements UserInterface {
         } catch (Exception ignored) {
             // swallow to avoid breaking user update on address save errors in this minimal change
         }
-
         // 6. 返回更新后的用户信息
         return new UserInfoDTO(updatedUser);
     }

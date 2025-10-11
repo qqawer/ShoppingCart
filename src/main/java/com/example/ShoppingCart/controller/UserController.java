@@ -145,30 +145,28 @@ public class UserController {
                                 BindingResult bindingResult,
                                 HttpSession session,
                                 Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("error", "输入信息有误，请检查");
-            // 保证返回页面时存在模板依赖的数据
-            try {
-                model.addAttribute("userInfo", userService.getCurrentUser(session));
-            } catch (Exception ignored) {}
-            model.addAttribute("updateRequest", request);
-            return "product/edit-profile";
-        }
-
         try {
             UserInfoDTO currentUser = userService.getCurrentUser(session);
+            model.addAttribute("userInfo", currentUser);  // 关键：重新放回
+
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("error", "输入信息有误，请检查");
+                model.addAttribute("updateRequest", request);
+                return "product/edit-profile";
+            }
+
             UserInfoDTO updatedUser = userService.updateUserInfo(currentUser.getUserId(), request);
-            // 更新 Session 中的用户信息
             session.setAttribute(SessionConstant.CURRENT_USER, updatedUser);
             model.addAttribute("success", "信息更新成功");
             return "redirect:/user/profile";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
             try {
                 model.addAttribute("userInfo", userService.getCurrentUser(session));
             } catch (Exception ignored) {}
             model.addAttribute("updateRequest", request);
+            model.addAttribute("error", e.getMessage());
             return "product/edit-profile";
         }
+
     }
 }

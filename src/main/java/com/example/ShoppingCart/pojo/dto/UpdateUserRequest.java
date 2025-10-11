@@ -1,15 +1,18 @@
 package com.example.ShoppingCart.pojo.dto;
 
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class UpdateUserRequest {
 
-    @Size(min = 2, max = 50, message = "用户名长度必须在2-50个字符之间")
+    //@Size(min = 2, max = 50, message = "用户名长度必须在2-50个字符之间")
+    @Pattern(regexp = "^$|.{2,50}$", message = "用户名长度必须在2-50个字符之间")
     private String userName;
 
     private String avatar;
 
-    @Size(min = 6, max = 20, message = "密码长度必须在6-20个字符之间")
+    //@Size(min = 6, max = 20, message = "密码长度必须在6-20个字符之间")
+    @Pattern(regexp = "^$|.{6,20}$", message = "密码长度必须在6-20个字符之间")
     private String newPassword;
 
     private String oldPassword;
@@ -19,7 +22,6 @@ public class UpdateUserRequest {
     private String phone;
     private String region;
     private String detailAddress;
-
     public String getUserName() {
         return userName;
     }
