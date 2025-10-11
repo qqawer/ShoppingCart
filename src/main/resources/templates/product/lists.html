@@ -117,23 +117,26 @@
     <div th:if="${successMessage}" class="success show-success message" role="alert">
         <strong>成功：</strong><span th:text="${successMessage}"></span>
     </div>
-
+<!--    search function-->
     <form class="row g-2 mb-4" th:action="@{/products/search}" method="get">
         <div class="col-md-4">
             <input class="form-control" name="productName" placeholder="搜索商品名称..." type="text">
         </div>
-        <div class="col-md-2">
-            <select class="form-select" name="sort">
-                <option value="">默认排序</option>
-                <option value="asc">价格升序</option>
-                <option value="desc">价格降序</option>
-            </select>
-        </div>
+
         <div class="col-md-2">
             <button class="btn btn-primary w-100">搜索</button>
         </div>
     </form>
-
+<!--    sort function-->
+    <form class="row g-2 mb-4" th:action="@{/products/lists}" method="get">
+        <div class="col-md-3">
+            <select class="form-select" name="sort" onchange="this.form.submit()">
+                <option value="">默认排序</option>
+                <option value="asc" th:selected="${param.sort == 'asc'}">价格升序</option>
+                <option value="desc" th:selected="${param.sort == 'desc'}">价格降序</option>
+            </select>
+        </div>
+    </form>
     <!-- 商品网格 -->
     <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3" th:each="p : ${page.content}">

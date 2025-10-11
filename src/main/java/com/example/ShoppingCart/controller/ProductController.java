@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,9 +34,30 @@ public class ProductController {
 
     //Query all products.
     @GetMapping("products/lists")
-    public String getAllProducts(@PageableDefault(size = 12) Pageable pageable, Model model, HttpSession session) {
+    public String getAllProducts(@PageableDefault(size = 12, sort = "price", direction = Sort.Direction.ASC) Pageable pageable,
+                                 @RequestParam(required = false) String sort, Model model, HttpSession session) {
+
+        //sort attribute to create pageable
+        if(sort!=null && !sort.isEmpty()) {
+            Sort.Direction direction = Sort.Direction.ASC;
+            String sortField = "price";
+            if("desc".equals(sort)) {
+                direction = Sort.Direction.DESC;
+            }
+
+            pageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(direction, sortField)
+            );
+            String sortMessage = "asc".equals(sort) ? "价格升序" : "价格降序";
+            model.addAttribute("successMessage",
+                    "切换到" + sortMessage + "模式");
+        }
+
         Page<Product> products=pservice.getAllProductsByStatus(pageable);
         model.addAttribute("page", products);
+        model.addAttribute("currentSort", sort); // 传递当前排序方式到前端
 
         // 获取购物车商品数量
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
