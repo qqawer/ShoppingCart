@@ -2,6 +2,7 @@ package com.example.ShoppingCart.controller;
 
 import java.util.List;
 
+import com.example.ShoppingCart.interfacemethods.CartInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,9 @@ public class SaleHistoryController {
     @Autowired
     private SaleHistoryInterface SaleHistoryService;
 
+    @Autowired
+    private CartInterface cartInterface;
+
     @GetMapping("/menu") //历史菜单
     public String getUserOrderHistory(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,HttpSession session, Model model) {
@@ -44,6 +48,12 @@ public class SaleHistoryController {
         System.out.println("pages:" + OrderRecords.getTotalPages());
 //        System.out.println("first:" + OrderRecords.stream().findFirst());
 //        System.out.println("last:" + OrderRecords.nextOrLastPageable());
+        int cartCount = 0;
+        if (userId != null) {
+            cartCount = cartInterface.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
+
         return "SaleHistory/order-history"; // 对应SaleHistory/order-history.html
     }
 

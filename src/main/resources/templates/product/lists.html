@@ -131,12 +131,13 @@
     <form class="row g-2 mb-4" th:action="@{/products/lists}" method="get">
         <div class="col-md-3">
             <select class="form-select" name="sort" onchange="this.form.submit()">
-                <option value="">默认排序</option>
+                <option value="default" th:selected="${param.sort == ''}">默认排序</option>
                 <option value="asc" th:selected="${param.sort == 'asc'}">价格升序</option>
                 <option value="desc" th:selected="${param.sort == 'desc'}">价格降序</option>
             </select>
         </div>
     </form>
+
     <!-- 商品网格 -->
     <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3" th:each="p : ${page.content}">

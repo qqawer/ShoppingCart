@@ -10,6 +10,7 @@ import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.model.SessionConstant;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class ProductController {
 
     //Query all products.
     @GetMapping("products/lists")
-    public String getAllProducts(@PageableDefault(size = 12, sort = "price", direction = Sort.Direction.ASC) Pageable pageable,
+    public String getAllProducts(@PageableDefault(size = 12, sort = "price") Pageable pageable,
                                  @RequestParam(required = false) String sort, Model model, HttpSession session) {
 
         //sort attribute to create pageable
@@ -70,9 +71,11 @@ public class ProductController {
         return "product/lists";
     }
 
+
+
     // Query a single product based on the product ID
     @GetMapping("/products/{productId}")
-    public String getProductById(@PathVariable String productId,Model model) {
+    public String getProductById(@PathVariable String productId,Model model,HttpSession session) {
         if (productId == null || productId.trim().isEmpty()) {
             throw new BusinessException(ErrorCode.PARAM_CANNOT_BE_NULL,"productId can not be null");
         }
@@ -81,6 +84,12 @@ public class ProductController {
             throw new BusinessException(ErrorCode.PRODUCT_NOT_EXIST, productId);
         }
         model.addAttribute("product",product);
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        int cartCount = 0;
+        if (userId != null) {
+            cartCount = cartInterface.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
         return "product/product-detail";
     }
 
