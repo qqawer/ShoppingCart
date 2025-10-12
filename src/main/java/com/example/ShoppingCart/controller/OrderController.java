@@ -1,12 +1,13 @@
 package com.example.ShoppingCart.controller;
 
 import com.example.ShoppingCart.model.*;
+import com.example.ShoppingCart.repository.UserAddressRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import com.example.ShoppingCart.interfacemethods.OrderInterface;
 
-
+import java.util.List;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,9 @@ public class OrderController {
 
     @Autowired
     private OrderInterface orderService;
+    
+    @Autowired
+    private UserAddressRepository userAddressRepository;
 
     /**
      * 创建订单
@@ -55,13 +59,17 @@ public class OrderController {
             return "redirect:/products/lists";
         }
         Order order = orderService.findByOrderId(orderId);
-
-        //如果userAddress为空，提示跳转userprofile
-        if(order.getAddress() == null) {
-            log.warn("address is null, redirecting to products list");
+        
+        // 获取用户的所有地址
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+        List<UserAddress> userAddresses = userAddressRepository.findByUser_UserId(userId);
+        
+        if(userAddresses == null || userAddresses.isEmpty()) {
+            log.warn("No addresses found for user, showing error");
             model.addAttribute("error", "请先填写收货地址。");
         }
-
+        
+        model.addAttribute("userAddresses", userAddresses);
         model.addAttribute("currentPendingOrder", order);
         return "confirm-page";
     }
@@ -90,7 +98,10 @@ public class OrderController {
      * POST /checkout/order/payment
      */
     @PostMapping("/order/payment")
-    public String payment(HttpSession session, @RequestParam(required = false) String paymentMethod, Model model) {
+    public String payment(HttpSession session, 
+                         @RequestParam(required = false) String paymentMethod,
+                         @RequestParam(required = false) String selectedAddressId,
+                         Model model) {
         try {
             String orderId = (String) session.getAttribute("orderId");
             if (orderId == null) {
@@ -100,14 +111,35 @@ public class OrderController {
 
             if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
                 log.warn("paymentMethod is null or empty");
-                model.addAttribute("errorMessage", "Please select a payment method");
+                model.addAttribute("error", "Please select a payment method");
                 Order order = orderService.findByOrderId(orderId);
                 model.addAttribute("currentPendingOrder", order);
                 return "confirm-page";
             }
+            
+            if (selectedAddressId == null || selectedAddressId.trim().isEmpty()) {
+                log.warn("selectedAddressId is null or empty");
+                model.addAttribute("error", "Please select a delivery address");
+                Order order = orderService.findByOrderId(orderId);
+                
+                // 重新获取用户地址列表
+                String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+                List<UserAddress> userAddresses = userAddressRepository.findByUser_UserId(userId);
+                model.addAttribute("userAddresses", userAddresses);
+                model.addAttribute("currentPendingOrder", order);
+                return "confirm-page";
+            }
 
-            log.info("Processing payment for order: {}, method: {}", orderId, paymentMethod);
+            log.info("Processing payment for order: {}, method: {}, address: {}", orderId, paymentMethod, selectedAddressId);
             Order order = orderService.findByOrderId(orderId);
+            
+            // 设置选中的地址
+            UserAddress selectedAddress = userAddressRepository.findById(selectedAddressId).orElse(null);
+            if (selectedAddress != null) {
+                order.setAddress(selectedAddress);
+                orderService.updateOrder(order);
+            }
+            
             orderService.createPaymentRecord(paymentMethod, order);
             // 支付成功后移除 session 中的 orderId
             session.removeAttribute("orderId");

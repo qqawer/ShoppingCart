@@ -37,4 +37,7 @@ public interface OrderInterface {
     void cancelOrder(Order order);
 
     Order findByOrderId(String orderId);
+    
+    // 更新订单信息
+    void updateOrder(Order order);
 }

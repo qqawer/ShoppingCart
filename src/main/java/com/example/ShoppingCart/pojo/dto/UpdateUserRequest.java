@@ -22,6 +22,18 @@ public class UpdateUserRequest {
     private String phone;
     private String region;
     private String detailAddress;
+    
+    // 是否设为默认地址
+    private Boolean isDefault;
+
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+    
     public String getUserName() {
         return userName;
     }

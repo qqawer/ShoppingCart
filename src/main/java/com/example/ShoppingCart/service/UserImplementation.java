@@ -5,6 +5,7 @@ import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import com.example.ShoppingCart.interfacemethods.UserInterface;
 import com.example.ShoppingCart.model.SessionConstant;
 import com.example.ShoppingCart.model.User;
+import com.example.ShoppingCart.model.UserAddress;
 import com.example.ShoppingCart.pojo.dto.LoginRequest;
 import com.example.ShoppingCart.pojo.dto.RegisterRequest;
 import com.example.ShoppingCart.pojo.dto.UpdateUserRequest;
@@ -143,26 +144,33 @@ public class UserImplementation implements UserInterface {
         // 5. 保存更新
         User updatedUser = userRepository.save(user);
 
-//        // 6. 如果请求中包含地址信息，则保存或更新用户地址（最小改动：每个用户仅保存一条地址）
+//        // 6. 如果请求中包含地址信息，则保存或更新用户地址
         try {
             if (request.getReceiverName() != null && !request.getReceiverName().isEmpty()
                     && request.getDetailAddress() != null && !request.getDetailAddress().isEmpty()) {
 
-                // 查找已有地址（若存在则更新，否则新建）
-                com.example.ShoppingCart.model.UserAddress exist = userAddressRepository.findByUser_UserId(userId);
-                com.example.ShoppingCart.model.UserAddress addr;
-                if (exist == null) {
-                    addr = new com.example.ShoppingCart.model.UserAddress();
-                    addr.setUser(updatedUser);
-                } else {
-                    addr = exist;
-                }
-
+                // 创建新地址
+                UserAddress addr = new UserAddress();
+                addr.setUser(updatedUser);
                 addr.setReceiverName(request.getReceiverName());
                 addr.setPhone(request.getPhone());
                 addr.setRegion(request.getRegion());
                 addr.setDetailAddress(request.getDetailAddress());
-                addr.setDefault(true);
+                
+                // 检查是否有默认地址
+                UserAddress defaultAddress = userAddressRepository.findByUser_UserIdAndIsDefaultTrue(userId);
+                // 如果没有默认地址或请求设置为默认，则设置为默认
+                //等价request.getIsDefault() != null && request.getIsDefault()
+                if (defaultAddress == null || Boolean.TRUE.equals(request.getIsDefault())) {
+                    // 如果已有默认地址且不是当前地址，则取消其默认状态
+                    if (defaultAddress != null) {
+                        defaultAddress.setDefault(false);
+                        userAddressRepository.save(defaultAddress);
+                    }
+                    addr.setDefault(true);
+                } else {
+                    addr.setDefault(false);
+                }
 
                 userAddressRepository.save(addr);
             }

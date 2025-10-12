@@ -52,10 +52,12 @@ public class OrderImplementation implements OrderInterface {
         Order order = new Order();
         order.setUser(userrepo.findById(userId).orElseThrow());
         // 允许创建没有地址的订单，地址可以在确认页面添加
-        UserAddress addr = useraddressrepo.findByUser_UserId(userId);
-        order.setAddressdetail(addr.getDetailAddress());   //简单方案创建地址和phone
-        order.setPhone(addr.getPhone());
-        order.setAddress(addr);// 可以为 null
+        UserAddress addr = useraddressrepo.findByUser_UserId(userId).stream().findFirst().orElse(null);
+        if (addr != null) {
+            order.setAddressdetail(addr.getDetailAddress());   //简单方案创建地址和phone
+            order.setPhone(addr.getPhone());
+            order.setAddress(addr);                            // 可以为 null
+        }
         order.setTotalAmount(calculateTotalPrice(cartRecords));
         order.setOrderStatus(0);                                //pending in default
         order.setOrderTime(LocalDateTime.now());
@@ -172,5 +174,13 @@ public class OrderImplementation implements OrderInterface {
             throw new BusinessException(ErrorCode.PARAM_ERROR, "orderId");
         }
         return orderrepo.findById(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PARAM_ERROR, "order"));
+    }
+    
+    @Override
+    public void updateOrder(Order order) {
+        if (order == null) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "Order cannot be null");
+        }
+        orderrepo.save(order);
     }
 }

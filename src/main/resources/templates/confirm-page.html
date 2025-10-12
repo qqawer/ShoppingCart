@@ -146,12 +146,24 @@
                 </p>
             </div>
 
-            <div class="form-section" th:if="${currentPendingOrder.address != null}">
+            <div class="form-section">
                 <h2>Delivery Address</h2>
-                <p><label>Consignee: </label><span th:text="${currentPendingOrder.address.receiverName}"></span></p>
-                <p><label>Contact Number: </label><span th:text="${currentPendingOrder.address.phone}"></span></p>
-                <p><label>Region: </label><span th:text="${currentPendingOrder.address.region}"></span></p>
-                <p><label>Detailed Address: </label><span th:text="${currentPendingOrder.address.detailAddress}"></span></p>
+                <div th:if="${userAddresses != null and !userAddresses.isEmpty()}">
+                    <div class="address-selection">
+                        <div th:each="address, status : ${userAddresses}" class="address-option">
+                            <input type="radio" name="selectedAddressId" th:id="'address-' + ${address.addressId}" 
+                                   th:value="${address.addressId}" th:checked="${address.default}">
+                            <label th:for="'address-' + ${address.addressId}" class="address-label">
+                                <p><strong th:text="${address.receiverName}"></strong> <span th:text="${address.phone}"></span></p>
+                                <p th:text="${address.region + ' ' + address.detailAddress}"></p>
+                                <span th:if="${address.default}" class="default-badge">Default</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${userAddresses == null or userAddresses.isEmpty()}" class="no-address-warning">
+                    <p>No delivery address found. Please <a th:href="@{/user/profile}">add an address</a> first.</p>
+                </div>
             </div>
 
             <div class="form-section" th:if="${currentPendingOrder.orderItems != null and !currentPendingOrder.orderItems.isEmpty()}">
