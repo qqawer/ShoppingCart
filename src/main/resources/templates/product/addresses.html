@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的地址 - 购物车系统</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #f4f5f6;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            box-sizing: border-box;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        .address-list {
+            margin-top: 24px;
+        }
+
+        .address-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .address-item.default {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+
+        .default-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .address-content {
+            margin-bottom: 12px;
+        }
+
+        .address-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+        }
+
+        button, a.button-link, .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        button:hover, a.button-link:hover, .btn:hover {
+            opacity: 0.9;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>我的地址</h1>
+        
+        <!-- 成功消息 -->
+        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+        
+        <!-- 错误消息 -->
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        
+        <!-- 地址列表 -->
+        <div class="address-list">
+            <!-- 无地址时显示 -->
+            <div th:if="${#lists.isEmpty(addresses)}" class="empty-state">
+                <p>您还没有添加任何地址</p>
+                <a th:href="@{/user/edit}" class="button-link">添加新地址</a>
+            </div>
+            
+            <!-- 地址列表 -->
+            <div th:each="address : ${addresses}" class="address-item" th:classappend="${address.default} ? 'default' : ''">
+                <div th:if="${address.default}" class="default-badge">默认</div>
+                
+                <div class="address-content">
+                    <p><strong th:text="${address.receiverName}"></strong> <span th:text="${address.phone}"></span></p>
+                    <p th:text="${address.region + ' ' + address.detailAddress}"></p>
+                </div>
+                
+                <div class="address-actions">
+                    <form th:if="${!address.default}" th:action="@{/user/address/default/{id}(id=${address.addressId})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary">设为默认</button>
+                    </form>
+                    <form th:action="@{/user/address/delete/{id}(id=${address.addressId})}" method="post" style="display: inline;"
+                          onsubmit="return confirm('确定要删除这个地址吗？');">
+                        <button type="submit" class="btn btn-danger">删除</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <a th:href="@{/user/edit}" class="button-link">添加新地址</a>
+            <a th:href="@{/user/profile}" class="button-link btn-secondary">返回个人中心</a>
+        </div>
+    </div>
+</body>
+</html>
