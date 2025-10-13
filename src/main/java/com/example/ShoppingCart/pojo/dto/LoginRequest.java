@@ -9,7 +9,7 @@ public class LoginRequest {
      * 手机号
      */
     @NotBlank(message = "请输入手机号")
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @Pattern(regexp = "^[89]\\d{7}$", message = "手机号格式不正确")
     private String phoneNumber;
 
     /**
