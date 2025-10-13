@@ -52,26 +52,26 @@ public class ShoppingCartApplicationTests  {
     @Test
     void injectAllData() {
         // USER
-        User user1 =buildUser("avatar1.jpg", "2024-01-15 10:00:00", "hashed_password_1", "13812345678", "John Doe");
+        User user1 =buildUser("avatar1.jpg", "2024-01-15 10:00:00", "hashed_password_1", "80000001", "John Doe");
         userRepository.save(user1);
-        User user2 =buildUser("avatar2.png", "2024-01-15 10:30:00", "hashed_password_2", "15987654321", "Jane Smith");
+        User user2 =buildUser("avatar2.png", "2024-01-15 10:30:00", "hashed_password_2", "80000002", "Jane Smith");
         userRepository.save(user2);
-        User user3 =buildUser("avatar3.gif", "2024-01-15 11:00:00", "hashed_password_3", "17600000000", "Peter Jones");
+        User user3 =buildUser("avatar3.gif", "2024-01-15 11:00:00", "hashed_password_3", "80000003", "Peter Jones");
         userRepository.save(user3);
-        User user4 =buildUser("avatar4.jpeg", "2024-01-15 11:30:00", "hashed_password_4", "18512345678", "Alice Brown");
+        User user4 =buildUser("avatar4.jpeg", "2024-01-15 11:30:00", "hashed_password_4", "80000004", "Alice Brown");
         userRepository.save(user4);
-        User user5 =buildUser("avatar5.svg", "2024-01-15 12:00:00", "hashed_password_5", "19811223344", "Bob Wilson");
+        User user5 =buildUser("avatar5.svg", "2024-01-15 12:00:00", "hashed_password_5", "80000005", "Bob Wilson");
         userRepository.save(user5);
         //USER ADDRESS
-        UserAddress userAddress1 = buildUserAddress("123 Main St, Apt 4B", true, "13812345678", "John Doe", "California", user1);
+        UserAddress userAddress1 = buildUserAddress("123 Main St, Apt 4B", true, "80000001", "John Doe", "California", user1);
         userAddressRepository.save(userAddress1);
-        UserAddress userAddress2 = buildUserAddress("456 Oak Ave", false, "15987654321", "Jane Smith", "New York", user2);
+        UserAddress userAddress2 = buildUserAddress("456 Oak Ave", false, "80000002", "Jane Smith", "New York", user2);
         userAddressRepository.save(userAddress2);
-        UserAddress userAddress3 = buildUserAddress("789 Pine Ln", false, "17600000000", "Peter Jones", "Texas", user3);
+        UserAddress userAddress3 = buildUserAddress("789 Pine Ln", false, "80000003", "Peter Jones", "Texas", user3);
         userAddressRepository.save(userAddress3);
-        UserAddress userAddress4 = buildUserAddress("101 Elm Rd", false, "18512345678", "Alice Brown", "Florida", user4);
+        UserAddress userAddress4 = buildUserAddress("101 Elm Rd", false, "80000004", "Alice Brown", "Florida", user4);
         userAddressRepository.save(userAddress4);
-        UserAddress userAddress5 = buildUserAddress("222 Maple Dr", true, "19811223344", "Bob Wilson", "Illinois", user5);
+        UserAddress userAddress5 = buildUserAddress("222 Maple Dr", true, "80000005", "Bob Wilson", "Illinois", user5);
         userAddressRepository.save(userAddress5);
         //Product
         Product product1 =buildProduct("Apple", "The latest iPhone", "https://images.macrumors.com/t/dQZq21dmJHx3YkK_MZNHsVFt7Zo=/1920x/article-new/2023/01/iPhone-15-General-Mock-Feature.jpg", "999.99", "iPhone 15 Pro",200);
