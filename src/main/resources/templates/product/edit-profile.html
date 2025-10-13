@@ -135,6 +135,11 @@
             margin-bottom: 15px;
             font-size: 16px;
         }
+        .field-error {
+            color: #c33;
+            margin-top: 6px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +163,12 @@
         <div th:if="${success}" class="success-message" th:text="${success}"></div>
 
         <form th:action="@{/user/update}" th:object="${updateRequest}" method="post">
+            <!-- 全局绑定错误（例如业务校验，或 BindingResult 的 global errors） -->
+            <div th:if="${#fields.hasGlobalErrors()}" class="error-message">
+                <ul>
+                    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+                </ul>
+            </div>
             <div class="form-group">
                 <label for="userName">新用户名</label>
                 <input type="text"
@@ -167,7 +178,7 @@
                        minlength="2"
                        maxlength="50">
                 <small>留空表示不修改用户名</small>
-<!--                <div class="field-error" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>-->
+                <div class="field-error" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
             </div>
 
             <div class="form-group">
@@ -177,7 +188,7 @@
                        th:field="*{avatar}"
                        placeholder="例如：https://example.com/avatar.jpg">
                 <small>请输入图片的完整 URL 地址（如：https://i.imgur.com/xxx.jpg），留空则不修改</small>
-<!--                <div class="field-error" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></div>-->
+                <div class="field-error" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></div>
             </div>
 
             <div class="password-section">
@@ -190,7 +201,7 @@
                            th:field="*{oldPassword}"
                            placeholder="修改密码时必填">
                     <small>只有修改密码时才需要填写</small>
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}"></div>
                 </div>
 
                 <div class="form-group">
@@ -202,7 +213,7 @@
                            minlength="6"
                            maxlength="20">
                     <small>留空表示不修改密码，长度6-20个字符</small>
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
                 </div>
             </div>
 
@@ -212,25 +223,25 @@
                 <div class="form-group">
                     <label for="receiverName">收件人姓名</label>
                     <input type="text" id="receiverName" th:field="*{receiverName}" placeholder="例如：张三">
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('receiverName')}" th:errors="*{receiverName}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('receiverName')}" th:errors="*{receiverName}"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="phoneAddr">联系电话</label>
                     <input type="text" id="phoneAddr" th:field="*{phone}" placeholder="例如：+65 91234567">
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="region">省市区</label>
                     <input type="text" id="region" th:field="*{region}" placeholder="例如：Singapore">
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('region')}" th:errors="*{region}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('region')}" th:errors="*{region}"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="detailAddress">详细地址</label>
                     <input type="text" id="detailAddress" th:field="*{detailAddress}" placeholder="例如：某某小区1号楼101室">
-<!--                    <div class="field-error" th:if="${#fields.hasErrors('detailAddress')}" th:errors="*{detailAddress}"></div>-->
+                    <div class="field-error" th:if="${#fields.hasErrors('detailAddress')}" th:errors="*{detailAddress}"></div>
                 </div>
             </div>
 

@@ -146,8 +146,28 @@ public class UserImplementation implements UserInterface {
 
 //        // 6. 如果请求中包含地址信息，则保存或更新用户地址
         try {
-            if (request.getReceiverName() != null && !request.getReceiverName().isEmpty()
-                    && request.getDetailAddress() != null && !request.getDetailAddress().isEmpty()) {
+            // If user submitted any address-related field, require all address fields to be present
+            boolean anyAddressFieldProvided = (request.getReceiverName() != null && !request.getReceiverName().isEmpty())
+                    || (request.getPhone() != null && !request.getPhone().isEmpty())
+                    || (request.getRegion() != null && !request.getRegion().isEmpty())
+                    || (request.getDetailAddress() != null && !request.getDetailAddress().isEmpty());
+
+            if (anyAddressFieldProvided) {
+                // require completeness
+                boolean allPresent = request.getReceiverName() != null && !request.getReceiverName().isEmpty()
+                        && request.getPhone() != null && !request.getPhone().isEmpty()
+                        && request.getRegion() != null && !request.getRegion().isEmpty()
+                        && request.getDetailAddress() != null && !request.getDetailAddress().isEmpty();
+
+                if (!allPresent) {
+                    throw new BusinessException(ErrorCode.PARAM_ERROR, "请完整填写收货地址（收件人、联系电话、地区、详细地址）");
+                }
+
+                // check current count
+                java.util.List<UserAddress> existing = userAddressRepository.findByUser_UserId(userId);
+                if (existing != null && existing.size() >= 6) {
+                    throw new BusinessException(ErrorCode.PARAM_ERROR, "已达到最多6个地址的限制，请先删除一个地址再添加。");
+                }
 
                 // 创建新地址
                 UserAddress addr = new UserAddress();
@@ -156,13 +176,10 @@ public class UserImplementation implements UserInterface {
                 addr.setPhone(request.getPhone());
                 addr.setRegion(request.getRegion());
                 addr.setDetailAddress(request.getDetailAddress());
-                
+
                 // 检查是否有默认地址
                 UserAddress defaultAddress = userAddressRepository.findByUser_UserIdAndIsDefaultTrue(userId);
-                // 如果没有默认地址或请求设置为默认，则设置为默认
-                //等价request.getIsDefault() != null && request.getIsDefault()
                 if (defaultAddress == null || Boolean.TRUE.equals(request.getIsDefault())) {
-                    // 如果已有默认地址且不是当前地址，则取消其默认状态
                     if (defaultAddress != null) {
                         defaultAddress.setDefault(false);
                         userAddressRepository.save(defaultAddress);
@@ -174,8 +191,11 @@ public class UserImplementation implements UserInterface {
 
                 userAddressRepository.save(addr);
             }
+        } catch (BusinessException e) {
+            // rethrow business exceptions so controller can show message to user
+            throw e;
         } catch (Exception ignored) {
-            // swallow to avoid breaking user update on address save errors in this minimal change
+            // swallow other exceptions to avoid breaking user update on address save errors
         }
         // 6. 返回更新后的用户信息
         return new UserInfoDTO(updatedUser);
