@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.interfacemethods;
 
+import com.alipay.api.AlipayApiException;
 import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.model.Order;
 import com.example.ShoppingCart.model.OrderItem;
@@ -40,4 +41,7 @@ public interface OrderInterface {
     
     // 更新订单信息
     void updateOrder(Order order);
+
+
+    String createFormPay(String paymentMethod,Order order) throws AlipayApiException;
 }

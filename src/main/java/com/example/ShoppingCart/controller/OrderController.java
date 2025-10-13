@@ -1,13 +1,19 @@
 package com.example.ShoppingCart.controller;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
 import com.example.ShoppingCart.model.*;
 import com.example.ShoppingCart.repository.UserAddressRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import com.example.ShoppingCart.interfacemethods.OrderInterface;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,6 +114,9 @@ public class OrderController {
                 log.warn("orderId is null when processing payment");
                 return "redirect:/products/lists";
             }
+            if (paymentMethod.equals("alipay")) {
+                return "redirect:/checkout/Alipay?paymentMethod=alipay";
+            }
 
             if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
                 log.warn("paymentMethod is null or empty");
@@ -164,6 +173,47 @@ public class OrderController {
         return "payment-success";
     }
 
+    /**
+     * 如果是Alipay，点击 Confirm 后 POST 到这里，直接返回二维码页面
+     */
+    @GetMapping("/Alipay")
+    public String alipayForm(Model model,HttpSession session,@RequestParam(required = false) String paymentMethod) {
+        try {
+            String orderId= (String) session.getAttribute("orderId");
+            Order order = orderService.findByOrderId(orderId);
+            String qrForm = orderService.createFormPay(paymentMethod,order); // 支付宝返回的链接
+            model.addAttribute("alipayForm", qrForm);         // 塞进模型
+            return "alipaylogin"; // 对应 templates/pay-qr.html
+        } catch (Exception e) {
+            model.addAttribute("err", e.getMessage());
+            return "error"; // 错误页
+        }
+    }
+    @PostMapping("/api/alipay/notify")
+    @ResponseBody
+    public String notify(HttpServletRequest req) throws AlipayApiException {
+        Map<String, String> params = new HashMap<>();
+        req.getParameterMap().forEach((k, v) -> params.put(k, v[0]));
+        // 1. 验签
+        boolean signOk = AlipaySignature.rsaCheckV1(
+                params,                     // 1. 参数 Map
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnA4w58/EegvNhLp0HuR2PZy0eamXPAtaisIU5JxmC3P72XEDmBvLkptlNy+nEOYOI8xhMfvafmApN8iUMYYk4Yf7AbduXHQCDJDPZkOmR7k067Pv1nkLSunAntmID2HSAIyuMl1hNjcv52UBX8sPD4DHdYmZwwbPPHO0edRH/SPtutgj5tEnKKwEQ2KAPlZQpHzbsYhbN4G9zUUkKMONm0npk7ed0yE8QgEI0WeQ4tF8pwmQPM1lD8bIL44bGEZqKDEeovy8JivYG7zQcoO4u+HEvYQviG8P7R0xXcHFinASSI5Mq38ETSjzCkTyF+LUMXuMnsGIGnOVXKPcIHvSaQIDAQAB",     // 2. 公钥字符串
+                "UTF-8",                            // 3. 字符集
+                "RSA2");                            // 4. 签名类型
+        if (!signOk) return "fail";
+        String tradeStatus = req.getParameter("trade_status");
+        if ("TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus)) {
+            String outTradeNo = req.getParameter("out_trade_no");
+            Order order = orderService.findByOrderId(outTradeNo);
+            orderService.createPaymentRecord("alipay", order);
+        }
+        return "success";
+    }
+    @GetMapping("/pay-success")
+    public String paySuccess(HttpSession session) {
+        session.removeAttribute("orderId");
+        return "redirect:/checkout/order/payment/success";
+    }
 
 
 

@@ -1,5 +1,9 @@
 package com.example.ShoppingCart.service;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.domain.AlipayTradePagePayModel;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayTradePagePayResponse;
 import com.example.ShoppingCart.interfacemethods.OrderInterface;
 import com.example.ShoppingCart.model.*;
 import com.example.ShoppingCart.repository.*;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,6 +39,8 @@ public class OrderImplementation implements OrderInterface {
     private UserAddressRepository useraddressrepo;
     @Autowired
     private ProductImplementation productImplementation;
+    @Autowired
+    private AlipayImplementation alipayrepo;
     @Override
     public Order createOrder(String userId) {
         //先判断是否已存在订单，且不能为空购物车，如果订单存在删除旧订单，重新创建新订单
@@ -183,4 +190,52 @@ public class OrderImplementation implements OrderInterface {
         }
         orderrepo.save(order);
     }
+
+
+    @Override
+    @Transactional
+    public String createFormPay(String paymentMethod,Order order) throws AlipayApiException {
+        //save paymentRecord to database
+        PaymentRecord record=new PaymentRecord();
+        record.setPaymentAmount(order.getTotalAmount());
+        record.setPaymentMethod(paymentMethod);
+        record.setTradeNo(UUID.randomUUID().toString());
+        record.setPayStatus(1);
+        record.setOrder(order);
+        order.setOrderStatus(1);
+        order.setPaymentRecord(record);
+        paymentrepo.save(record);
+        productImplementation.updateStockAfterPayment(order);
+
+        // 支付成功后清空购物车
+        String userId = order.getUser().getUserId();
+        List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
+        if (!cartRecords.isEmpty()) {
+            cartrepo.deleteAll(cartRecords);
+        }
+
+        //use the Alipay API
+        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        AlipayTradePagePayModel model = new AlipayTradePagePayModel();
+        model.setOutTradeNo(order.getOrderId());
+        model.setTotalAmount(order.getTotalAmount().toPlainString());
+        String subject = order.getOrderItems().stream()
+                .map(OrderItem::getProductName)   // 只拿商品名
+                .collect(Collectors.joining("-")); // 用 - 连接
+        // 超长截断
+        if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
+        model.setSubject(subject);
+        request.setBizModel(model);
+        request.setReturnUrl("http://127.0.0.1:8080/checkout/pay-success");
+        request.setNotifyUrl("http://127.0.0.1:8080/checkout/api/alipay/notify");
+        model.setProductCode("FAST_INSTANT_TRADE_PAY");
+
+        AlipayTradePagePayResponse response =alipayrepo.getAlipayClient().pageExecute(request, "POST");
+        if (!response.isSuccess()) {
+            throw new RuntimeException("支付宝下单失败：" + response.getMsg());
+        }
+        // 4. 返回表单页面
+        return response.getBody();
+    }
+
 }
