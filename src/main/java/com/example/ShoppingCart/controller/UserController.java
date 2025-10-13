@@ -199,7 +199,7 @@ public class UserController {
      * POST /user/update
      */
     @PostMapping("/user/update")
-    public String updateProfile(@Valid @ModelAttribute UpdateUserRequest request,
+    public String updateProfile(@Valid @ModelAttribute("updateRequest") UpdateUserRequest request,
                                 BindingResult bindingResult,
                                 HttpSession session,
                                 Model model) {
