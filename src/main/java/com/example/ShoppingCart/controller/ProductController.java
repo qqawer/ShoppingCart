@@ -36,29 +36,11 @@ public class ProductController {
     //Query all products.
     @GetMapping("products/lists")
     public String getAllProducts(@PageableDefault(size = 12, sort = "price") Pageable pageable,
-                                 @RequestParam(required = false) String sort, Model model, HttpSession session) {
+                                 Model model, HttpSession session) {
 
-        //sort attribute to create pageable
-        if(sort!=null && !sort.isEmpty()) {
-            Sort.Direction direction = Sort.Direction.ASC;
-            String sortField = "price";
-            if("desc".equals(sort)) {
-                direction = Sort.Direction.DESC;
-            }
-
-            pageable = PageRequest.of(
-                    pageable.getPageNumber(),
-                    pageable.getPageSize(),
-                    Sort.by(direction, sortField)
-            );
-            String sortMessage = "asc".equals(sort) ? "价格升序" : "价格降序";
-            model.addAttribute("successMessage",
-                    "切换到" + sortMessage + "模式");
-        }
 
         Page<Product> products=pservice.getAllProductsByStatus(pageable);
         model.addAttribute("page", products);
-        model.addAttribute("currentSort", sort); // 传递当前排序方式到前端
 
         // 获取购物车商品数量
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
@@ -93,9 +75,9 @@ public class ProductController {
         return "product/product-detail";
     }
 
-    // Search products by name
     @GetMapping("/products/search")
     public String searchProductsByName(@RequestParam(required = false) String productName,
+                                       @RequestParam(required = false) String sort,
                                        @PageableDefault(size = 12) Pageable pageable,
                                        Model model,
                                        HttpSession session) {
@@ -107,31 +89,92 @@ public class ProductController {
         }
         model.addAttribute("cartCount", cartCount);
 
+        // 处理排序逻辑
+        Pageable sortedPageable = handleSorting(sort, pageable);
+        String sortMessage = getSortMessage(sort);
+
         Page<Product> products;
         if (productName == null || productName.isEmpty()) {
-            model.addAttribute("errorMessage", "请输入商品名称！");
-            // 这里获取所有商品
-            products = pservice.getAllProductsByStatus(pageable);
+            // 显示所有商品
+            products = pservice.getAllProductsByStatus(sortedPageable);
+
+            // 如果有排序操作，显示排序消息
+            if (sort != null && !sort.isEmpty()) {
+                model.addAttribute("successMessage", "商品已按" + sortMessage + "排列");
+            } else {
+                model.addAttribute("errorMessage", "请输入商品名称！");
+            }
         }
         else {
             productName = productName.strip();
-//            products = pservice.searchProductsByName(productName, pageable);
-            products = pservice.searchAvailableProductsByName(productName, pageable);
+            products = pservice.searchAvailableProductsByName(productName, sortedPageable);
+
             if (products.isEmpty()) {
                 model.addAttribute("errorMessage", "抱歉，没有找到与 '" + productName + "' 相关的商品");
-                // 可以选择显示所有商品或空列表
-                // products = Page.empty(pageable); // 显示空列表
-                products = pservice.getAllProductsByStatus(pageable); // 显示所有商品
+                // 显示所有商品
+                products = pservice.getAllProductsByStatus(sortedPageable);
             }
             else {
-                model.addAttribute("successMessage", "找到 " + products.getTotalElements() + " 个相关商品");
+                String message = "找到 " + products.getTotalElements() + " 个相关商品";
+                // 如果有排序，添加排序信息
+                if (sort != null && !sort.isEmpty()) {
+                    message += "，并按" + sortMessage + "排列";
+                }
+                model.addAttribute("successMessage", message);
             }
         }
+
         model.addAttribute("page", products);
         model.addAttribute("searchKeyword", productName);
+        model.addAttribute("currentSort", sort); // 用于前端显示当前排序状态
 
         return "product/lists";
     }
+
+    // 处理排序的辅助方法
+    private Pageable handleSorting(String sortParam, Pageable originalPageable) {
+        if (sortParam == null || sortParam.isEmpty()) {
+            return originalPageable;
+        }
+
+        Sort.Direction direction;
+        String field;
+
+        switch (sortParam) {
+            case "price_asc":
+                direction = Sort.Direction.ASC;
+                field = "price";
+                break;
+            case "price_desc":
+                direction = Sort.Direction.DESC;
+                field = "price";
+                break;
+            default:
+                return originalPageable;
+        }
+
+        Sort sort = Sort.by(direction, field);
+        return PageRequest.of(originalPageable.getPageNumber(),
+                originalPageable.getPageSize(),
+                sort);
+    }
+
+    // 生成排序消息的辅助方法
+    private String getSortMessage(String sort) {
+        if (sort == null || sort.isEmpty()) {
+            return "默认顺序";
+        }
+
+        switch (sort) {
+            case "price,asc":
+                return "价格升序";
+            case "price,desc":
+                return "价格降序";
+            default:
+                return "指定顺序";
+        }
+    }
+
 
     @GetMapping("/api/products/lists")
     @ResponseBody
