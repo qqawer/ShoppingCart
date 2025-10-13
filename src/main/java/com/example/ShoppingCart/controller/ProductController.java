@@ -178,7 +178,7 @@ public class ProductController {
 
     @GetMapping("/api/products/lists")
     @ResponseBody
-    public ResponseMessage<Page<Product>> getApiProduct(@PageableDefault(size = 5) Pageable pageable){
+    public ResponseMessage<Page<Product>> getApiProduct(@PageableDefault(size = 12) Pageable pageable){
         Page<Product> products=pservice.getAllProducts(pageable);
         if (products.isEmpty()) {
             throw new BusinessException(ErrorCode.PRODUCT_LIST_EMPTY);
@@ -235,7 +235,7 @@ public class ProductController {
             return "redirect:/products/lists";
         }
         // 是管理员,跳转到百度
-        return "redirect:http://www.baidu.com";
+        return "redirect:http://localhost:5173/products";
     }
 
 }
