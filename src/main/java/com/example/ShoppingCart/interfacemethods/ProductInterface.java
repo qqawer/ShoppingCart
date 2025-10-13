@@ -23,6 +23,8 @@ public interface ProductInterface {
 
     Page<Product> getAllProductsByStatus(Pageable pageable);
 
+    Page<Product> searchAvailableProductsByName(String productName, Pageable pageable);
+
     Product updateProduct(ProductUpdateDTO product);
 
     void deleteProduct(String productId);

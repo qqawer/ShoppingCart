@@ -149,7 +149,7 @@
                         <span th:text="${item.product.productName}">商品名称</span>
                     </div>
                 </td>
-                <td th:text="${item.product.price + '元'}">0元</td>
+                <td th:text="${'$' + item.product.price }">0</td>
                 <td>
                     <div class="quantity-control">
                         <a th:href="@{/cart/decrease(productId=${item.product.productId})}">
@@ -164,7 +164,8 @@
                         </a>
                     </div>
                 </td>
-                <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2) + '元'}">0.00元</td>
+                <td th:text="${'$' + #numbers.formatDecimal(item.product.price * item.quantity, 1, 2, 'POINT')}">0.00</td>
+
                 <td>
                     <a th:href="@{/cart/remove(productId=${item.product.productId})}"
                        onclick="return confirm('确定要删除该商品吗？')">

@@ -162,4 +162,9 @@ public class ProductImplementation implements ProductInterface {
             prepo.save(product);
         }
     }
+
+    @Override
+    public Page<Product> searchAvailableProductsByName(String productName, Pageable pageable) {
+        return prepo.findAvailableProductsByName(productName, pageable);
+    }
 }

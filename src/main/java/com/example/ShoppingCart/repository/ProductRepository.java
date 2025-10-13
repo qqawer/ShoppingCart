@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 public interface ProductRepository extends JpaRepository<Product,String> {
@@ -17,5 +18,7 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     boolean existsByProductName(String productName);
     @Query("SELECT p FROM Product p WHERE p.status = 1 AND p.stock > 0")
     Page<Product> findAvailableProducts(Pageable pageable);
+    @Query("SELECT p FROM Product p WHERE p.productName LIKE %:productName% AND p.status = 1 AND p.stock > 0")
+    Page<Product> findAvailableProductsByName(@Param("productName") String productName, Pageable pageable);
 
 }

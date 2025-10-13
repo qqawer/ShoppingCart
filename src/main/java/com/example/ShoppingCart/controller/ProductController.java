@@ -112,9 +112,11 @@ public class ProductController {
             model.addAttribute("errorMessage", "请输入商品名称！");
             // 这里获取所有商品
             products = pservice.getAllProductsByStatus(pageable);
-        } else {
+        }
+        else {
             productName = productName.strip();
-            products = pservice.searchProductsByName(productName, pageable);
+//            products = pservice.searchProductsByName(productName, pageable);
+            products = pservice.searchAvailableProductsByName(productName, pageable);
             if (products.isEmpty()) {
                 model.addAttribute("errorMessage", "抱歉，没有找到与 '" + productName + "' 相关的商品");
                 // 可以选择显示所有商品或空列表
