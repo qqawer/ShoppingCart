@@ -153,6 +153,7 @@
                         <a th:href="@{/products/{id}(id=${p.productId})}" class="btn btn-sm btn-outline-primary">查看详情</a>
                         <form th:action="@{/cart/add}" method="post" class="d-inline">
                             <input type="hidden" name="productId" th:value="${p.productId}">
+                            <input type="hidden" name="currentPage" th:value="${page.number}">
                             <button type="submit" class="btn btn-sm btn-danger">加入购物车</button>
                         </form>
                     </div>

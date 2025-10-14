@@ -1,23 +1,32 @@
 package com.example.ShoppingCart.controller;
 
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.internal.util.AlipaySignature;
-import com.example.ShoppingCart.model.*;
-import com.example.ShoppingCart.repository.UserAddressRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ui.Model;
-import com.example.ShoppingCart.interfacemethods.OrderInterface;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.interfacemethods.OrderInterface;
+import com.example.ShoppingCart.model.Order;
+import com.example.ShoppingCart.model.SessionConstant;
+import com.example.ShoppingCart.model.UserAddress;
+import com.example.ShoppingCart.repository.UserAddressRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/checkout")
@@ -40,15 +49,21 @@ public class OrderController {
     //添加html
     //点击checkout 跳转订单确认页面
     @PostMapping("/order")
-    public String createOrder(HttpSession session) {
+    public String createOrder(HttpSession session, RedirectAttributes redirectAttributes) {
         // 使用统一的 Session 常量获取用户 ID
         //补全拦截器
         //生成订单和订单项目
         //需要添加异常处理
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
-        Order order = orderService.createOrder(userId);
-        session.setAttribute("orderId", order.getOrderId());
-        return "redirect:/checkout/order/confirm";
+        try {
+            Order order = orderService.createOrder(userId);
+            session.setAttribute("orderId", order.getOrderId());
+            return "redirect:/checkout/order/confirm";
+        } catch (BusinessException e) {
+            // 如果创建订单失败（比如库存不足），返回购物车页面并显示错误
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/cart";
+        }
     }
 
     /**
@@ -114,16 +129,17 @@ public class OrderController {
                 log.warn("orderId is null when processing payment");
                 return "redirect:/products/lists";
             }
-            if (paymentMethod.equals("alipay")) {
-                return "redirect:/checkout/Alipay?paymentMethod=alipay";
-            }
-
+            
             if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
                 log.warn("paymentMethod is null or empty");
                 model.addAttribute("error", "Please select a payment method");
                 Order order = orderService.findByOrderId(orderId);
                 model.addAttribute("currentPendingOrder", order);
                 return "confirm-page";
+            }
+            
+            if (paymentMethod.equals("alipay")) {
+                return "redirect:/checkout/Alipay?paymentMethod=alipay";
             }
             
             if (selectedAddressId == null || selectedAddressId.trim().isEmpty()) {

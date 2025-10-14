@@ -21,6 +21,27 @@ public class CartRecord {
 
     private Boolean isSelected = true; // Whether selected (for settlement)
 
+    @Transient // 表示这个字段不持久化到数据库
+    private boolean insufficientStock;
+
+    public boolean isInsufficientStock() {
+        return insufficientStock;
+    }
+
+    public void setInsufficientStock(boolean insufficientStock) {
+        this.insufficientStock = insufficientStock;
+    }
+
+    public int getAvailableStock() {
+        return availableStock;
+    }
+
+    public void setAvailableStock(int availableStock) {
+        this.availableStock = availableStock;
+    }
+
+    @Transient
+    private int availableStock;
     public String getCartId() {
         return cartId;
     }

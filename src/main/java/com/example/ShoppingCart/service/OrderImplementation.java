@@ -1,19 +1,5 @@
 package com.example.ShoppingCart.service;
 
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.domain.AlipayTradePagePayModel;
-import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.alipay.api.response.AlipayTradePagePayResponse;
-import com.example.ShoppingCart.interfacemethods.OrderInterface;
-import com.example.ShoppingCart.model.*;
-import com.example.ShoppingCart.repository.*;
-
-import jakarta.transaction.Transactional;
-import com.example.ShoppingCart.exception.BusinessException;
-import com.example.ShoppingCart.exception.errorcode.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +7,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.domain.AlipayTradePagePayModel;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayTradePagePayResponse;
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
+import com.example.ShoppingCart.interfacemethods.OrderInterface;
+import com.example.ShoppingCart.model.CartRecord;
+import com.example.ShoppingCart.model.Order;
+import com.example.ShoppingCart.model.OrderItem;
+import com.example.ShoppingCart.model.PaymentRecord;
+import com.example.ShoppingCart.model.Product;
+import com.example.ShoppingCart.model.UserAddress;
+import com.example.ShoppingCart.repository.CartRepository;
+import com.example.ShoppingCart.repository.OrderItemRepository;
+import com.example.ShoppingCart.repository.OrderRepository;
+import com.example.ShoppingCart.repository.PaymentRecordRepository;
+import com.example.ShoppingCart.repository.UserAddressRepository;
+import com.example.ShoppingCart.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -52,8 +63,18 @@ public class OrderImplementation implements OrderInterface {
         List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
         //验证是否为空
         if(cartRecords.isEmpty()){
-            throw new IllegalStateException("Shopping cart is empty");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "购物车为空");
         }
+        
+        // 验证所有商品的库存是否充足
+        for(CartRecord record : cartRecords) {
+            Product product = record.getProduct();
+            if(product.getStock() < record.getQuantity()) {
+                throw new BusinessException(ErrorCode.PRODUCT_STOCK_NOT_ENOUGH, 
+                    "商品 " + product.getProductName() + " 库存不足！当前库存：" + product.getStock() + " 件，购物车数量：" + record.getQuantity() + " 件");
+            }
+        }
+        
         //通过验证开始创建订单
 
         Order order = new Order();

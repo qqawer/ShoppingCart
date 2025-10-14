@@ -1,5 +1,13 @@
 package com.example.ShoppingCart.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.ShoppingCart.exception.BusinessException;
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.model.Product;
@@ -7,14 +15,8 @@ import com.example.ShoppingCart.model.User;
 import com.example.ShoppingCart.repository.CartRepository;
 import com.example.ShoppingCart.repository.ProductRepository;
 import com.example.ShoppingCart.repository.UserRepository;
-import com.example.ShoppingCart.exception.BusinessException;
-import com.example.ShoppingCart.exception.errorcode.ErrorCode;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.transaction.Transactional;
 
 //Achieve CartInterface
 @Service
@@ -40,6 +42,7 @@ public class CartImplementation implements CartInterface {
         Optional<CartRecord> cartRecord = cartRepository.findByUser_UserIdAndProduct_ProductId(userId, productId);
         return cartRecord.orElse(null);
     }
+
     //Update the quantity of product in Cart
     @Override
     public CartRecord updateQuantity(CartRecord existingCartRecord, Integer quantity) {
@@ -64,6 +67,26 @@ public class CartImplementation implements CartInterface {
         existingCartRecord.setQuantity(newQuantity);
         return cartRepository.save(existingCartRecord);
     }
+
+    //Update the quantity without stock check (for decrease operation)
+    @Override
+    public CartRecord updateQuantityWithoutStockCheck(CartRecord existingCartRecord, Integer quantity) {
+        if (quantity == null) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量不能为空");
+        }
+
+        int newQuantity = existingCartRecord.getQuantity() + quantity;
+
+        // 如果新数量小于等于0，删除购物车项
+        if (newQuantity <= 0) {
+            cartRepository.delete(existingCartRecord);
+            return null;
+        }
+
+        existingCartRecord.setQuantity(newQuantity);
+        return cartRepository.save(existingCartRecord);
+    }
+
     //Create the product in Cart
     @Override
     public CartRecord createCartItem(String userId, String productId, Integer quantity) {
@@ -96,6 +119,7 @@ public class CartImplementation implements CartInterface {
 
         return cartRepository.save(newCartRecord);
     }
+
     //Get all the product in Cart
     @Override
     public List<CartRecord> getCartItemsByUserId(String userId) {
@@ -105,4 +129,17 @@ public class CartImplementation implements CartInterface {
         return cartRepository.findByUser_UserId(userId);
     }
 
+
+
+    @Override
+    public boolean checkInventory(String productId, int required_quantity) {
+        Product product = productRepository.findByProductId(productId);
+        return product != null && product.getStock() >= required_quantity;
+    }
+
+    @Override
+    public int getProductInventory(String productId) {
+        Product product = productRepository.findByProductId(productId);
+        return product != null ? product.getStock() : 0;
+    }
 }

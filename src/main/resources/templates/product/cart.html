@@ -74,6 +74,12 @@
             background-color: #0056b3;
         }
 
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         .no-order {
             text-align: center;
             color: #555;
@@ -155,13 +161,22 @@
                         <a th:href="@{/cart/decrease(productId=${item.product.productId})}">
                             <button type="button">-</button>
                         </a>
-                        <input type="text"
-                               th:value="${item.quantity}"
-                               readonly
-                               style="width: 50px; text-align: center;">
+                        <form th:action="@{/cart/update}" method="post" class="d-inline" style="margin: 0;">
+                            <input type="hidden" name="productId" th:value="${item.product.productId}">
+                            <input type="number"
+                                   name="quantity"
+                                   th:value="${item.quantity}"
+                                   min="1"
+                                   th:max="${item.product.stock}"
+                                   style="width: 50px; text-align: center;"
+                                   onchange="this.form.submit()">
+                        </form>
                         <a th:href="@{/cart/increase(productId=${item.product.productId})}">
                             <button type="button">+</button>
                         </a>
+                    </div>
+                    <div th:if="${item.insufficientStock}" style="color: #e4393c; font-size: 12px; margin-top: 5px;">
+                        库存不足！仅剩 <span th:text="${item.availableStock}"></span> 件
                     </div>
                 </td>
                 <td th:text="${'$' + #numbers.formatDecimal(item.product.price * item.quantity, 1, 2, 'POINT')}">0.00</td>
@@ -180,10 +195,13 @@
         <div class="summary">
             <p>商品总数：<span th:text="${cartItems.size()}">0</span> 件</p>
             <p class="total-price">合计：<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + '元'}">0元</span></p>
+            <div th:if="${hasInsufficientStock}" style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeaa7;">
+                <strong>提示：</strong>部分商品库存不足，请调整数量后再结算
+            </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <a href="/products/lists" class="button-link">继续购物</a>
                 <form th:action="@{/checkout/order}" method="post">
-                    <button type="submit">去结算</button>
+                    <button type="submit" th:disabled="${hasInsufficientStock}">去结算</button>
                 </form>
             </div>
         </div>
@@ -194,6 +212,7 @@
         <p>购物车是空的，快去选购商品吧！</p>
         <a href="/products/lists" class="button-link">去购物</a>
     </div>
+
 </div>
 
 </body>

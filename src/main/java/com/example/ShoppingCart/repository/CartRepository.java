@@ -13,6 +13,4 @@ public interface CartRepository extends JpaRepository <CartRecord, String>{
     List<CartRecord> findByUser_UserId(String userId);
     //find the one CartRecord by userId and productId
     Optional<CartRecord> findByUser_UserIdAndProduct_ProductId(String userId, String productId);
-
-
 }

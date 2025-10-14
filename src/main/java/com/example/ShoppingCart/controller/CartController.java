@@ -1,18 +1,22 @@
 package com.example.ShoppingCart.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.example.ShoppingCart.exception.BusinessException;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.CartRecord;
 import com.example.ShoppingCart.model.SessionConstant;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CartController {
@@ -33,17 +37,67 @@ public class CartController {
 
         // 计算总计（所有商品）
         BigDecimal totalPrice = BigDecimal.ZERO;
+        boolean hasInsufficientStock = false;
         for (CartRecord item : cartItems) {
             BigDecimal itemTotal = item.getProduct().getPrice()
                     .multiply(new BigDecimal(item.getQuantity()));
             totalPrice = totalPrice.add(itemTotal);
+            int availableStock = cartInterface.getProductInventory(item.getProduct().getProductId());
+            boolean insufficientStock = item.getQuantity() > availableStock;
+            item.setInsufficientStock(insufficientStock);
+            if (insufficientStock) {
+                item.setAvailableStock(availableStock);
+                hasInsufficientStock = true;
+            }
         }
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("userId", userId);
+        model.addAttribute("hasInsufficientStock", hasInsufficientStock);
 
         return "product/cart";
+    }
+
+    // 更新商品数量（通过输入框）
+    @PostMapping("/cart/update")
+    public String updateQuantity(@RequestParam String productId,
+                                 @RequestParam Integer quantity,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
+
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
+            if (existingCartRecord != null) {
+                // 验证输入的数量
+                if (quantity <= 0) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "商品数量必须大于0");
+                    return "redirect:/cart";
+                }
+
+                // 检查库存
+                if (!cartInterface.checkInventory(productId, quantity)) {
+                    int availableStock = cartInterface.getProductInventory(productId);
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "库存不足！当前库存仅剩 " + availableStock + " 件");
+                    return "redirect:/cart";
+                }
+
+                // 计算需要增加或减少的数量
+                int quantityDiff = quantity - existingCartRecord.getQuantity();
+                cartInterface.updateQuantity(existingCartRecord, quantityDiff);
+                redirectAttributes.addFlashAttribute("successMessage", "商品数量已更新");
+            }
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/cart";
     }
 
     // 增加商品数量
@@ -58,7 +112,17 @@ public class CartController {
         try {
             CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
             if (existingCartRecord != null) {
+                //test whether can add the stock,
+                int newQuantity = existingCartRecord.getQuantity() + 1;
+                //add the error message
+                if (!cartInterface.checkInventory(productId, newQuantity)) {
+                    int availableStock = cartInterface.getProductInventory(productId);
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "库存不足！当前库存仅剩 " + availableStock + " 件，请减少数量");
+                    return "redirect:/cart";
+                }
                 cartInterface.updateQuantity(existingCartRecord, 1);
+
             }
         } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -68,17 +132,36 @@ public class CartController {
 
     // 减少商品数量
     @GetMapping("/cart/decrease")
-    public String decreaseQuantity(@RequestParam String productId, HttpSession session) {
+    public String decreaseQuantity(@RequestParam String productId,
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes) {
+
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
 
         if (userId == null) {
             return "redirect:/login";
         }
 
-        CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
-        if ((existingCartRecord != null) && (existingCartRecord.getQuantity() != 1)) {
-            cartInterface.updateQuantity(existingCartRecord, -1);
+        try {
+            CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
+            if (existingCartRecord != null) {
+                int currentQuantity = existingCartRecord.getQuantity();
+
+                // 如果当前数量已经是1，不能再减少
+                if (currentQuantity <= 1) {
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "商品数量已是最小值，无法再减少");
+                    return "redirect:/cart";
+                }
+
+                // 正常减少1个，不检查库存（减少操作不需要检查库存）
+                cartInterface.updateQuantityWithoutStockCheck(existingCartRecord, -1);
+                redirectAttributes.addFlashAttribute("successMessage", "商品数量已减少");
+            }
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
+
         return "redirect:/cart";
     }
 
@@ -104,6 +187,7 @@ public class CartController {
     public String addToCart(
             @RequestParam String productId,
             @RequestParam(required = false, defaultValue = "1") Integer quantity,
+            @RequestParam(required = false, defaultValue = "0") Integer currentPage,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
@@ -116,6 +200,19 @@ public class CartController {
 
         try {
             CartRecord existingCartRecord = cartInterface.checkCartItem(userId, productId);
+            int totalQuantity = quantity;
+
+            if (existingCartRecord != null) {
+                totalQuantity += existingCartRecord.getQuantity();
+            }
+
+            // 检查库存是否足够
+            if (!cartInterface.checkInventory(productId, totalQuantity)) {
+                int availableStock = cartInterface.getProductInventory(productId);
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "库存不足！当前库存仅剩 " + availableStock + " 件，无法添加到购物车");
+                return "redirect:/products/lists?page=" + currentPage;
+            }
 
             if (existingCartRecord != null) {
                 cartInterface.updateQuantity(existingCartRecord, quantity);
@@ -127,6 +224,6 @@ public class CartController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/products/lists";
+        return "redirect:/products/lists?page=" + currentPage;
     }
 }
