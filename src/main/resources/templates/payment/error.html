@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Alipay error page</title>
+    <title>错误信息</title>
 </head>
 <body>
-
+<!-- 直接把后台给的 form 字符串原样输出，浏览器会立即自动 POST -->
 <div th:utext="${err}"></div>
 </body>

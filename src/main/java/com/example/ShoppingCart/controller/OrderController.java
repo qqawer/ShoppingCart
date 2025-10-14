@@ -92,7 +92,7 @@ public class OrderController {
         
         model.addAttribute("userAddresses", userAddresses);
         model.addAttribute("currentPendingOrder", order);
-        return "confirm-page";
+        return "payment/confirm-page";
     }
 
     @PostMapping("/order/cancel")
@@ -135,7 +135,7 @@ public class OrderController {
                 model.addAttribute("error", "Please select a payment method");
                 Order order = orderService.findByOrderId(orderId);
                 model.addAttribute("currentPendingOrder", order);
-                return "confirm-page";
+                return "payment/confirm-page";
             }
             
             if (paymentMethod.equals("alipay")) {
@@ -152,7 +152,7 @@ public class OrderController {
                 List<UserAddress> userAddresses = userAddressRepository.findByUser_UserId(userId);
                 model.addAttribute("userAddresses", userAddresses);
                 model.addAttribute("currentPendingOrder", order);
-                return "confirm-page";
+                return "payment/confirm-page";
             }
 
             log.info("Processing payment for order: {}, method: {}, address: {}", orderId, paymentMethod, selectedAddressId);
@@ -186,7 +186,7 @@ public class OrderController {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         Order order = orderService.findPaidOrder(userId);
         model.addAttribute("currentPaidOrder", order);
-        return "payment-success";
+        return "payment/payment-success";
     }
 
     /**
@@ -199,10 +199,10 @@ public class OrderController {
             Order order = orderService.findByOrderId(orderId);
             String qrForm = orderService.createFormPay(paymentMethod,order); // 支付宝返回的链接
             model.addAttribute("alipayForm", qrForm);         // 塞进模型
-            return "alipaylogin"; // 对应 templates/pay-qr.html
+            return "payment/alipaylogin"; // 对应 templates/pay-qr.html
         } catch (Exception e) {
             model.addAttribute("err", e.getMessage());
-            return "error"; // 错误页
+            return "payment/error"; // 错误页
         }
     }
     @PostMapping("/api/alipay/notify")
