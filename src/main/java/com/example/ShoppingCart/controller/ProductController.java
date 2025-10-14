@@ -190,7 +190,7 @@ public class ProductController {
             // 不是管理员,拒绝访问,跳转到商品列表页面
             return "redirect:/products/lists";
         }
-        // 是管理员,跳转到百度
+        // 是管理员,跳转到api页面
         return "redirect:http://localhost:5173/products";
     }
 

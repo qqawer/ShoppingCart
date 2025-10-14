@@ -65,7 +65,7 @@ public class UserController {
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
-        return "product/login";
+        return "user/login";
     }
     
     /**
@@ -84,7 +84,7 @@ public class UserController {
         List<UserAddress> addresses = userAddressRepository.findByUser_UserId(userId);
         model.addAttribute("addresses", addresses);
         
-        return "product/addresses";
+        return "user/addresses";
     }
 
     /**
@@ -99,7 +99,7 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "输入信息有误，请检查");
-            return "product/login";
+            return "user/login";
         }
 
         try {
@@ -114,7 +114,7 @@ public class UserController {
             }
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "product/login";
+            return "user/login";
         }
     }
 
@@ -139,7 +139,7 @@ public class UserController {
         try {
             UserInfoDTO userInfo = userService.getCurrentUser(session);
             model.addAttribute("userInfo", userInfo);
-            return "product/profile";
+            return "user/profile";
         } catch (Exception e) {
             return "redirect:/login";
         }
@@ -152,7 +152,7 @@ public class UserController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
-        return "product/register";
+        return "user/register";
     }
 
     /**
@@ -165,7 +165,7 @@ public class UserController {
                            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "输入信息有误，请检查");
-            return "product/register";
+            return "user/register";
         }
 
         try {
@@ -174,7 +174,7 @@ public class UserController {
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "product/register";
+            return "user/register";
         }
     }
 
@@ -188,7 +188,7 @@ public class UserController {
             UserInfoDTO userInfo = userService.getCurrentUser(session);
             model.addAttribute("userInfo", userInfo);
             model.addAttribute("updateRequest", new UpdateUserRequest());
-            return "product/edit-profile";
+            return "user/edit-profile";
         } catch (Exception e) {
             return "redirect:/login";
         }
@@ -210,7 +210,7 @@ public class UserController {
             if (bindingResult.hasErrors()) {
                 model.addAttribute("error", "输入信息有误，请检查");
                 model.addAttribute("updateRequest", request);
-                return "product/edit-profile";
+                return "user/edit-profile";
             }
 
             UserInfoDTO updatedUser = userService.updateUserInfo(currentUser.getUserId(), request);
@@ -223,7 +223,7 @@ public class UserController {
             } catch (Exception ignored) {}
             model.addAttribute("updateRequest", request);
             model.addAttribute("error", e.getMessage());
-            return "product/edit-profile";
+            return "user/edit-profile";
         }
     }
     /**
