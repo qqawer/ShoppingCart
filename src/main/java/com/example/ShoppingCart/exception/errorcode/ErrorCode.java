@@ -10,7 +10,7 @@ package com.example.ShoppingCart.exception.errorcode;
 public enum ErrorCode {
     // 通用客户端错误（40xx）
     SUCCESS(200, "操作成功"),
-    PARAM_ERROR(4001, "参数错误：%s"), // 带占位符，动态填充具体参数
+    PARAM_ERROR(4001, "Parameter error：%s"), // 带占位符，动态填充具体参数
     NOT_LOGIN(4002, "请先登录"),
     NO_PERMISSION(4003, "无权限访问"),
 
