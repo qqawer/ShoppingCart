@@ -173,7 +173,7 @@
             <span class="brand-badge" th:text="${product.brand}">品牌</span>
             <div class="product-title" th:text="${product.productName}">产品名称</div>
             <div class="price-section">
-                <span>¥</span><span th:text="${product.price}">价格</span>
+                <span th:text="${product.price}">价格</span><span>SGD</span>
             </div>
             <div class="stock-info">
                 <span th:text="'库存：' + ${product.stock} + ' 件'">库存信息</span>

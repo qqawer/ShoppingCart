@@ -118,7 +118,7 @@
         </tr>
         <tr>
             <th>支付金额</th>
-            <td th:text="${payment != null ? payment.paymentAmount : '无'}"></td>
+            <td th:text="${payment != null ? payment.paymentAmount : '无'} + 'SGD'"></td>
         </tr>
         <tr>
             <th>支付方式</th>
@@ -155,9 +155,9 @@
         <tbody>
             <tr th:each="item : ${orderItems}">
                 <td th:text="${item.productName}"></td>
-                <td th:text="${item.productPrice}"></td>
+                <td th:text="${item.productPrice}+'SGD'"></td>
                 <td th:text="${item.buyQuantity}"></td>
-                <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity, 1, 2)}"></td>
+                <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity, 1, 2)}+'SGD'"></td>
                 <td>
                     <a th:href="@{/SaleHistory/products/{orderItemId}(orderItemId=${item.itemId})}" class="btn btn-sm btn-outline-primary">查看物品详情</a>
                 </td>

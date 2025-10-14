@@ -52,24 +52,24 @@ public class ShoppingCartApplicationTests  {
     @Test
     void injectAllData() {
         // USER
-        User user1 =buildUser("avatar1.jpg", "2024-01-15 10:00:00", "hashed_password_1", "80000001", "John Doe");
+        User user1 =buildUser("avatar1.jpg", "2024-01-15 10:00:00", "hashed_password_1", "80000001", "John Doe","CUSTOMER");
         userRepository.save(user1);
-        User user2 =buildUser("avatar2.png", "2024-01-15 10:30:00", "hashed_password_2", "80000002", "Jane Smith");
+        User user2 =buildUser("avatar2.png", "2024-01-15 10:30:00", "hashed_password_2", "80000002", "Jane Smith","CUSTOMER");
         userRepository.save(user2);
-        User user3 =buildUser("avatar3.gif", "2024-01-15 11:00:00", "hashed_password_3", "80000003", "Peter Jones");
+        User user3 =buildUser("avatar3.gif", "2024-01-15 11:00:00", "hashed_password_3", "80000003", "Peter Jones","CUSTOMER");
         userRepository.save(user3);
-        User user4 =buildUser("avatar4.jpeg", "2024-01-15 11:30:00", "hashed_password_4", "80000004", "Alice Brown");
+        User user4 =buildUser("avatar4.jpeg", "2024-01-15 11:30:00", "hashed_password_4", "80000004", "Alice Brown","CUSTOMER");
         userRepository.save(user4);
-        User user5 =buildUser("avatar5.svg", "2024-01-15 12:00:00", "hashed_password_5", "80000005", "Bob Wilson");
+        User user5 =buildUser("avatar5.svg", "2024-01-15 12:00:00", "hashed_password_5", "80000005", "Bob Wilson","ADMIN");
         userRepository.save(user5);
         //USER ADDRESS
         UserAddress userAddress1 = buildUserAddress("123 Main St, Apt 4B", true, "80000001", "John Doe", "California", user1);
         userAddressRepository.save(userAddress1);
-        UserAddress userAddress2 = buildUserAddress("456 Oak Ave", false, "80000002", "Jane Smith", "New York", user2);
+        UserAddress userAddress2 = buildUserAddress("456 Oak Ave", true, "80000002", "Jane Smith", "New York", user2);
         userAddressRepository.save(userAddress2);
-        UserAddress userAddress3 = buildUserAddress("789 Pine Ln", false, "80000003", "Peter Jones", "Texas", user3);
+        UserAddress userAddress3 = buildUserAddress("789 Pine Ln", true, "80000003", "Peter Jones", "Texas", user3);
         userAddressRepository.save(userAddress3);
-        UserAddress userAddress4 = buildUserAddress("101 Elm Rd", false, "80000004", "Alice Brown", "Florida", user4);
+        UserAddress userAddress4 = buildUserAddress("101 Elm Rd", true, "80000004", "Alice Brown", "Florida", user4);
         userAddressRepository.save(userAddress4);
         UserAddress userAddress5 = buildUserAddress("222 Maple Dr", true, "80000005", "Bob Wilson", "Illinois", user5);
         userAddressRepository.save(userAddress5);
@@ -112,7 +112,7 @@ public class ShoppingCartApplicationTests  {
         productRepository.save(p5);
 
         Product p6 = buildProduct("宠幸", "可冲马桶、除臭 99 %、无粉尘、可食用级原料", 
-            "https://cbu01.alicdn.com/img/ibank/O1CN0157zjYb1NVOf7x0cND_!!2212811171575-0-cib.jpg", "89.00", "宠幸豆腐猫砂 6 L×4 包", 300);
+            "https://img10.360buyimg.com/n1/jfs/t1/98765/7/21374/56912/6409392aFbc5be55b/d98e28ff1b543b17.jpg", "89.00", "宠幸豆腐猫砂 6 L×4 包", 300);
         productRepository.save(p6);
 
         Product p7 = buildProduct("网易严选", "0 谷 0 诱食剂、88 % 动物原料、粗蛋白 42 %", 
@@ -208,13 +208,14 @@ public class ShoppingCartApplicationTests  {
 
 
     // 构建方法
-    private User buildUser( String avatar, String createTime, String password, String phoneNumber, String userName) {
+    private User buildUser( String avatar, String createTime, String password, String phoneNumber, String userName,String role) {
         User user = new User();
         user.setAvatar(avatar);
         user.setCreateTime(LocalDateTime.parse(createTime.replace(" ", "T")));
         user.setPassword(password);
         user.setPhoneNumber(phoneNumber);
         user.setUserName(userName);
+        user.setRole(role);
         return user;
     }
 

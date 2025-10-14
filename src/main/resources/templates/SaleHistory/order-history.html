@@ -179,7 +179,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <p class="mb-0">总金额: <span class="fw-bold text-danger" th:text="'¥' + ${order.totalAmount}"></span></p>
+                                <p class="mb-0">总金额: <span class="fw-bold text-danger" th:text="${order.totalAmount}+'SGD'"></span></p>
                             </div>
                             <div class="col-md-2 text-md-end mt-3 mt-md-0">
                                 <a th:href="@{'/SaleHistory/menu/' + ${order.orderId} + '/detail'}" class="btn btn-outline-primary btn-sm">
