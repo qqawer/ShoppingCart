@@ -159,6 +159,9 @@ public class ProductImplementation implements ProductInterface {
                 throw new BusinessException(ErrorCode.PARAM_ERROR, "Insufficient stock");
             }
             product.setStock(product.getStock() - item.getBuyQuantity());
+            if (product.getStock()<=0){
+                product.setStatus(0);
+            }
             prepo.save(product);
         }
     }

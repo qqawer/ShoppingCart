@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.ShoppingCart.service.AlipayImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class OrderController {
 
     @Autowired
     private OrderInterface orderService;
+
+    @Autowired
+    private AlipayImplementation alipayService;
     
     @Autowired
     private UserAddressRepository userAddressRepository;
@@ -197,9 +201,9 @@ public class OrderController {
         try {
             String orderId= (String) session.getAttribute("orderId");
             Order order = orderService.findByOrderId(orderId);
-            String qrForm = orderService.createFormPay(paymentMethod,order); // 支付宝返回的链接
-            model.addAttribute("alipayForm", qrForm);         // 塞进模型
-            return "payment/alipaylogin"; // 对应 templates/pay-qr.html
+            String form =alipayService.createFormPay(paymentMethod,order); // 支付宝返回的链接
+            model.addAttribute("alipayForm", form);         // 塞进模型
+            return "payment/alipaylogin"; // 对应 templates/payment/alipaylogin.html
         } catch (Exception e) {
             model.addAttribute("err", e.getMessage());
             return "payment/error"; // 错误页
