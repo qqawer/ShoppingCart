@@ -79,7 +79,7 @@ public class OrderController {
     @GetMapping("/order/confirm")
     public String confirm(Model model, HttpSession session) {
         //complete the interceptor
-        //session 存order
+        //session save order
         String orderId = (String) session.getAttribute("orderId");
         if (orderId == null) {
             log.warn("orderId is null in session, redirecting to products list");

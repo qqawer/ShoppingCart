@@ -122,7 +122,7 @@
 <body>
 <div class="container">
     <div th:if="${error}" class="alert alert-danger" role="alert">
-        <strong>⚠ 错误：</strong>
+        <strong>⚠ ERROR:</strong>
         <span th:text="${error}"></span>
         <a th:href="@{/user/edit}" class="button-link">Add address</a>
     </div>
@@ -141,7 +141,7 @@
                     <!--<span th:if="${currentPendingOrder.orderStatus == 1}">Paid</span>-->
                 </p>
                 <p>
-                    <label>Total: </label>$
+                    <label>Total: </label>
                     <span th:text="${#numbers.formatDecimal(currentPendingOrder.totalAmount, 1, 2, 'POINT')}"></span> SGD
                 </p>
             </div>
@@ -180,9 +180,9 @@
                     <tbody>
                     <tr th:each="item : ${currentPendingOrder.orderItems}">
                         <td th:text="${item.productName}"></td>
-                        <td th:text="${#numbers.formatDecimal(item.productPrice, 1, 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice, 1, 2, 'POINT')}+'SGD'"></td>
                         <td th:text="${item.buyQuantity}"></td>
-                        <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity , 1, 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.productPrice * item.buyQuantity , 1, 2, 'POINT')}+'SGD'"></td>
                 </table>
             </div>
 

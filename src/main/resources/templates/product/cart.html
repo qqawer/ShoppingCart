@@ -121,12 +121,12 @@
 <div class="container">
     <h2>My Cart</h2>
 
-    <!-- 错误消息提示 -->
+    <!-- error message -->
     <div th:if="${errorMessage}" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
         <strong>Error:</strong><span th:text="${errorMessage}"></span>
     </div>
 
-    <!-- 成功消息提示 -->
+    <!-- success message -->
     <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
         <strong>Success:</strong><span th:text="${successMessage}"></span>
     </div>
@@ -179,7 +179,7 @@
                         Insufficient stock! Only <span th:text="${item.availableStock}"></span> items left
                     </div>
                 </td>
-                <td th:text="${'$' + #numbers.formatDecimal(item.product.price * item.quantity, 1, 2, 'POINT')}">0.00</td>
+                <td th:text="${ #numbers.formatDecimal(item.product.price * item.quantity, 1, 2, 'POINT') +'SGD'}">0.00</td>
 
                 <td>
                     <a th:href="@{/cart/remove(productId=${item.product.productId})}"
