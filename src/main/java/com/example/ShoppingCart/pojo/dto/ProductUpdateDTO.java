@@ -1,24 +1,24 @@
 package com.example.ShoppingCart.pojo.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.math.BigDecimal;
-
 public class ProductUpdateDTO {
 
-    // 编辑必须传id，用于定位产品（必传，非空且为正数）
-    @NotNull(message = "产品ID不能为空")
+    // The editor must pass the ID to locate the product (required, non-empty, and positive integer).
+    @NotNull(message = "Product ID cannot be empty")
     private String productId;
 
     private String productName;
 
-    // 价格：编辑时可选，传值则必须>0
-    @DecimalMin(value = "0.01", message = "产品价格必须大于0")
+    // price: optional when editing, must be >0 if passed
+    @DecimalMin(value = "0.01", message = "Product price must be greater than 0")
     private BigDecimal price;
 
-    @PositiveOrZero(message = "产品库存不能为负数")
+    @PositiveOrZero(message = "Product stock cannot be negative")
     private Integer stock;
 
     private String brand;
@@ -27,7 +27,7 @@ public class ProductUpdateDTO {
 
     private String description;
 
-    @PositiveOrZero(message = "状态值无效")
+    @PositiveOrZero(message = "Status value is invalid")
     private Integer status;
 
     public String getProductId() {

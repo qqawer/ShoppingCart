@@ -52,13 +52,13 @@ public class CartImplementation implements CartInterface {
 
         int newQuantity = existingCartRecord.getQuantity() + quantity;
 
-        // 如果新数量小于等于0，删除购物车项
+        // if new quantity is less than or equal to 0, delete the cart item
         if (newQuantity <= 0) {
             cartRepository.delete(existingCartRecord);
             return null;
         }
 
-        // 检查库存是否充足
+        // check if the stock is enough
         Product product = existingCartRecord.getProduct();
         if (product.getStock() < newQuantity) {
             throw new BusinessException(ErrorCode.PRODUCT_STOCK_NOT_ENOUGH, product.getStock());
@@ -72,12 +72,12 @@ public class CartImplementation implements CartInterface {
     @Override
     public CartRecord updateQuantityWithoutStockCheck(CartRecord existingCartRecord, Integer quantity) {
         if (quantity == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量不能为空");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "Quantity cannot be empty");
         }
 
         int newQuantity = existingCartRecord.getQuantity() + quantity;
 
-        // 如果新数量小于等于0，删除购物车项
+        // if new quantity is less than or equal to 0, delete the cart item
         if (newQuantity <= 0) {
             cartRepository.delete(existingCartRecord);
             return null;
@@ -97,7 +97,7 @@ public class CartImplementation implements CartInterface {
             throw new BusinessException(ErrorCode.PARAM_ERROR, "productId");
         }
         if (quantity == null || quantity <= 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR, "数量必须大于0");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "Quantity must be greater than 0");
         }
 
         User user = userRepository.findById(userId)
@@ -106,7 +106,7 @@ public class CartImplementation implements CartInterface {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_EXIST));
 
-        // 检查库存是否充足
+        // check if the stock is enough
         if (product.getStock() < quantity) {
             throw new BusinessException(ErrorCode.PRODUCT_STOCK_NOT_ENOUGH, product.getStock());
         }

@@ -1,40 +1,42 @@
 package com.example.ShoppingCart.interfacemethods;
 
+import org.springframework.validation.BindingResult;
+
 import com.example.ShoppingCart.pojo.dto.LoginRequest;
 import com.example.ShoppingCart.pojo.dto.RegisterRequest;
 import com.example.ShoppingCart.pojo.dto.UpdateUserRequest;
 import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.validation.BindingResult;
 
 public interface UserInterface {
     /**
-     * 用户登录
+     * user login
      */
     UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult);
 
     /**
-     * 用户登出
+     * user logout
      */
     void logout(HttpSession session);
 
     /**
-     * 获取当前登录用户信息
+     * get the current logged in user information
      */
     UserInfoDTO getCurrentUser(HttpSession session);
 
     /**
-     * 检查用户是否已登录
+     * check if the user is logged in
      */
     boolean isLoggedIn(HttpSession session);
 
     /**
-     * 用户注册
+     * user register
      */
     UserInfoDTO register(RegisterRequest request);
 
     /**
-     * 更新用户信息
+     * update user information
      */
     UserInfoDTO updateUserInfo(String userId, UpdateUserRequest request);
 }

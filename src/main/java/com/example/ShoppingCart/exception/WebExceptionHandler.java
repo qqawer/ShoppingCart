@@ -1,6 +1,5 @@
 package com.example.ShoppingCart.exception;
 
-import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -10,11 +9,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.ShoppingCart.exception.errorcode.ErrorCode;
+
 /**
- * 处理 @Controller 的异常（页面类Controller）
+ * handle @Controller exceptions (page class Controller)
  */
 @ControllerAdvice(annotations = Controller.class)
-@Order(Ordered.LOWEST_PRECEDENCE)   // 最后兜底，只拦页面
+@Order(Ordered.LOWEST_PRECEDENCE)   // last fallback, only intercept pages
 public class WebExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(WebExceptionHandler.class);
 

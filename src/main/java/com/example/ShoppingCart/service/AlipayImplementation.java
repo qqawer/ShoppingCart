@@ -1,5 +1,12 @@
 package com.example.ShoppingCart.service;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayConfig;
@@ -13,13 +20,8 @@ import com.example.ShoppingCart.model.OrderItem;
 import com.example.ShoppingCart.model.PaymentRecord;
 import com.example.ShoppingCart.repository.CartRepository;
 import com.example.ShoppingCart.repository.PaymentRecordRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AlipayImplementation {
@@ -46,7 +48,7 @@ public class AlipayImplementation {
         this.alipayClient=alipayClient;
     }
     /**
-     * 传入订单信息，返回一段可直接回显的 form HTML
+     * pass in order information, return a form HTML that can be directly displayed
      */
 
     @Transactional
@@ -63,7 +65,7 @@ public class AlipayImplementation {
         paymentrepo.save(record);
         productImplementation.updateStockAfterPayment(order);
 
-        // 支付成功后清空购物车
+        // after payment, clear the cart
         String userId = order.getUser().getUserId();
         List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
         if (!cartRecords.isEmpty()) {
@@ -76,9 +78,9 @@ public class AlipayImplementation {
         model.setOutTradeNo(order.getOrderId());
         model.setTotalAmount(order.getTotalAmount().toPlainString());
         String subject = order.getOrderItems().stream()
-                .map(OrderItem::getProductName)   // 只拿商品名
-                .collect(Collectors.joining("-")); // 用 - 连接
-        // 超长截断
+                .map(OrderItem::getProductName)   // only take the product name
+                .collect(Collectors.joining("-")); // use - to connect
+        // truncate if too long
         if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
         model.setSubject(subject);
         request.setBizModel(model);
@@ -88,9 +90,9 @@ public class AlipayImplementation {
 
         AlipayTradePagePayResponse response =alipayClient.pageExecute(request, "POST");
         if (!response.isSuccess()) {
-            throw new RuntimeException("支付宝下单失败：" + response.getMsg());
+            throw new RuntimeException("Alipay下单失败：" + response.getMsg());
         }
-        // 4. 返回表单页面
+        // return form page
         return response.getBody();
     }
 }

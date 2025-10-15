@@ -6,17 +6,17 @@ import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
     /**
-     * 手机号
+     * phone number
      */
-    @NotBlank(message = "请输入手机号")
-    @Pattern(regexp = "^[89]\\d{7}$", message = "手机号格式不正确")
+    @NotBlank(message = "Please enter an 8-digit Singapore mobile phone number.")
+    @Pattern(regexp = "^[89]\\d{7}$", message = "Phone number format is incorrect")
     private String phoneNumber;
 
     /**
-     * 密码（明文）
+     * password (plain text)
      */
-    @NotBlank(message = "请输入密码")
-    @Size(min = 6, max = 20, message = "密码长度必须在6-20位之间")
+    @NotBlank(message = "Please enter a password")
+    @Size(min = 6, max = 20, message = "Password length must be between 6-20 characters")
     private String password;
 
     public LoginRequest() {

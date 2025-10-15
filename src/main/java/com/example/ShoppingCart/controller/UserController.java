@@ -1,5 +1,17 @@
 package com.example.ShoppingCart.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.example.ShoppingCart.interfacemethods.UserInterface;
 import com.example.ShoppingCart.model.SessionConstant;
 import com.example.ShoppingCart.model.UserAddress;
@@ -8,16 +20,9 @@ import com.example.ShoppingCart.pojo.dto.RegisterRequest;
 import com.example.ShoppingCart.pojo.dto.UpdateUserRequest;
 import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
 import com.example.ShoppingCart.repository.UserAddressRepository;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 public class UserController {
@@ -28,38 +33,38 @@ public class UserController {
     private UserAddressRepository userAddressRepository;
     
     /**
-     * 删除地址
+     * delete the address
      * POST /user/address/delete/{addressId}
      */
     @PostMapping("/user/address/delete/{addressId}")
     public String deleteAddress(@PathVariable String addressId, HttpSession session, Model model, 
                                RedirectAttributes redirectAttributes) {
-        // 检查用户是否登录
+        // check whether the user is logged in
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         if (userId == null) {
             return "redirect:/login";
         }
         
         try {
-            // 获取要删除的地址
+            // get the address to be deleted
             UserAddress address = userAddressRepository.findById(addressId).orElse(null);
             
-            // 检查地址是否存在且属于当前用户
+            // check whether the address exists and belongs to the current user
             if (address != null && address.getUser().getUserId().equals(userId)) {
                 userAddressRepository.delete(address);
-                redirectAttributes.addFlashAttribute("successMessage", "地址删除成功");
+                redirectAttributes.addFlashAttribute("successMessage", "address deleted successfully");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "地址不存在或不属于当前用户");
+                redirectAttributes.addFlashAttribute("errorMessage", "address does not exist or does not belong to the current user");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "删除地址失败: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "failed to delete address: " + e.getMessage());
         }
         
         return "redirect:/user/addresses";
     }
 
     /**
-     * 显示登录页面
+     * display the login page
      * GET /login
      */
     @GetMapping("/login")
@@ -69,18 +74,18 @@ public class UserController {
     }
     
     /**
-     * 显示用户地址列表页面
+     * display the user address list page
      * GET /user/addresses
      */
     @GetMapping("/user/addresses")
     public String addressesPage(HttpSession session, Model model) {
-        // 检查用户是否登录
+        // check whether the user is logged in
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         if (userId == null) {
             return "redirect:/login";
         }
 
-        // 获取用户所有地址
+        // get all the addresses of the user
         List<UserAddress> addresses = userAddressRepository.findByUser_UserId(userId);
         model.addAttribute("addresses", addresses);
         
@@ -98,18 +103,18 @@ public class UserController {
                         Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("error", "输入信息有误，请检查");
+            model.addAttribute("error", "the input information is incorrect, please check");
             return "user/login";
         }
 
         try {
             UserInfoDTO userInfo = userService.login(request, session, bindingResult);
-            // 根据用户角色跳转不同页面
+            // redirect to different pages based on the user role
             if ("ADMIN".equals(userInfo.getRole())) {
-                // 管理员跳转到百度
+                // admin redirect to the products page
                 return "redirect:/#/products";
             } else {
-                // 顾客跳转到商品列表页面
+                // customer redirect to the product list page
                 return "redirect:/products/lists";
             }
         } catch (Exception e) {
@@ -121,7 +126,7 @@ public class UserController {
 
 
     /**
-     * 用户登出
+     * user logout
      * GET /logout
      */
     @GetMapping("/logout")
@@ -131,7 +136,7 @@ public class UserController {
     }
 
     /**
-     * 显示用户信息页面
+     * display the user information page
      * GET /user/profile
      */
     @GetMapping("/user/profile")
@@ -146,7 +151,7 @@ public class UserController {
     }
 
     /**
-     * 显示注册页面
+     * display the register page
      * GET /register
      */
     @GetMapping("/register")
@@ -156,7 +161,7 @@ public class UserController {
     }
 
     /**
-     * 用户注册
+     * user register
      * POST /register
      */
     @PostMapping("/register")
@@ -164,13 +169,13 @@ public class UserController {
                            BindingResult bindingResult,
                            Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("error", "输入信息有误，请检查");
+            model.addAttribute("error", "the input information is incorrect, please check");
             return "user/register";
         }
 
         try {
             userService.register(request);
-            model.addAttribute("success", "注册成功，请登录");
+            model.addAttribute("success", "registration successful, please login");
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -179,7 +184,7 @@ public class UserController {
     }
 
     /**
-     * 显示编辑用户信息页面
+     * display the edit user information page
      * GET /user/edit
      */
     @GetMapping("/user/edit")
@@ -195,7 +200,7 @@ public class UserController {
     }
 
     /**
-     * 更新用户信息
+     * update the user information
      * POST /user/update
      */
     @PostMapping("/user/update")
@@ -205,17 +210,17 @@ public class UserController {
                                 Model model) {
         try {
             UserInfoDTO currentUser = userService.getCurrentUser(session);
-            model.addAttribute("userInfo", currentUser);  // 关键：重新放回
+            model.addAttribute("userInfo", currentUser);  // key: put back
 
             if (bindingResult.hasErrors()) {
-                model.addAttribute("error", "输入信息有误，请检查");
+                model.addAttribute("error", "the input information is incorrect, please check");
                 model.addAttribute("updateRequest", request);
                 return "user/edit-profile";
             }
 
             UserInfoDTO updatedUser = userService.updateUserInfo(currentUser.getUserId(), request);
             session.setAttribute(SessionConstant.CURRENT_USER, updatedUser);
-            model.addAttribute("success", "信息更新成功");
+            model.addAttribute("success", "information updated successfully");
             return "redirect:/user/profile";
         } catch (Exception e) {
             try {
@@ -227,20 +232,20 @@ public class UserController {
         }
     }
     /**
-     * 设置默认地址
+     * set the default address
      * POST /user/address/default/{addressId}
      */
     @PostMapping("/user/address/default/{addressId}")
     public String setDefaultAddress(@PathVariable String addressId, HttpSession session) {
         try {
             UserInfoDTO userInfo = userService.getCurrentUser(session);
-            // 先将所有地址设为非默认
+                // first set all addresses to non-default
             List<UserAddress> addresses = userAddressRepository.findByUser_UserId(userInfo.getUserId());
             for (UserAddress address : addresses) {
                 address.setDefault(false);
                 userAddressRepository.save(address);
             }
-            // 设置选中的地址为默认
+            // set the selected address to default
             UserAddress selectedAddress = userAddressRepository.findById(addressId).orElse(null);
             if (selectedAddress != null) {
                 selectedAddress.setDefault(true);

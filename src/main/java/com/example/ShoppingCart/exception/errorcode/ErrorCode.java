@@ -1,55 +1,55 @@
 package com.example.ShoppingCart.exception.errorcode;
 
 /**
- * 错误码枚举类：集中管理所有错误码和提示信息
- * 编码规则：
- * - 4xxx：客户端错误（如参数错、权限错）
- * - 5xxx：服务端错误（如数据库错、系统错）
- * - 按模块细分：40xx=通用客户端错，41xx=用户模块错，42xx=订单模块错...
+ * error code enum class: manage all error codes and prompt information
+ * coding rules:
+ * - 4xxx: client error (such as parameter error, permission error)
+ * - 5xxx: server error (such as database error, system error)
+ * - by module: 40xx=general client error, 41xx=user module error, 42xx=order module error...
  */
 public enum ErrorCode {
-    // 通用客户端错误（40xx）
-    SUCCESS(200, "操作成功"),
-    PARAM_ERROR(4001, "Parameter error：%s"), // 带占位符，动态填充具体参数
-    NOT_LOGIN(4002, "请先登录"),
-    NO_PERMISSION(4003, "无权限访问"),
+    // general client error (40xx)
+    SUCCESS(200, "operation successful"),
+    PARAM_ERROR(4001, "Parameter error：%s"), // with placeholder, dynamically fill in specific parameters
+    NOT_LOGIN(4002, "please login first"),
+    NO_PERMISSION(4003, "no permission to access"),
 
-    // 用户模块错误（41xx）
-    USER_NOT_FOUND(4101, "用户不存在"),
-    USER_NAME_DUPLICATE(4102, "用户名已被占用"),
-    PASSWORD_ERROR(4103, "密码错误"),
-    PHONE_NUMBER_DUPLICATE(4104, "手机号已被注册"),
-    PASSWORD_NOT_MATCH(4105, "两次输入的密码不一致"),
-    OLD_PASSWORD_ERROR(4106, "原密码错误"),
+    // user module error (41xx)
+    USER_NOT_FOUND(4101, "user not found"),
+    USER_NAME_DUPLICATE(4102, "username already exists"),
+    PASSWORD_ERROR(4103, "password error"),
+    PHONE_NUMBER_DUPLICATE(4104, "phone number already registered"),
+    PASSWORD_NOT_MATCH(4105, "two passwords entered are not consistent"),
+    OLD_PASSWORD_ERROR(4106, "old password error"),
 
-    // 订单模块错误（42xx）
-    ORDER_NOT_FOUND(4201, "订单不存在"),
-    ORDER_STATUS_ERROR(4202, "订单状态错误，当前状态：%s"),
+    // order module error (42xx)
+    ORDER_NOT_FOUND(4201, "order not found"),
+    ORDER_STATUS_ERROR(4202, "order status error, current status: %s"),
 
     //Product module error (43xx)
     PRODUCT_NOT_EXIST(4301, "The product does not exist,productId:%s"),
     PRODUCT_LIST_EMPTY(4302, "There are currently no products available"),
     PARAM_CANNOT_BE_NULL (4303, "Request parameter cannot be empty:%s"),
     PRODUCT_NAME_DUPLICATE(4304, "Product name already exists:%s"),
-    PRODUCT_STOCK_NOT_ENOUGH(4305, "商品库存不足，当前库存：%s"),
+    PRODUCT_STOCK_NOT_ENOUGH(4305, "product stock not enough, current stock: %s"),
 
-    // 服务端错误（5xxx）
-    DB_ERROR(5001, "数据库操作失败"),
-    SYSTEM_ERROR(5002, "系统内部错误，请稍后重试"),
-    REDIS_ERROR(5003, "缓存服务异常");
+    // server error (5xxx)
+    DB_ERROR(5001, "database operation failed"),
+    SYSTEM_ERROR(5002, "system internal error, please try again later"),
+    REDIS_ERROR(5003, "cache service exception");
 
-    // 错误码
+    // error code
     private final int code;
-    // 错误信息（支持 %s 占位符）
+    // error message (supports %s placeholder)
     private final String message;
 
-    // 构造方法（枚举类必须私有）
+    // constructor (enum class must be private)
     ErrorCode(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    // getter 方法
+    // getter method
     public int getCode() {
         return code;
     }
@@ -59,7 +59,7 @@ public enum ErrorCode {
     }
 
     /**
-     * 动态填充消息中的占位符（如 PARAM_ERROR.getMessage("手机号格式错误")）
+     * dynamically fill in the placeholder in the message (e.g. PARAM_ERROR.getMessage("phone number format error"))
      */
     public String getMessage(Object... args) {
         return String.format(message, args);

@@ -12,7 +12,7 @@ public class SessionConstant {
     public static final String CURRENT_USER = "currentUser";
 
     /**
-     * 私有构造函数，防止实例化
+     * private constructor, prevent instantiation
      */
     private SessionConstant() {
         throw new AssertionError("常量类不能实例化");

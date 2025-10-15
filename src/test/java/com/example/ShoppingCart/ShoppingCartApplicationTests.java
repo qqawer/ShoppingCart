@@ -91,86 +91,85 @@ public class ShoppingCartApplicationTests  {
         Product product8 =buildProduct("TaoTronics", "LED desk lamp with USB charging", "https://images-na.ssl-images-amazon.com/images/I/71UgSY4fovL.jpg", "49.99", "Desk Lamp",900);
         productRepository.save(product8);
 
-        Product p1 = buildProduct("三顿半", "0-6 号 7 种风味、3 秒冷萃、0 糖 0 脂", 
-            "https://img.alicdn.com/imgextra/i3/725677994/O1CN01SfeZ1w28vIlug1vMb_!!0-item_pic.jpg", "269.00", "三顿半精品冷萃超即溶咖啡 36 颗", 300);
+                Product p1 = buildProduct("Saturnbird", "Flavors 0-6, 3-second cold brew, 0 sugar 0 fat", 
+            "https://img.alicdn.com/imgextra/i3/725677994/O1CN01SfeZ1w28vIlug1vMb_!!0-item_pic.jpg", "269.00", "Saturnbird Premium Cold Brew Coffee 36 Capsules", 300);
         productRepository.save(p1);
 
-        Product p2 = buildProduct("元气森林", "0 糖 0 脂 0 卡、清新白桃味、整箱装", 
-            "https://static.foodtalks.cn/image/cms/entry/ca5235aa94b4c40df8b2921b07283d5d7eed.jpg", "129.90", "元气森林白桃苏打气泡水 480 mL×24 瓶", 500);
+        Product p2 = buildProduct("Genki Forest", "0 sugar 0 fat 0 calories, Fresh white peach flavor, Bulk pack", 
+            "https://static.foodtalks.cn/image/cms/entry/ca5235aa94b4c40df8b2921b07283d5d7eed.jpg", "129.90", "Genki Forest White Peach Sparkling Water 480mL×24 Bottles", 500);
         productRepository.save(p2);
 
-        Product p3 = buildProduct("好欢螺", "柳州正宗、加辣加臭、独立包装", 
-            "https://img.alicdn.com/i1/2808887230/O1CN01Ghw0te23HOHF5TKTI_!!2808887230.jpg", "59.80", "好欢螺螺蛳粉 400 g×5 袋", 800);
+        Product p3 = buildProduct("Haohuanluo", "Authentic Liuzhou, Extra spicy, Individual packaging", 
+            "https://img.alicdn.com/i1/2808887230/O1CN01Ghw0te23HOHF5TKTI_!!2808887230.jpg", "59.80", "Haohuanluo Snail Rice Noodles 400g×5 Bags", 800);
         productRepository.save(p3);
 
-        Product p4 = buildProduct("小米", "红外感应、电动夹臂、30 W无线快充", 
-            "https://img.alicdn.com/bao/uploaded/i1/2222828811/O1CN01h6D7iz2ExUYcIHC0T_!!0-item_pic.jpg", "149.00", "小米车载无线充电器 30 W", 200);
+        Product p4 = buildProduct("Xiaomi", "Infrared sensor, Electric clamp arm, 30W wireless fast charging", 
+            "https://img.alicdn.com/bao/uploaded/i1/2222828811/O1CN01h6D7iz2ExUYcIHC0T_!!0-item_pic.jpg", "149.00", "Xiaomi Car Wireless Charger 30W", 200);
         productRepository.save(p4);
 
-        Product p5 = buildProduct("米其林", "静音肋条、湿地刹车短 2.4 米、舒适升级", 
-            "https://img.alicdn.com/i1/2302551350/O1CN015GcGHG1LqLTDKfeZV_!!2302551350.jpg", "699.00", "米其林 215/55R17 浩悦4 轮胎", 40);
+        Product p5 = buildProduct("Michelin", "Silent ribs, Wet brake 2.4m shorter, Comfort upgrade", 
+            "https://img.alicdn.com/i1/2302551350/O1CN015GcGHG1LqLTDKfeZV_!!2302551350.jpg", "699.00", "Michelin 215/55R17 Primacy 4 Tire", 40);
         productRepository.save(p5);
 
-        Product p6 = buildProduct("宠幸", "可冲马桶、除臭 99 %、无粉尘、可食用级原料", 
-            "https://img10.360buyimg.com/n1/jfs/t1/98765/7/21374/56912/6409392aFbc5be55b/d98e28ff1b543b17.jpg", "89.00", "宠幸豆腐猫砂 6 L×4 包", 300);
+        Product p6 = buildProduct("Chongxing", "Flushable, 99% odor elimination, Dust-free, Food-grade materials", 
+            "https://img10.360buyimg.com/n1/jfs/t1/98765/7/21374/56912/6409392aFbc5be55b/d98e28ff1b543b17.jpg", "89.00", "Chongxing Tofu Cat Litter 6L×4 Packs", 300);
         productRepository.save(p6);
 
-        Product p7 = buildProduct("网易严选", "0 谷 0 诱食剂、88 % 动物原料、粗蛋白 42 %", 
-            "https://img.alicdn.com/i2/1986966273/O1CN01cRzpuq1wD5GLyZheB_!!1986966273.jpg", "168.00", "网易严选全期猫粮 2 kg×2 袋", 200);
+        Product p7 = buildProduct("Yanxuan", "0 grain 0 attractant, 88% animal ingredients, 42% crude protein", 
+            "https://img.alicdn.com/i2/1986966273/O1CN01cRzpuq1wD5GLyZheB_!!1986966273.jpg", "168.00", "Yanxuan All Life Stages Cat Food 2kg×2 Bags", 200);
         productRepository.save(p7);
 
-        Product p8 = buildProduct("索尼", "1200 万像素、5 轴防抖、AI 智能构图、4K 60 fps", 
-            "https://i.ytimg.com/vi/FRkHu_0kqbc/maxresdefault.jpg", "13999.00", "Sony ZV-E1 全画幅 Vlog 相机", 15);
+        Product p8 = buildProduct("Sony", "12MP, 5-axis stabilization, AI smart framing, 4K 60fps", 
+            "https://i.ytimg.com/vi/FRkHu_0kqbc/maxresdefault.jpg", "13999.00", "Sony ZV-E1 Full-Frame Vlog Camera", 15);
         productRepository.save(p8);
 
-        Product p9 = buildProduct("极米", "4K 超清、2200 ANSI 流明、哈曼卡顿音响", 
-            "https://img.alicdn.com/i4/2177009988/O1CN01eVQSDX2NeYmTPpWM2_!!2177009988.jpg", "4999.00", "极米 H6 4K 投影仪", 25);
+        Product p9 = buildProduct("XGIMI", "4K ultra HD, 2200 ANSI lumens, Harman Kardon audio", 
+            "https://img.alicdn.com/i4/2177009988/O1CN01eVQSDX2NeYmTPpWM2_!!2177009988.jpg", "4999.00", "XGIMI H6 4K Projector", 25);
         productRepository.save(p9);
 
-        Product p10 = buildProduct("倍思", "2C1A 三口、65 W 盲插、折叠插脚、兼容 PD/QC", 
-            "https://pic3.zhimg.com/v2-a45fd674a750d7917e28682e9c69e686_r.jpg", "158.00", "倍思 65 W 氮化镓快充头", 500);
+        Product p10 = buildProduct("Baseus", "2C1A triple port, 65W universal plug, Foldable prongs, Compatible with PD/QC", 
+            "https://pic3.zhimg.com/v2-a45fd674a750d7917e28682e9c69e686_r.jpg", "158.00", "Baseus 65W GaN Fast Charger", 500);
         productRepository.save(p10);
 
-        Product p11 = buildProduct("译林出版社", "法国圣埃克苏佩里经典，精装全彩插图", 
-            "https://book.goldenhouse.com.my/wp-content/uploads/2021/01/xwz3dlts_des_02-768x938.jpg", "45.00", "《小王子》精装版", 600);
+        Product p11 = buildProduct("Yilin Press", "French classic by Saint-Exupéry, Hardcover with full-color illustrations", 
+            "https://book.goldenhouse.com.my/wp-content/uploads/2021/01/xwz3dlts_des_02-768x938.jpg", "45.00", "The Little Prince Hardcover Edition", 600);
         productRepository.save(p11);
 
-        Product p12 = buildProduct("重庆出版社", "刘慈欣代表作，亚洲首部雨果奖长篇", 
-            "https://img.alicdn.com/imgextra/i3/859515618/O1CN01SnCpAB1rN5jTfddWg_!!859515618.jpg", "93.00", "《三体》全集 3 册", 400);
+        Product p12 = buildProduct("Chongqing Publishing House", "Liu Cixin's masterpiece, First Asian Hugo Award novel", 
+            "https://img.alicdn.com/imgextra/i3/859515618/O1CN01SnCpAB1rN5jTfddWg_!!859515618.jpg", "93.00", "The Three-Body Problem Complete Set 3 Volumes", 400);
         productRepository.save(p12);
 
-        Product p13 = buildProduct("迪卡侬", "7 速旋飞、铝合金车架、舒适几何、入门首选", 
-            "https://img.alicdn.com/bao/uploaded/i4/352469034/O1CN01jHKQ152Gbcq3wZ5vV_!!352469034-0-lubanu-s.jpg", "1799.00", "迪卡侬 RC100 公路自行车", 35);
+        Product p13 = buildProduct("Decathlon", "7-speed freewheel, Aluminum frame, Comfortable geometry, Beginner's choice", 
+            "https://img.alicdn.com/bao/uploaded/i4/352469034/O1CN01jHKQ152Gbcq3wZ5vV_!!352469034-0-lubanu-s.jpg", "1799.00", "Decathlon RC100 Road Bike", 35);
         productRepository.save(p13);
 
-        Product p14 = buildProduct("Oakley", "Plutonite 镜片、100 % UV 防护、轻量 O-Matter 框架", 
-            "https://img12.360buyimg.com/imgzone/jfs/t1/171822/38/6436/98140/6084ea2aE9eb82bae/03ea2b6714211734.jpg", "1299.00", "Oakley 运动太阳镜 Radar EV", 60);
+        Product p14 = buildProduct("Oakley", "Plutonite lens, 100% UV protection, Lightweight O-Matter frame", 
+            "https://img12.360buyimg.com/imgzone/jfs/t1/171822/38/6436/98140/6084ea2aE9eb82bae/03ea2b6714211734.jpg", "1299.00", "Oakley Sport Sunglasses Radar EV", 60);
         productRepository.save(p14);
 
-        Product p15 = buildProduct("护舒宝", "液体材料贴合、10 倍吸收、无感体验", 
-            "https://img.alicdn.com/i3/217101303/O1CN01ObIes81LUosb5D7Ih_!!217101303.jpg", "69.90", "护舒宝液体卫生巾 270 mm×30 片", 300);
+        Product p15 = buildProduct("Whisper", "Liquid material bonding, 10x absorption, Invisible experience", 
+            "https://img.alicdn.com/i3/217101303/O1CN01ObIes81LUosb5D7Ih_!!217101303.jpg", "69.90", "Whisper Liquid Sanitary Pads 270mm×30 Pieces", 300);
         productRepository.save(p15);
 
-        Product p16 = buildProduct("薇诺娜", "敏感肌专研、马齿苋+青刺果、7 天缓解泛红", 
-            "https://th.bing.com/th/id/R.1a6a50dfffe7c91832f517823d6a5320?rik=ElnJFQNR265Wag&riu=http%3a%2f%2fyufumall-img4a.yufu.cn%2fAccount%2f100000001500%2fMainPic%2fDefault%2f6b27e003ae6c43cea9dca43a48d4b66e.jpg&ehk=dBdLafLiBseGQusrWTmPPD9ZCpTWCRdKz8eUrk5GeSI%3d&risl=&pid=ImgRaw&r=0", "268.00", "薇诺娜舒敏保湿特护霜 50 g", 150);
+        Product p16 = buildProduct("Winona", "Sensitive skin formula, Portulaca + sea buckthorn, 7-day redness relief", 
+            "https://th.bing.com/th/id/R.1a6a50dfffe7c91832f517823d6a5320?rik=ElnJFQNR265Wag&riu=http%3a%2f%2fyufumall-img4a.yufu.cn%2fAccount%2f100000001500%2fMainPic%2fDefault%2f6b27e003ae6c43cea9dca43a48d4b66e.jpg&ehk=dBdLafLiBseGQusrWTmPPD9ZCpTWCRdKz8eUrk5GeSI%3d&risl=&pid=ImgRaw&r=0", "268.00", "Winona Soothing Moisturizing Cream 50g", 150);
         productRepository.save(p16);
 
-        Product p17 = buildProduct("农夫山泉", "17.5° 糖酸比、产地直采、每颗独立网套", 
-            "https://imgservice.suning.cn/uimg1/b2c/image/wueK18eYfQKHcIkOTwGvlA.jpg_800w_800h_4e", "89.90", "农夫山泉 17.5° 橙 5 kg", 200);
+        Product p17 = buildProduct("Nongfu Spring", "17.5° sugar-acid ratio, Origin direct sourcing, Individual mesh bag per piece", 
+            "https://imgservice.suning.cn/uimg1/b2c/image/wueK18eYfQKHcIkOTwGvlA.jpg_800w_800h_4e", "89.90", "Nongfu Spring 17.5° Orange 5kg", 200);
         productRepository.save(p17);
 
-        Product p18 = buildProduct("三只松鼠", "6 种坚果果干、干湿分离包装、孕妇可食", 
-            "https://img.alicdn.com/bao/uploaded/O1CN01wkWDkF26ehLN8EbFb_!!6000000007687-0-yinhe.jpg", "149.00", "三只松鼠每日坚果 750 g", 400);
+        Product p18 = buildProduct("Three Squirrels", "6 types of nuts and dried fruits, Dry-wet separation packaging, Pregnancy safe", 
+            "https://img.alicdn.com/bao/uploaded/O1CN01wkWDkF26ehLN8EbFb_!!6000000007687-0-yinhe.jpg", "149.00", "Three Squirrels Daily Nuts 750g", 400);
         productRepository.save(p18);
 
-        Product p19 = buildProduct("3M", "前挡 UV400、侧后高隐私、隔热 99 %、10 年质保", 
-            "https://tse2.mm.bing.net/th/id/OIP.weYGntZYbJe2DlbrLLnFsAHaKc?rs=1&pid=ImgDetMain&o=7&rm=3", "1899.00", "3M 汽车隔热膜 全车套装", 80);
+        Product p19 = buildProduct("3M", "Front windshield UV400, Side-rear high privacy, 99% heat insulation, 10-year warranty", 
+            "https://tse2.mm.bing.net/th/id/OIP.weYGntZYbJe2DlbrLLnFsAHaKc?rs=1&pid=ImgDetMain&o=7&rm=3", "1899.00", "3M Automotive Window Tint Full Car Package", 80);
         productRepository.save(p19);
 
-        Product p20 = buildProduct("Apple", "已停产，库存售罄，仅展示", 
+        Product p20 = buildProduct("Apple", "Discontinued, Out of stock, Display only", 
             "https://tse2.mm.bing.net/th/id/OIP.SOKeeHGcU3uKk3o8edUv7gHaE7?rs=1&pid=ImgDetMain&o=7&rm=3", "4999.00", "iPhone 13 mini 128GB", 0);
         productRepository.save(p20);
-
         //Order
         Order order1 = buildShopOrder(0, "2025-10-05 10:00:00", "1259.97", userAddress1, user1);
         shopOrderRepository.save(order1);

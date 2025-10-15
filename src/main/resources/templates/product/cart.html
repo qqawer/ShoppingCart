@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>购物车 - 电商购物车系统</title>
+    <title>Cart - E-commerce Shopping Cart System</title>
     <style>
         html, body {
             height: 100%;
@@ -119,16 +119,16 @@
 <body>
 
 <div class="container">
-    <h2>我的购物车</h2>
+    <h2>My Cart</h2>
 
     <!-- 错误消息提示 -->
     <div th:if="${errorMessage}" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
-        <strong>错误：</strong><span th:text="${errorMessage}"></span>
+        <strong>Error:</strong><span th:text="${errorMessage}"></span>
     </div>
 
     <!-- 成功消息提示 -->
     <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
-        <strong>成功：</strong><span th:text="${successMessage}"></span>
+        <strong>Success:</strong><span th:text="${successMessage}"></span>
     </div>
 
     <div th:if="${cartItems != null and !cartItems.isEmpty()}">
@@ -137,11 +137,11 @@
         <table>
             <thead>
             <tr>
-                <th>商品名称</th>
-                <th>单价</th>
-                <th>数量</th>
-                <th>小计</th>
-                <th>操作</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Operation</th>
             </tr>
             </thead>
             <tbody>
@@ -152,7 +152,7 @@
                              width="80"
                              height="80"
                              th:alt="${item.product.productName}">
-                        <span th:text="${item.product.productName}">商品名称</span>
+                        <span th:text="${item.product.productName}">Product Name</span>
                     </div>
                 </td>
                 <td th:text="${'$' + item.product.price }">0</td>
@@ -176,14 +176,14 @@
                         </a>
                     </div>
                     <div th:if="${item.insufficientStock}" style="color: #e4393c; font-size: 12px; margin-top: 5px;">
-                        库存不足！仅剩 <span th:text="${item.availableStock}"></span> 件
+                        Insufficient stock! Only <span th:text="${item.availableStock}"></span> items left
                     </div>
                 </td>
                 <td th:text="${'$' + #numbers.formatDecimal(item.product.price * item.quantity, 1, 2, 'POINT')}">0.00</td>
 
                 <td>
                     <a th:href="@{/cart/remove(productId=${item.product.productId})}"
-                       onclick="return confirm('确定要删除该商品吗？')">
+                       onclick="return confirm('Are you sure you want to delete this product?')">
                         <button type="button">×</button>
                     </a>
                 </td>
@@ -193,24 +193,24 @@
 
         <!-- 结算区域 -->
         <div class="summary">
-            <p>商品总数：<span th:text="${cartItems.size()}">0</span> 件</p>
-            <p class="total-price">合计：<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + '元'}">0元</span></p>
+            <p>Total Products:<span th:text="${cartItems.size()}">0</span> items</p>
+            <p class="total-price">Total:<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + 'SGD'}">0SGD</span></p>
             <div th:if="${hasInsufficientStock}" style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeaa7;">
-                <strong>提示：</strong>部分商品库存不足，请调整数量后再结算
+                <strong>Note:</strong>Some products are out of stock, please adjust the quantity and try again
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <a href="/products/lists" class="button-link">继续购物</a>
+                <a href="/products/lists" class="button-link">Continue Shopping</a>
                 <form th:action="@{/checkout/order}" method="post">
-                    <button type="submit" th:disabled="${hasInsufficientStock}">去结算</button>
+                    <button type="submit" th:disabled="${hasInsufficientStock}">Go to Checkout</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- 空购物车提示 -->
+    <!-- Empty cart提示 -->
     <div th:if="${cartItems == null or cartItems.isEmpty()}" class="no-order">
-        <p>购物车是空的，快去选购商品吧！</p>
-        <a href="/products/lists" class="button-link">去购物</a>
+        <p>The cart is empty, go to shop now!</p>
+        <a href="/products/lists" class="button-link">Go to Shop</a>
     </div>
 
 </div>

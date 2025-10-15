@@ -1,42 +1,41 @@
 package com.example.ShoppingCart.pojo.dto;
 
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public class UpdateUserRequest {
 
-    //@Size(min = 2, max = 50, message = "用户名长度必须在2-50个字符之间")
-    @Pattern(regexp = "^$|\\S{2,50}$", message = "用户名长度必须在2-50个字符之间")
+    //@Size(min = 2, max = 50, message = "User name length must be between 2-50 characters")
+    @Pattern(regexp = "^$|\\S{2,50}$", message = "User name length must be between 2-50 characters")
     private String userName;
 
     private String avatar;
 
-    //@Size(min = 6, max = 20, message = "密码长度必须在6-20个字符之间")
-    @Pattern(regexp = "^$|\\S{6,20}$", message = "密码长度必须在6-20个字符之间")
+    //@Size(min = 6, max = 20, message = "Password length must be between 6-20 characters")
+    @Pattern(regexp = "^$|\\S{6,20}$", message = "Password length must be between 6-20 characters")
     private String newPassword;
 
     private String oldPassword;
 
     // Address fields (optional) - minimal addition to allow saving a single address via profile edit
-    @Pattern(regexp = "^$|^[\\p{L}\\s]{2,50}$", message = "收件人姓名应为2-50个字符，仅限字母或中文")
+    @Pattern(regexp = "^$|^[\\p{L}\\s]{2,50}$", message = "Receiver name should be 2-50 characters, only letters or Chinese")
     private String receiverName;
 
     @Pattern(
             regexp = "^$|(\\+65\\s?|65\\s?)?[89]\\d{7}$",
-            message = "请输入有效的新加坡手机号（如 +65 91234567 或 81234567）"
+            message = "Please enter a valid Singapore mobile phone number (e.g. +65 91234567 or 81234567)"
     )
     private String phone;
 
-    @Pattern(regexp = "^$|^[A-Za-z\\s]{2,50}$", message = "地区名应为2-50个英文字符")
+    @Pattern(regexp = "^$|^[A-Za-z\\s]{2,50}$", message = "Region name should be 2-50 English characters")
     private String region;
 
     @Pattern(
             regexp = "^$|^[A-Za-z0-9\\s,#-]{5,100}$",
-            message = "详细地址应为5-100个字符，仅限字母、数字和常见符号"
+            message = "Detailed address should be 5-100 characters, only letters, numbers and common symbols"
     )
     private String detailAddress;
 
-    // 是否设为默认地址
+    // whether to set as default address
     private Boolean isDefault;
 
     public Boolean getIsDefault() {

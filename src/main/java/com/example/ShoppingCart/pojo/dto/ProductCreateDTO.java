@@ -1,25 +1,25 @@
 package com.example.ShoppingCart.pojo.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.math.BigDecimal;
-
 public class ProductCreateDTO {
 
-    @NotBlank(message = "产品名称不能为空")
+    @NotBlank(message = "Product name cannot be empty")
     private String productName;
 
 
-    @NotNull(message = "产品价格不能为空")
-    @DecimalMin(value = "0.01", message = "产品价格必须大于0")
+    @NotNull(message = "Product price cannot be empty")
+    @DecimalMin(value = "0.01", message = "Product price must be greater than 0")
     private BigDecimal price;
 
 
-    @NotNull(message = "产品库存不能为空")
-    @PositiveOrZero(message = "产品库存不能为负数")
+    @NotNull(message = "Product stock cannot be empty")
+    @PositiveOrZero(message = "Product stock cannot be negative")
     private Integer stock;
 
 
@@ -86,7 +86,7 @@ public class ProductCreateDTO {
         this.status = status;
     }
 
-    // 状态：非必填，默认1（已上架），这里加校验确保传值只能是0或1
-    @PositiveOrZero(message = "状态值无效")
+    // status: non-required, default 1 (on the shelf), here add verification to ensure that the value can only be 0 or 1
+    @PositiveOrZero(message = "Status value is invalid")
     private Integer status = 1;
 }

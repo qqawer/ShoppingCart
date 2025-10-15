@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户注册 - 购物车系统</title>
+    <title>User Registration - Shopping Cart System</title>
     <style>
         html, body {
             height: 100%;
@@ -112,7 +112,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>用户注册</h1>
+    <h1>User Registration</h1>
 
     <div th:if="${error}" class="error-message" th:text="${error}"></div>
     <div th:if="${success}" class="success-message" th:text="${success}"></div>
@@ -120,53 +120,53 @@
     <div class="form-section">
         <form th:action="@{/register}" th:object="${registerRequest}" method="post">
             <div class="form-group">
-                <label for="userName">用户名</label>
+                <label for="userName">Username</label>
                 <input type="text"
                        id="userName"
                        th:field="*{userName}"
-                       placeholder="请输入用户名（2-50字符）"
+                       placeholder="Please enter your username (2-50 characters)"
                        required>
             </div>
 
             <div class="form-group">
-                <label for="phoneNumber">手机号</label>
+                <label for="phoneNumber">Mobile phone number</label>
                 <input type="text"
                        id="phoneNumber"
                        th:field="*{phoneNumber}"
-                       placeholder="请输入手机号"
+                       placeholder="Please enter an 8-digit Singapore mobile phone number."
                        pattern="^[89]\d{7}$"
                        required>
             </div>
 
             <div class="form-group">
-                <label for="password">密码</label>
+                <label for="password">password</label>
                 <input type="password"
                        id="password"
                        th:field="*{password}"
-                       placeholder="请输入密码（6-20字符）"
+                       placeholder="Please enter your password (6-20 characters)"
                        minlength="6"
                        maxlength="20"
                        required>
             </div>
 
             <div class="form-group">
-                <label for="confirmPassword">确认密码</label>
+                <label for="confirmPassword">Confirm Password</label>
                 <input type="password"
                        id="confirmPassword"
                        th:field="*{confirmPassword}"
-                       placeholder="请再次输入密码"
+                       placeholder="Please re-enter your password"
                        minlength="6"
                        maxlength="20"
                        required>
             </div>
 
             <div class="button-group">
-                <button type="submit">注册</button>
+                <button type="submit">Register</button>
             </div>
         </form>
 
         <div class="login-link">
-            已有账户？<a th:href="@{/login}">立即登录</a>
+            Existing Account？<a th:href="@{/login}">Log in now</a>
         </div>
     </div>
 </div>
