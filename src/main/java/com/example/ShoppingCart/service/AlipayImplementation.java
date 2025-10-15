@@ -55,7 +55,7 @@ public class AlipayImplementation {
     public String createFormPay(String paymentMethod, Order order) throws AlipayApiException {
         //save paymentRecord to database
         PaymentRecord record=new PaymentRecord();
-        record.setPaymentAmount(order.getTotalAmount());
+        record.setPaymentAmount(order.getTotalAmount() * 5.6 );
         record.setPaymentMethod(paymentMethod);
         record.setTradeNo(UUID.randomUUID().toString());
         record.setPayStatus(1);
