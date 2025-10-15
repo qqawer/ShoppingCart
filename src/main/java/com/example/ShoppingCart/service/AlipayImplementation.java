@@ -1,5 +1,7 @@
 package com.example.ShoppingCart.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,7 +59,12 @@ public class AlipayImplementation {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(order.getOrderId());
-        model.setTotalAmount(order.getTotalAmount().toPlainString());
+        model.setTotalAmount(
+                order.getTotalAmount()
+                        .multiply(BigDecimal.valueOf(5.6))
+                        .setScale(2, RoundingMode.HALF_UP)   // Keep two decimal places.
+                        .toPlainString()
+        );
         String subject = order.getOrderItems().stream()
                 .map(OrderItem::getProductName)   // only take the product name
                 .collect(Collectors.joining("-")); // use - to connect
@@ -65,7 +72,7 @@ public class AlipayImplementation {
         if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
         model.setSubject(subject);
         request.setBizModel(model);
-        request.setReturnUrl("http://127.0.0.1:8080/api/pay-success");
+        request.setReturnUrl("http://127.0.0.1:8080/pay-success");
         request.setNotifyUrl("https://grudgeless-overage-latricia.ngrok-free.dev/api/alipay/notify");
         model.setProductCode("FAST_INSTANT_TRADE_PAY");
 

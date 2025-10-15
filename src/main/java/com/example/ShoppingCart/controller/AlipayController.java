@@ -63,7 +63,7 @@ public class AlipayController {
         System.out.println("12321432");
         return "success";
     }
-    @GetMapping("/api/pay-success")
+    @GetMapping("/pay-success")
     public String paySuccess(HttpSession session) {
         session.removeAttribute("orderId");
         return "redirect:/checkout/order/payment/success";
