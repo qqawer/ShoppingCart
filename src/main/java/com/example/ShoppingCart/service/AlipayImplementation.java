@@ -72,8 +72,8 @@ public class AlipayImplementation {
         if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
         model.setSubject(subject);
         request.setBizModel(model);
-        request.setReturnUrl("http://127.0.0.1:8080/pay-success");
-        request.setNotifyUrl("https://grudgeless-overage-latricia.ngrok-free.dev/api/alipay/notify");
+        request.setReturnUrl("http://localhost:8080/pay-success");
+        request.setNotifyUrl("https://astrid-unsilvered-kandy.ngrok-free.dev/api/alipay/notify");
         model.setProductCode("FAST_INSTANT_TRADE_PAY");
 
         AlipayTradePagePayResponse response =alipayClient.pageExecute(request, "POST");
