@@ -52,26 +52,7 @@ public class AlipayImplementation {
      */
 
     @Transactional
-    public String createFormPay(String paymentMethod, Order order) throws AlipayApiException {
-        //save paymentRecord to database
-        PaymentRecord record=new PaymentRecord();
-        record.setPaymentAmount(order.getTotalAmount());
-        record.setPaymentMethod(paymentMethod);
-        record.setTradeNo(UUID.randomUUID().toString());
-        record.setPayStatus(1);
-        record.setOrder(order);
-        order.setOrderStatus(1);
-        order.setPaymentRecord(record);
-        paymentrepo.save(record);
-        productImplementation.updateStockAfterPayment(order);
-
-        // after payment, clear the cart
-        String userId = order.getUser().getUserId();
-        List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
-        if (!cartRecords.isEmpty()) {
-            cartrepo.deleteAll(cartRecords);
-        }
-
+    public String createFormPay(Order order) throws AlipayApiException {
         //use the Alipay API
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
@@ -84,8 +65,8 @@ public class AlipayImplementation {
         if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
         model.setSubject(subject);
         request.setBizModel(model);
-        request.setReturnUrl("http://127.0.0.1:8080/checkout/pay-success");
-        request.setNotifyUrl("http://127.0.0.1:8080/checkout/api/alipay/notify");
+        request.setReturnUrl("http://127.0.0.1:8080/api/pay-success");
+        request.setNotifyUrl("https://grudgeless-overage-latricia.ngrok-free.dev/api/alipay/notify");
         model.setProductCode("FAST_INSTANT_TRADE_PAY");
 
         AlipayTradePagePayResponse response =alipayClient.pageExecute(request, "POST");

@@ -3,7 +3,9 @@ package com.example.ShoppingCart.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import com.example.ShoppingCart.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,6 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.example.ShoppingCart.exception.BusinessException;
 import com.example.ShoppingCart.interfacemethods.OrderInterface;
-import com.example.ShoppingCart.model.Order;
-import com.example.ShoppingCart.model.SessionConstant;
-import com.example.ShoppingCart.model.UserAddress;
 import com.example.ShoppingCart.repository.UserAddressRepository;
 import com.example.ShoppingCart.service.AlipayImplementation;
 
@@ -36,9 +35,6 @@ public class OrderController {
 
     @Autowired
     private OrderInterface orderService;
-
-    @Autowired
-    private AlipayImplementation alipayService;
     
     @Autowired
     private UserAddressRepository userAddressRepository;
@@ -145,7 +141,7 @@ public class OrderController {
             }
             
             if (paymentMethod.equals("alipay")) {
-                return "redirect:/checkout/Alipay?paymentMethod=alipay";
+                return "redirect:/Alipay?paymentMethod=alipay";
             }
             
             if (selectedAddressId == null || selectedAddressId.trim().isEmpty()) {
@@ -194,49 +190,6 @@ public class OrderController {
         model.addAttribute("currentPaidOrder", order);
         return "payment/payment-success";
     }
-
-    /**
-     * if it is Alipay, click Confirm after POSTing here, directly return the QR code page
-     */
-    @GetMapping("/Alipay")
-    public String alipayForm(Model model,HttpSession session,@RequestParam(required = false) String paymentMethod) {
-        try {
-            String orderId= (String) session.getAttribute("orderId");
-            Order order = orderService.findByOrderId(orderId);
-            String form =alipayService.createFormPay(paymentMethod,order); // the link returned by Alipay
-            model.addAttribute("alipayForm", form);         // put into the model
-            return "payment/alipaylogin"; // corresponding templates/payment/alipaylogin.html
-        } catch (Exception e) {
-            model.addAttribute("err", e.getMessage());
-            return "payment/error"; // error page
-        }
-    }
-    @PostMapping("/api/alipay/notify")
-    @ResponseBody
-    public String notify(HttpServletRequest req) throws AlipayApiException {
-        Map<String, String> params = new HashMap<>();
-        req.getParameterMap().forEach((k, v) -> params.put(k, v[0]));
-        // 1. verify the signature
-        boolean signOk = AlipaySignature.rsaCheckV1(
-                params,                     // 1. parameter Map
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnA4w58/EegvNhLp0HuR2PZy0eamXPAtaisIU5JxmC3P72XEDmBvLkptlNy+nEOYOI8xhMfvafmApN8iUMYYk4Yf7AbduXHQCDJDPZkOmR7k067Pv1nkLSunAntmID2HSAIyuMl1hNjcv52UBX8sPD4DHdYmZwwbPPHO0edRH/SPtutgj5tEnKKwEQ2KAPlZQpHzbsYhbN4G9zUUkKMONm0npk7ed0yE8QgEI0WeQ4tF8pwmQPM1lD8bIL44bGEZqKDEeovy8JivYG7zQcoO4u+HEvYQviG8P7R0xXcHFinASSI5Mq38ETSjzCkTyF+LUMXuMnsGIGnOVXKPcIHvSaQIDAQAB",     // 2. public key string
-                "UTF-8",                            // 3. character set
-                "RSA2");                            // 4. signature type
-        if (!signOk) return "fail";
-        String tradeStatus = req.getParameter("trade_status");
-        if ("TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus)) {
-            String outTradeNo = req.getParameter("out_trade_no");
-            Order order = orderService.findByOrderId(outTradeNo);
-            orderService.createPaymentRecord("alipay", order);
-        }
-        return "success";
-    }
-    @GetMapping("/pay-success")
-    public String paySuccess(HttpSession session) {
-        session.removeAttribute("orderId");
-        return "redirect:/checkout/order/payment/success";
-    }
-
 
 
 }

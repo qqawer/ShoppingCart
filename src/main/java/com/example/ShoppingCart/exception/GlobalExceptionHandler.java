@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.exception;
 
+import com.alipay.api.AlipayApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -25,5 +26,12 @@ public class GlobalExceptionHandler {
         log.error("system exception", e);
         return new ResponseMessage(ErrorCode.SYSTEM_ERROR.getCode(),
                 ErrorCode.SYSTEM_ERROR.getMessage(), null);
+    }
+
+    /** 1. 支付宝 notify 专用：保证返回纯文本，避免 JSON/HTML */
+    @ExceptionHandler(AlipayApiException.class)
+    public String handleAlipay(AlipayApiException e) {
+        log.warn("Alipay notify error: {}", e.getMessage());
+        return "fail";          // 支付宝收到 fail 会重试
     }
 }
