@@ -1,17 +1,18 @@
 package com.example.ShoppingCart.repository;
 
-import com.example.ShoppingCart.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.ShoppingCart.model.Product;
+
 
 public interface ProductRepository extends JpaRepository<Product,String> {
     Page<Product>findAll(Pageable pageable);
-    Product findByProductId(String productId); // 返回实体而非 Optional
-    Page<Product> findByProductNameContaining(String productName,Pageable pageable); // 模糊查询
+    Product findByProductId(String productId); // return entity rather than Optional
+    Page<Product> findByProductNameContaining(String productName,Pageable pageable); // fuzzy query
 
     void deleteProductByProductId(String productId);
     Page<Product> findByStatus(Integer status, Pageable pageable);

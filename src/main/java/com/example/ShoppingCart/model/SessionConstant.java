@@ -2,12 +2,12 @@ package com.example.ShoppingCart.model;
 
 public class SessionConstant {
     /**
-     * Session 中存储用户 ID 的 key
+     * The key storing the user ID in the session
      */
     public static final String USER_ID = "userId";
 
     /**
-     * Session 中存储完整用户信息的 key
+     *  (key: storing the complete user information in the session)
      */
     public static final String CURRENT_USER = "currentUser";
 
@@ -15,6 +15,6 @@ public class SessionConstant {
      * private constructor, prevent instantiation
      */
     private SessionConstant() {
-        throw new AssertionError("常量类不能实例化");
+        throw new AssertionError("constant class cannot be instantiated");
     }
 }

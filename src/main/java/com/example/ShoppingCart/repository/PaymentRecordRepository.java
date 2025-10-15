@@ -1,12 +1,12 @@
 package com.example.ShoppingCart.repository;
 
-import com.example.ShoppingCart.model.PaymentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
+import com.example.ShoppingCart.model.PaymentRecord;
 
 public interface PaymentRecordRepository extends JpaRepository<PaymentRecord,String> {
-    //通过order id 找payment record
+    //find payment record by order id
     @Query("SELECT o FROM PaymentRecord o WHERE o.order.orderId = :orderId")
     PaymentRecord findByOrderId(String orderId);
 }

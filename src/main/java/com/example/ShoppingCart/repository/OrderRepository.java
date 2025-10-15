@@ -1,17 +1,15 @@
 package com.example.ShoppingCart.repository;
 
-import com.example.ShoppingCart.model.Order;
-import com.example.ShoppingCart.model.OrderItem;
-import com.example.ShoppingCart.model.PaymentRecord;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
-import java.util.Optional;
+import com.example.ShoppingCart.model.Order;
 
 public interface OrderRepository extends JpaRepository<Order,String> {
 
@@ -19,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order,String> {
 
     Order findFirstByUser_UserIdAndOrderStatusOrderByOrderTimeDesc(String userUserId, Integer orderStatus);
 
-    // 通过userid 找到order
+    //find order by userid
     @Query("SELECT o FROM Order o WHERE o.user.userId = :userId")
     List<Order> findByUserId(String userId);
 

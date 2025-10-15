@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class SortUtil {
-    // 处理排序的辅助方法
+    // handle sorting
     public static Pageable handleSorting(String sortParam, Pageable originalPageable) {
         if (sortParam == null || sortParam.isEmpty()) {
             return originalPageable;
@@ -33,19 +33,19 @@ public class SortUtil {
                 sort);
     }
 
-    // 生成排序消息的辅助方法
+    // generate sorting message
     public static String getSortMessage(String sort) {
         if (sort == null || sort.isEmpty()) {
-            return "默认顺序";
+            return "Default order";
         }
 
         switch (sort) {
             case "price,asc":
-                return "价格升序";
+                return "Price ascending";
             case "price,desc":
-                return "价格降序";
+                return "Price descending";
             default:
-                return "指定顺序";
+                return "Specified order";
         }
     }
 

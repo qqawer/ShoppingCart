@@ -1,9 +1,19 @@
 package com.example.ShoppingCart.model;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})}) // Unique constraint: The same user cannot add the same product to the cart more than once
@@ -21,7 +31,7 @@ public class CartRecord {
 
     private Boolean isSelected = true; // Whether selected (for settlement)
 
-    @Transient // 表示这个字段不持久化到数据库
+    @Transient // means this field is not persisted to the database
     private boolean insufficientStock;
 
     public boolean isInsufficientStock() {

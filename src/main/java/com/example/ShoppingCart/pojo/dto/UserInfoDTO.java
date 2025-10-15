@@ -1,8 +1,9 @@
 package com.example.ShoppingCart.pojo.dto;
 
-import com.example.ShoppingCart.model.User;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.example.ShoppingCart.model.User;
 
 public class UserInfoDTO implements Serializable {
 

@@ -1,9 +1,10 @@
 package com.example.ShoppingCart.repository;
 
-import com.example.ShoppingCart.model.UserAddress;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.example.ShoppingCart.model.UserAddress;
 
 public interface UserAddressRepository extends JpaRepository<UserAddress,String> {
     List<UserAddress> findByUser_UserId(String userId);
