@@ -10,6 +10,7 @@ import com.example.ShoppingCart.interfacemethods.ProductInterface;
 import com.example.ShoppingCart.interfacemethods.CartInterface;
 import com.example.ShoppingCart.model.Product;
 import com.example.ShoppingCart.model.SessionConstant;
+import com.example.ShoppingCart.utils.SortUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173") // 或你前端 dev-server 的端口
 @Controller
 public class ProductController {
 
@@ -37,8 +37,6 @@ public class ProductController {
     @GetMapping("products/lists")
     public String getAllProducts(@PageableDefault(size = 12, sort = "price") Pageable pageable,
                                  Model model, HttpSession session) {
-
-
         Page<Product> products=pservice.getAllProductsByStatus(pageable);
         model.addAttribute("page", products);
 
@@ -90,8 +88,8 @@ public class ProductController {
         model.addAttribute("cartCount", cartCount);
 
         // 处理排序逻辑
-        Pageable sortedPageable = handleSorting(sort, pageable);
-        String sortMessage = getSortMessage(sort);
+        Pageable sortedPageable = SortUtil.handleSorting(sort, pageable);
+        String sortMessage = SortUtil.getSortMessage(sort);
 
         Page<Product> products;
         if (productName == null || productName.isEmpty()) {
@@ -129,69 +127,6 @@ public class ProductController {
         model.addAttribute("currentSort", sort); // 用于前端显示当前排序状态
 
         return "product/lists";
-    }
-
-    // 处理排序的辅助方法
-    private Pageable handleSorting(String sortParam, Pageable originalPageable) {
-        if (sortParam == null || sortParam.isEmpty()) {
-            return originalPageable;
-        }
-
-        Sort.Direction direction;
-        String field;
-
-        switch (sortParam) {
-            case "price_asc":
-                direction = Sort.Direction.ASC;
-                field = "price";
-                break;
-            case "price_desc":
-                direction = Sort.Direction.DESC;
-                field = "price";
-                break;
-            default:
-                return originalPageable;
-        }
-
-        Sort sort = Sort.by(direction, field);
-        return PageRequest.of(originalPageable.getPageNumber(),
-                originalPageable.getPageSize(),
-                sort);
-    }
-
-    // 生成排序消息的辅助方法
-    private String getSortMessage(String sort) {
-        if (sort == null || sort.isEmpty()) {
-            return "默认顺序";
-        }
-
-        switch (sort) {
-            case "price,asc":
-                return "价格升序";
-            case "price,desc":
-                return "价格降序";
-            default:
-                return "指定顺序";
-        }
-    }
-
-    // 管理员商品管理页面
-    @GetMapping("/admin/products")
-    public String adminProductsPage(@PageableDefault(size = 10) Pageable pageable, Model model, HttpSession session) {
-        // 检查用户是否登录
-        String userId = (String) session.getAttribute(SessionConstant.USER_ID);
-        if (userId == null) {
-            return "redirect:/login";
-        }
-
-        // 检查用户是否为管理员
-        UserInfoDTO currentUser = (UserInfoDTO) session.getAttribute(SessionConstant.CURRENT_USER);
-        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
-            // 不是管理员,拒绝访问,跳转到商品列表页面
-            return "redirect:/products/lists";
-        }
-        // 是管理员,跳转到api页面
-        return "redirect:http://localhost:5173/products";
     }
 
 }
