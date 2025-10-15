@@ -42,6 +42,4 @@ public interface OrderInterface {
     // 更新订单信息
     void updateOrder(Order order);
 
-
-    String createFormPay(String paymentMethod,Order order) throws AlipayApiException;
 }

@@ -6,12 +6,32 @@ import com.alipay.api.AlipayConfig;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradePagePayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayTradePagePayResponse;
+import com.example.ShoppingCart.model.CartRecord;
+import com.example.ShoppingCart.model.Order;
+import com.example.ShoppingCart.model.OrderItem;
+import com.example.ShoppingCart.model.PaymentRecord;
+import com.example.ShoppingCart.repository.CartRepository;
+import com.example.ShoppingCart.repository.PaymentRecordRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AlipayImplementation {
     private final AlipayClient alipayClient;
-
+    @Autowired
+    private AlipayImplementation alipayrepo;
+    @Autowired
+    private PaymentRecordRepository paymentrepo;
+    @Autowired
+    private ProductImplementation productImplementation;
+    @Autowired
+    private CartRepository cartrepo;
     public AlipayClient getAlipayClient() {
         return alipayClient;
     }
@@ -33,16 +53,49 @@ public class AlipayImplementation {
     /**
      * 传入订单信息，返回一段可直接回显的 form HTML
      */
-    public String createForm(String outTradeNo, String totalAmount, String subject) throws AlipayApiException {
+
+    @Transactional
+    public String createFormPay(String paymentMethod, Order order) throws AlipayApiException {
+        //save paymentRecord to database
+        PaymentRecord record=new PaymentRecord();
+        record.setPaymentAmount(order.getTotalAmount());
+        record.setPaymentMethod(paymentMethod);
+        record.setTradeNo(UUID.randomUUID().toString());
+        record.setPayStatus(1);
+        record.setOrder(order);
+        order.setOrderStatus(1);
+        order.setPaymentRecord(record);
+        paymentrepo.save(record);
+        productImplementation.updateStockAfterPayment(order);
+
+        // 支付成功后清空购物车
+        String userId = order.getUser().getUserId();
+        List<CartRecord> cartRecords = cartrepo.findByUser_UserId(userId);
+        if (!cartRecords.isEmpty()) {
+            cartrepo.deleteAll(cartRecords);
+        }
+
+        //use the Alipay API
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
-        model.setOutTradeNo(outTradeNo);
-        model.setTotalAmount(totalAmount);
+        model.setOutTradeNo(order.getOrderId());
+        model.setTotalAmount(order.getTotalAmount().toPlainString());
+        String subject = order.getOrderItems().stream()
+                .map(OrderItem::getProductName)   // 只拿商品名
+                .collect(Collectors.joining("-")); // 用 - 连接
+        // 超长截断
+        if (subject.length() > 200) subject = subject.substring(0, 200) + "...";
         model.setSubject(subject);
-        model.setProductCode("FAST_INSTANT_TRADE_PAY");
         request.setBizModel(model);
+        request.setReturnUrl("http://127.0.0.1:8080/checkout/pay-success");
+        request.setNotifyUrl("http://127.0.0.1:8080/checkout/api/alipay/notify");
+        model.setProductCode("FAST_INSTANT_TRADE_PAY");
 
-        // 必须返回 POST 表单，GET 会 405
-        return alipayClient.pageExecute(request, "POST").getBody();
+        AlipayTradePagePayResponse response =alipayrepo.getAlipayClient().pageExecute(request, "POST");
+        if (!response.isSuccess()) {
+            throw new RuntimeException("支付宝下单失败：" + response.getMsg());
+        }
+        // 4. 返回表单页面
+        return response.getBody();
     }
 }
