@@ -1,5 +1,6 @@
 package com.example.ShoppingCart.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class AlipayImplementation {
     public String createFormPay(String paymentMethod, Order order) throws AlipayApiException {
         //save paymentRecord to database
         PaymentRecord record=new PaymentRecord();
-        record.setPaymentAmount(order.getTotalAmount());
+        record.setPaymentAmount(order.getTotalAmount().multiply(BigDecimal.valueOf(5.6)));
         record.setPaymentMethod(paymentMethod);
         record.setTradeNo(UUID.randomUUID().toString());
         record.setPayStatus(1);
