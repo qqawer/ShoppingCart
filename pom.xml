@@ -76,6 +76,7 @@
             <artifactId>alipay-sdk-java</artifactId>
             <version>4.40.467.ALL</version>
         </dependency>
+
     </dependencies>
     <repositories>
         <repository>
@@ -86,6 +87,16 @@
     </repositories>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

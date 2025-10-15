@@ -4,27 +4,27 @@ import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 import com.example.ShoppingCart.exception.errorcode.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
 
-
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)   // 保证优先
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
-    @ResponseBody
-    public ResponseMessage handlerBusinessException(BusinessException e){
-        return new ResponseMessage(e.getCode(),e.getMessage(),null);
+    public ResponseMessage handleBusiness(BusinessException e) {
+        return new ResponseMessage(e.getCode(), e.getMessage(), null);
     }
 
-    // 处理系统异常（如空指针、数据库连接失败）
     @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public ResponseMessage handlerSystemException(Exception e) {
-        log.error("系统异常", e); // 记录详细日志
-        return new ResponseMessage(ErrorCode.SYSTEM_ERROR.getCode(), ErrorCode.SYSTEM_ERROR.getMessage(),null );
+    public ResponseMessage handleAll(Exception e) {
+        log.error("系统异常", e);
+        return new ResponseMessage(ErrorCode.SYSTEM_ERROR.getCode(),
+                ErrorCode.SYSTEM_ERROR.getMessage(), null);
     }
 }
