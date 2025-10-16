@@ -40,14 +40,10 @@ public class SaleHistoryController {
     public String getUserOrderHistory(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,HttpSession session, Model model) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
-//        System.out.println("Session userId: " + userId);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderTime"));
         Page<Order> OrderRecords = SaleHistoryService.getUserOrders(userId, pageable);
-//        List<Order> orders = SaleHistoryService.getOrdersByUserId(userId);
         model.addAttribute("orders", OrderRecords);
         System.out.println("pages:" + OrderRecords.getTotalPages());
-//        System.out.println("first:" + OrderRecords.stream().findFirst());
-//        System.out.println("last:" + OrderRecords.nextOrLastPageable());
         int cartCount = 0;
         if (userId != null) {
             cartCount = cartInterface.getCartItemsByUserId(userId).size();

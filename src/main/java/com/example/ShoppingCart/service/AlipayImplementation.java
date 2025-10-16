@@ -42,7 +42,7 @@ public class AlipayImplementation {
             @Value("${custom.alipay.app-private-key}") String privateKey,
             @Value("${custom.alipay.app-public-key}") String alipayPublicKey,
             @Value("${custom.alipay.app-id}") String appId,
-            @Value("${custom.notify-url}") String notifyUrl  // 回调地址也从配置读取
+            @Value("${custom.notify-url}") String notifyUrl  // The callback address is also read from the configuration.
     ) throws AlipayApiException {
         this.notifyUrl = notifyUrl+"/api/alipay/notify";
         AlipayConfig alipayConfig = new AlipayConfig();

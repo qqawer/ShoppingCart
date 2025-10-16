@@ -130,9 +130,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Ecommerce Platform</a>
+<!--        When the screen narrows, navigation links are collapsed into a hamburger button. Tap it to expand.-->
         <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+<!--        navigation, show the related function-->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link active" href="/products/lists">Product List</a></li>
@@ -190,6 +192,7 @@
                     </div>
                 </div>
             </div>
+<!--            empty message when order is null-->
             <div th:if="${orders == null or #lists.size(orders) == 0}" class="empty-state">
                 <i class="bi bi-receipt"></i>
                 <h4>No order records</h4>
