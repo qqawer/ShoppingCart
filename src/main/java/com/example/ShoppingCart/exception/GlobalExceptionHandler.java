@@ -5,6 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,6 +18,20 @@ import com.example.ShoppingCart.pojo.dto.ResponseMessage;
 @Order(Ordered.HIGHEST_PRECEDENCE)   // ensure priority
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    //1.Bean Validation validation failed
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseMessage handleValidation(MethodArgumentNotValidException e) {
+        FieldError fe = e.getBindingResult().getFieldError();
+        String msg = fe == null ? "Parameter error" : fe.getDefaultMessage();
+        return new ResponseMessage(4001, msg, null);
+    }
+
+    //2. JSON format error or request body is empty
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseMessage handleJson(HttpMessageNotReadableException e) {
+        return new ResponseMessage(4002, "Request body format error or required field missing", null);
+    }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseMessage handleBusiness(BusinessException e) {

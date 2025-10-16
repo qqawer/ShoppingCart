@@ -1,0 +1,9 @@
+custom:
+
+  notify-url: ""
+
+  alipay:
+    app-id: ""
+    app-private-key: ""
+    app-public-key: ""
+    alipay-public-key: ""

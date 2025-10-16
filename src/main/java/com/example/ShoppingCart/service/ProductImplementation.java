@@ -54,6 +54,9 @@ public class ProductImplementation implements ProductInterface {
         Product product = new Product();
         product.setProductName(dto.getProductName());
         product.setPrice(dto.getPrice());
+        if (product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "Product price must be greater than 0");
+        }
         product.setStock(dto.getStock());
         product.setBrand(dto.getBrand());
         product.setMainImage(dto.getMainImage());

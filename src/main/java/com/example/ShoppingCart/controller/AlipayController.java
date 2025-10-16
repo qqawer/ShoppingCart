@@ -8,6 +8,7 @@ import com.example.ShoppingCart.service.AlipayImplementation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,9 @@ import java.util.Map;
 
 @Controller
 public class AlipayController {
+    @Value("${custom.alipay.alipay-public-key}")
+    private String alipayPublicKey;
+
     @Autowired
     private OrderInterface orderService;
 
@@ -46,11 +50,10 @@ public class AlipayController {
     public String notify(HttpServletRequest req) throws AlipayApiException {
         Map<String, String> params = new HashMap<>();
         req.getParameterMap().forEach((k, v) -> params.put(k, v[0]));
-        System.out.println("1232");
         // 1. verify the signature
         boolean signOk = AlipaySignature.rsaCheckV1(
                 params,                     // 1. parameter Map
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnA4w58/EegvNhLp0HuR2PZy0eamXPAtaisIU5JxmC3P72XEDmBvLkptlNy+nEOYOI8xhMfvafmApN8iUMYYk4Yf7AbduXHQCDJDPZkOmR7k067Pv1nkLSunAntmID2HSAIyuMl1hNjcv52UBX8sPD4DHdYmZwwbPPHO0edRH/SPtutgj5tEnKKwEQ2KAPlZQpHzbsYhbN4G9zUUkKMONm0npk7ed0yE8QgEI0WeQ4tF8pwmQPM1lD8bIL44bGEZqKDEeovy8JivYG7zQcoO4u+HEvYQviG8P7R0xXcHFinASSI5Mq38ETSjzCkTyF+LUMXuMnsGIGnOVXKPcIHvSaQIDAQAB",     // 2. public key string
+                alipayPublicKey,     // 2. public key string
                 "UTF-8",                            // 3. character set
                 "RSA2");                            // 4. signature type
         if (!signOk) return "fail";
@@ -60,7 +63,6 @@ public class AlipayController {
             Order order = orderService.findByOrderId(outTradeNo);
             orderService.createPaymentRecord("alipay", order);
         }
-        System.out.println("12321432");
         return "success";
     }
     @GetMapping("/pay-success")
