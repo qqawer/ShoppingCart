@@ -155,7 +155,7 @@
                         <span th:text="${item.product.productName}">Product Name</span>
                     </div>
                 </td>
-                <td th:text="${'$' + item.product.price }">0</td>
+                <td th:text="${item.product.price + 'SGD'}">0</td>
                 <td>
                     <div class="quantity-control">
                         <a th:href="@{/cart/decrease(productId=${item.product.productId})}">

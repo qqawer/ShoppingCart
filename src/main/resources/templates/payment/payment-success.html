@@ -95,7 +95,7 @@
                 <span th:if="${currentPaidOrder.orderStatus == 2}">Shipped</span>
                 <span th:if="${currentPaidOrder.orderStatus == 3}">Completed</span>
             </p>
-            <p><label>Total Amount: </label> $<span th:text="${#numbers.formatDecimal(currentPaidOrder.totalAmount,1,2,'POINT')}"></span> SGD</p>
+            <p><label>Total Amount: </label><span th:text="${#numbers.formatDecimal(currentPaidOrder.totalAmount,1,2,'POINT')}"></span> SGD</p>
         </div>
 
         <div class="form-section">
@@ -124,7 +124,7 @@
             <h2>Payment Information</h2>
             <p><label>Method: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.paymentMethod : '—'}"></span></p>
             <p><label>Payment Time: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? #temporals.format(currentPaidOrder.paymentRecord.paymentTime,'yyyy-MM-dd HH:mm:ss') : '—'}"></span></p>
-            <p><label>Payment Amount: </label> $<span th:text="${currentPaidOrder.paymentRecord != null ? #numbers.formatDecimal(currentPaidOrder.paymentRecord.paymentAmount,1,2,'POINT') : '—'}"></span> SGD</p>
+            <p><label>Payment Amount: </label><span th:text="${currentPaidOrder.paymentRecord != null ? #numbers.formatDecimal(currentPaidOrder.paymentRecord.paymentAmount,1,2,'POINT') : '—'}"></span> SGD</p>
             <p><label>Transaction No.: </label> <span th:text="${currentPaidOrder.paymentRecord != null ? currentPaidOrder.paymentRecord.tradeNo : '—'}"></span></p>
             <p><label>Payment Status: </label>
                 <span th:if="${currentPaidOrder.paymentRecord != null and currentPaidOrder.paymentRecord.payStatus == 0}">Pending</span>
