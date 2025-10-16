@@ -18,7 +18,10 @@ import com.example.ShoppingCart.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
-//Achieve CartInterface
+/**
+ * Cart Service Implementation - Implements all cart business logic
+ * Handles cart operations with validation, stock checking, and database updates
+ */
 @Service
 @Transactional
 public class CartImplementation implements CartInterface {
@@ -29,7 +32,10 @@ public class CartImplementation implements CartInterface {
     @Autowired
     private ProductRepository productRepository;
 
-    //Check whether the product in the Cart
+    /**
+     * Check if product exists in user's cart
+     * Logic: Validate parameters, query database, return cart record or null
+     */
     @Override
     public CartRecord checkCartItem(String userId, String productId) {
         if (userId == null || userId.isEmpty()) {
@@ -43,7 +49,10 @@ public class CartImplementation implements CartInterface {
         return cartRecord.orElse(null);
     }
 
-    //Update the quantity of product in Cart
+    /**
+     * Update cart item quantity with stock validation
+     * Logic: Calculate new quantity, delete if <=0, check stock, update database
+     */
     @Override
     public CartRecord updateQuantity(CartRecord existingCartRecord, Integer quantity) {
         if (quantity == null) {
@@ -68,7 +77,10 @@ public class CartImplementation implements CartInterface {
         return cartRepository.save(existingCartRecord);
     }
 
-    //Update the quantity without stock check (for decrease operation)
+    /**
+     * Update quantity without stock validation (for decrease operation)
+     * Logic: Calculate new quantity, delete if <=0, save without checking stock
+     */
     @Override
     public CartRecord updateQuantityWithoutStockCheck(CartRecord existingCartRecord, Integer quantity) {
         if (quantity == null) {
@@ -87,7 +99,10 @@ public class CartImplementation implements CartInterface {
         return cartRepository.save(existingCartRecord);
     }
 
-    //Create the product in Cart
+    /**
+     * Create new cart item for user
+     * Logic: Validate input, check user/product exist, verify stock, create and save record
+     */
     @Override
     public CartRecord createCartItem(String userId, String productId, Integer quantity) {
         if (userId == null || userId.isEmpty()) {
@@ -120,7 +135,10 @@ public class CartImplementation implements CartInterface {
         return cartRepository.save(newCartRecord);
     }
 
-    //Get all the product in Cart
+    /**
+     * Retrieve all cart items for a user
+     * Logic: Validate userId, query all cart records from database
+     */
     @Override
     public List<CartRecord> getCartItemsByUserId(String userId) {
         if (userId == null || userId.isEmpty()) {
@@ -131,12 +149,20 @@ public class CartImplementation implements CartInterface {
 
 
 
+    /**
+     * Check if inventory is sufficient for requested quantity
+     * Logic: Find product, compare stock with required quantity
+     */
     @Override
     public boolean checkInventory(String productId, int required_quantity) {
         Product product = productRepository.findByProductId(productId);
         return product != null && product.getStock() >= required_quantity;
     }
 
+    /**
+     * Get current stock level for a product
+     * Logic: Find product, return stock or 0 if not found
+     */
     @Override
     public int getProductInventory(String productId) {
         Product product = productRepository.findByProductId(productId);

@@ -9,34 +9,38 @@ import com.example.ShoppingCart.pojo.dto.UserInfoDTO;
 
 import jakarta.servlet.http.HttpSession;
 
+/**
+ * User Service Interface - Defines all user-related operations
+ * Handles authentication, session management, and user profile operations
+ */
 public interface UserInterface {
     /**
-     * user login
+     * User login - Authenticate user and create session
      */
     UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult);
 
     /**
-     * user logout
+     * User logout - Invalidate session
      */
     void logout(HttpSession session);
 
     /**
-     * get the current logged in user information
+     * Get current logged in user information from session
      */
     UserInfoDTO getCurrentUser(HttpSession session);
 
     /**
-     * check if the user is logged in
+     * Check if user is currently logged in
      */
     boolean isLoggedIn(HttpSession session);
 
     /**
-     * user register
+     * User registration - Create new user account
      */
     UserInfoDTO register(RegisterRequest request);
 
     /**
-     * update user information
+     * Update user information (profile, password, addresses)
      */
     UserInfoDTO updateUserInfo(String userId, UpdateUserRequest request);
 }

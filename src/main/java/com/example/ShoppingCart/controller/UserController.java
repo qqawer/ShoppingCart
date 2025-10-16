@@ -24,31 +24,35 @@ import com.example.ShoppingCart.repository.UserAddressRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+/**
+ * User Controller - Handles user authentication, profile management, and address operations
+ * Main responsibilities: Login/logout, registration, profile viewing/editing, address management
+ */
 @Controller
 public class UserController {
     @Autowired
     private UserInterface userService;
-    
+
     @Autowired
     private UserAddressRepository userAddressRepository;
-    
+
     /**
-     * delete the address
-     * POST /user/address/delete/{addressId}
+     * Delete user address
+     * Logic: Verify user is logged in, check address ownership, delete from database
      */
     @PostMapping("/user/address/delete/{addressId}")
-    public String deleteAddress(@PathVariable String addressId, HttpSession session, Model model, 
-                               RedirectAttributes redirectAttributes) {
+    public String deleteAddress(@PathVariable String addressId, HttpSession session, Model model,
+                                RedirectAttributes redirectAttributes) {
         // check whether the user is logged in
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         if (userId == null) {
             return "redirect:/login";
         }
-        
+
         try {
             // get the address to be deleted
             UserAddress address = userAddressRepository.findById(addressId).orElse(null);
-            
+
             // check whether the address exists and belongs to the current user
             if (address != null && address.getUser().getUserId().equals(userId)) {
                 userAddressRepository.delete(address);
@@ -59,23 +63,23 @@ public class UserController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "failed to delete address: " + e.getMessage());
         }
-        
+
         return "redirect:/user/addresses";
     }
 
     /**
-     * display the login page
-     * GET /login
+     * Display login page
+     * Logic: Create empty LoginRequest object for form binding
      */
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
         return "user/login";
     }
-    
+
     /**
-     * display the user address list page
-     * GET /user/addresses
+     * Display user's address list page
+     * Logic: Check login status, retrieve all addresses for current user
      */
     @GetMapping("/user/addresses")
     public String addressesPage(HttpSession session, Model model) {
@@ -88,13 +92,13 @@ public class UserController {
         // get all the addresses of the user
         List<UserAddress> addresses = userAddressRepository.findByUser_UserId(userId);
         model.addAttribute("addresses", addresses);
-        
+
         return "user/addresses";
     }
 
     /**
-     * 用户登录
-     * POST /login
+     * Process user login
+     * Logic: Validate input, authenticate user, save to session, redirect based on role (admin/customer)
      */
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginRequest request,
@@ -126,8 +130,8 @@ public class UserController {
 
 
     /**
-     * user logout
-     * GET /logout
+     * User logout
+     * Logic: Invalidate session, redirect to login page
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -136,8 +140,8 @@ public class UserController {
     }
 
     /**
-     * display the user information page
-     * GET /user/profile
+     * Display user profile page
+     * Logic: Retrieve current user from session, show profile information
      */
     @GetMapping("/user/profile")
     public String getUserProfile(HttpSession session, Model model) {
@@ -151,8 +155,8 @@ public class UserController {
     }
 
     /**
-     * display the register page
-     * GET /register
+     * Display registration page
+     * Logic: Create empty RegisterRequest object for form binding
      */
     @GetMapping("/register")
     public String registerPage(Model model) {
@@ -161,8 +165,8 @@ public class UserController {
     }
 
     /**
-     * user register
-     * POST /register
+     * Process user registration
+     * Logic: Validate input, check duplicates, create new user account
      */
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute RegisterRequest request,
@@ -184,8 +188,8 @@ public class UserController {
     }
 
     /**
-     * display the edit user information page
-     * GET /user/edit
+     * Display edit profile page
+     * Logic: Retrieve current user info, prepare form for editing
      */
     @GetMapping("/user/edit")
     public String editProfilePage(HttpSession session, Model model) {
@@ -200,8 +204,8 @@ public class UserController {
     }
 
     /**
-     * update the user information
-     * POST /user/update
+     * Process user profile update
+     * Logic: Validate input, update user info (username/avatar/password/address), save to session
      */
     @PostMapping("/user/update")
     public String updateProfile(@Valid @ModelAttribute("updateRequest") UpdateUserRequest request,
@@ -232,14 +236,14 @@ public class UserController {
         }
     }
     /**
-     * set the default address
-     * POST /user/address/default/{addressId}
+     * Set default shipping address
+     * Logic: Unset all default flags, set selected address as default
      */
     @PostMapping("/user/address/default/{addressId}")
     public String setDefaultAddress(@PathVariable String addressId, HttpSession session) {
         try {
             UserInfoDTO userInfo = userService.getCurrentUser(session);
-                // first set all addresses to non-default
+            // first set all addresses to non-default
             List<UserAddress> addresses = userAddressRepository.findByUser_UserId(userInfo.getUserId());
             for (UserAddress address : addresses) {
                 address.setDefault(false);
@@ -251,7 +255,7 @@ public class UserController {
                 selectedAddress.setDefault(true);
                 userAddressRepository.save(selectedAddress);
             }
-            
+
             return "redirect:/user/addresses";
         } catch (Exception e) {
             return "redirect:/login";

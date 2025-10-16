@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+    User Profile Page
+    Logic: Display user information including avatar, username, phone, registration date
+    Provide links to edit profile, view products, and logout
+-->
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -120,13 +125,16 @@
 <div class="container">
     <h1>Personal Center</h1>
 
+    <!-- Avatar section: Display user avatar or first letter of username as fallback -->
     <div class="avatar-section">
         <div th:if="${userInfo.avatar == null or #strings.isEmpty(userInfo.avatar)}">
+            <!-- Default avatar: Show first letter of username -->
             <div class="avatar">
                 <span th:text="${#strings.substring(userInfo.userName, 0, 1)}">U</span>
             </div>
         </div>
         <div th:if="${userInfo.avatar != null and !#strings.isEmpty(userInfo.avatar)}">
+            <!-- Custom avatar: Show image with fallback to default if image fails -->
             <img th:src="${userInfo.avatar}"
                  alt="Avatar"
                  style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"
@@ -138,6 +146,7 @@
         <h3 th:text="${userInfo.userName}">Username</h3>
     </div>
 
+    <!-- User information display: Show all user details -->
     <div class="form-section">
         <div class="info-item">
             <span class="info-label">User ID:</span>
@@ -160,9 +169,10 @@
         </div>
     </div>
 
+    <!-- Action buttons: Edit profile, view products, or logout -->
     <div class="button-group">
-    <a th:href="@{/user/edit}" class="button-link">Edit Information</a>
-    <a th:href="@{/products/lists}" class="button-link">Return to Product List</a>
+        <a th:href="@{/user/edit}" class="button-link">Edit Information</a>
+        <a th:href="@{/products/lists}" class="button-link">Return to Product List</a>
         <a th:href="@{/logout}" class="button-link">Log Out</a>
     </div>
 </div>

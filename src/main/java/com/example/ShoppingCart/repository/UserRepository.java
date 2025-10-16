@@ -5,15 +5,19 @@ import org.springframework.stereotype.Repository;
 
 import com.example.ShoppingCart.model.User;
 
+/**
+ * User Repository - Data access layer for user operations
+ * Provides custom query methods for user authentication and lookup
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User,String> {
     /**
-     * find user by user name (for login)
+     * Find user by username (used for checking username availability)
      */
     User findByUserName(String userName);
 
     /**
-     * find user by phone number (for login)
+     * Find user by phone number (primary login credential)
      */
     User findByPhoneNumber(String phoneNumber);
 }

@@ -19,6 +19,10 @@ import com.example.ShoppingCart.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
+/**
+ * User Service Implementation - Implements all user business logic
+ * Handles authentication, registration, profile updates, and session management
+ */
 @Service
 @Transactional
 public class UserImplementation implements UserInterface {
@@ -27,37 +31,49 @@ public class UserImplementation implements UserInterface {
     @Autowired
     private com.example.ShoppingCart.repository.UserAddressRepository userAddressRepository;
 
+    /**
+     * User login authentication
+     * Logic: Find user by phone, verify password, create session, return user info
+     */
     @Override
     public UserInfoDTO login(LoginRequest request, HttpSession session, BindingResult bindingResult) {
 
-        // 1. find user by phone number
+        // Step 1: Find user by phone number
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
 
-        // 2. if not found, the user does not exist
+        // Step 2: If not found, the user does not exist
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
 
-        // 3. verify password (plain text comparison)
+        // Step 3: Verify password (plain text comparison)
         if (!request.getPassword().trim().equals(user.getPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_ERROR);
         }
 
-        // 4. login successful, save user information to Session
+        // Step 4: Login successful, save user information to Session
         session.setAttribute(SessionConstant.USER_ID, user.getUserId());
         UserInfoDTO userInfo = new UserInfoDTO(user);
         session.setAttribute(SessionConstant.CURRENT_USER, userInfo);
 
-        // 5. return user information
+        // Step 5: Return user information
         return userInfo;
     }
 
+    /**
+     * User logout
+     * Logic: Destroy entire session to clear all user data
+     */
     @Override
     public void logout(HttpSession session) {
         // destroy the entire Session
         session.invalidate();
     }
 
+    /**
+     * Get current user from session
+     * Logic: Retrieve user info from session, throw error if not logged in
+     */
     @Override
     public UserInfoDTO getCurrentUser(HttpSession session) {
         // get user information from Session
@@ -70,52 +86,65 @@ public class UserImplementation implements UserInterface {
         return userInfo;
     }
 
+    /**
+     * Check login status
+     * Logic: Verify if userId exists in session
+     */
     @Override
     public boolean isLoggedIn(HttpSession session) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
         return userId != null && !userId.isEmpty();
     }
 
+    /**
+     * User registration
+     * Logic: Validate passwords match, check duplicates, create new user, save to database
+     */
     @Override
     public UserInfoDTO register(RegisterRequest request) {
-        // 1. verify if the two passwords are consistent
+        // Step 1: Verify if the two passwords are consistent
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        // 2. check if the phone number has been registered
+        // Step 2: Check if the phone number has been registered
         User existingUser = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
         if (existingUser != null) {
             throw new BusinessException(ErrorCode.PHONE_NUMBER_DUPLICATE);
         }
 
-        // 3. check if the user name has been occupied
+        // Step 3: Check if the user name has been occupied
         User existingUserName = userRepository.findByUserName(request.getUserName().trim());
         if (existingUserName != null) {
             throw new BusinessException(ErrorCode.USER_NAME_DUPLICATE);
         }
 
-        // 4. create new user
+        // Step 4: Create new user
         User newUser = new User();
         newUser.setUserName(request.getUserName().trim());
         newUser.setPhoneNumber(request.getPhoneNumber().trim());
-        // 5. set password (plain text storage, Remove trailing spaces)
+
+        // Step 5: Set password (plain text storage, Remove trailing spaces)
         newUser.setPassword(request.getPassword().trim());
 
-        // 6. save to database
+        // Step 6: Save to database
         User savedUser = userRepository.save(newUser);
 
-        // 7. return user information
+        // Step 7: Return user information
         return new UserInfoDTO(savedUser);
     }
 
+    /**
+     * Update user profile information
+     * Logic: Update username, avatar, password if provided; optionally create new address
+     */
     @Override
     public UserInfoDTO updateUserInfo(String userId, UpdateUserRequest request) {
-        // 1. query user
+        // Step 1: Query user from database
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. update user name
+        // Step 2: Update user name if provided
         if (request.getUserName() != null && !request.getUserName().isEmpty()) {
             // check if the user name has been occupied by other users
             User existingUser = userRepository.findByUserName(request.getUserName());
@@ -125,12 +154,12 @@ public class UserImplementation implements UserInterface {
             user.setUserName(request.getUserName());
         }
 
-        // 3. update avatar
+        // Step 3: Update avatar if provided
         if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
             user.setAvatar(request.getAvatar());
         }
 
-        // 4. update password (if the old password and new password are provided)
+        // Step 4: Update password (if the old password and new password are provided)
         if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
             // verify old password
             if (request.getOldPassword() == null || request.getOldPassword().isEmpty()) {
@@ -143,10 +172,10 @@ public class UserImplementation implements UserInterface {
             user.setPassword(request.getNewPassword());
         }
 
-        // 5. save update
+        // Step 5: Save update
         User updatedUser = userRepository.save(user);
 
-//        // 6. if the request contains address information, save or update the user address
+        // Step 6: Handle address creation if address fields are provided
         try {
             // If user submitted any address-related field, require all address fields to be present
             boolean anyAddressFieldProvided = (request.getReceiverName() != null && !request.getReceiverName().isEmpty())
@@ -165,7 +194,7 @@ public class UserImplementation implements UserInterface {
                     throw new BusinessException(ErrorCode.PARAM_ERROR, "Please complete the shipping address (recipient, phone number, region, detailed address)");
                 }
 
-                // check current count
+                // check current count - limit to 6 addresses
                 java.util.List<UserAddress> existing = userAddressRepository.findByUser_UserId(userId);
                 if (existing != null && existing.size() >= 6) {
                     throw new BusinessException(ErrorCode.PARAM_ERROR, "The maximum number of addresses has been reached, please delete one address before adding.");
@@ -179,7 +208,7 @@ public class UserImplementation implements UserInterface {
                 addr.setRegion(request.getRegion());
                 addr.setDetailAddress(request.getDetailAddress());
 
-                // check if there is a default address
+                // handle default address logic
                 UserAddress defaultAddress = userAddressRepository.findByUser_UserIdAndIsDefaultTrue(userId);
                 if (defaultAddress == null || Boolean.TRUE.equals(request.getIsDefault())) {
                     if (defaultAddress != null) {
@@ -199,7 +228,8 @@ public class UserImplementation implements UserInterface {
         } catch (Exception ignored) {
             // swallow other exceptions to avoid breaking user update on address save errors
         }
-        // 6. return updated user information
+
+        // Step 7: Return updated user information
         return new UserInfoDTO(updatedUser);
     }
 }

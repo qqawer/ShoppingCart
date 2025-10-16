@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+    Shopping Cart Page
+    Logic: Display user's cart items, calculate total price, allow quantity updates,
+    check stock availability, navigate to checkout
+-->
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
@@ -121,16 +126,17 @@
 <div class="container">
     <h2>My Cart</h2>
 
-    <!-- error message -->
+    <!-- Display error messages (e.g., insufficient stock, invalid quantity) -->
     <div th:if="${errorMessage}" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
         <strong>Error:</strong><span th:text="${errorMessage}"></span>
     </div>
 
-    <!-- success message -->
+    <!-- Display success messages (e.g., quantity updated successfully) -->
     <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
         <strong>Success:</strong><span th:text="${successMessage}"></span>
     </div>
 
+    <!-- Cart items table: Display all products with quantity controls and remove option -->
     <div th:if="${cartItems != null and !cartItems.isEmpty()}">
         <input type="hidden" name="userId" th:value="${userId}">
 
@@ -191,23 +197,25 @@
             </tbody>
         </table>
 
-        <!-- 结算区域 -->
+        <!-- Summary section: Display total items, total price, and checkout button -->
         <div class="summary">
             <p>Total Products:<span th:text="${cartItems.size()}">0</span> items</p>
             <p class="total-price">Total:<span th:text="${#numbers.formatDecimal(totalPrice, 0, 2) + 'SGD'}">0SGD</span></p>
+            <!-- Stock warning: Disable checkout if any item has insufficient stock -->
             <div th:if="${hasInsufficientStock}" style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeaa7;">
                 <strong>Note:</strong>Some products are out of stock, please adjust the quantity and try again
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <a href="/products/lists" class="button-link">Continue Shopping</a>
                 <form th:action="@{/checkout/order}" method="post">
+                    <!-- Disable checkout button if stock is insufficient -->
                     <button type="submit" th:disabled="${hasInsufficientStock}">Go to Checkout</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Empty cart提示 -->
+    <!-- Empty cart message: Show when cart has no items -->
     <div th:if="${cartItems == null or cartItems.isEmpty()}" class="no-order">
         <p>The cart is empty, go to shop now!</p>
         <a href="/products/lists" class="button-link">Go to Shop</a>

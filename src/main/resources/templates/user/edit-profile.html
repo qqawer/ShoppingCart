@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+    Edit Profile Page
+    Logic: Display current user info, allow editing username/avatar/password,
+    optionally add new shipping address, validate all inputs before submission
+-->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -147,6 +152,7 @@
     <h1>Edit Profile</h1>
 
     <div class="form-section">
+        <!-- Display current user information for reference -->
         <div class="current-info">
             <h3>Current Information</h3>
             <div class="info-row">
@@ -159,11 +165,13 @@
             </div>
         </div>
 
+        <!-- Display error/success messages from form submission -->
         <div th:if="${error}" class="error-message" th:text="${error}"></div>
         <div th:if="${success}" class="success-message" th:text="${success}"></div>
 
+        <!-- Profile update form: Fields are optional, only update if provided -->
         <form th:action="@{/user/update}" th:object="${updateRequest}" method="post">
-            <!-- global binding error (e.g. business validation, or BindingResult global errors) -->
+            <!-- Display global validation errors -->
             <div th:if="${#fields.hasGlobalErrors()}" class="error-message">
                 <ul>
                     <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
@@ -191,6 +199,7 @@
                 <div class="field-error" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></div>
             </div>
 
+            <!-- Password change section: Only processes if both old and new password provided -->
             <div class="password-section">
                 <h3>Change Password</h3>
 
@@ -217,6 +226,7 @@
                 </div>
             </div>
 
+            <!-- Address section: Create new address, requires all fields if any field is filled -->
             <div class="form-section">
                 <h3>Shipping Address (Optional)</h3>
 

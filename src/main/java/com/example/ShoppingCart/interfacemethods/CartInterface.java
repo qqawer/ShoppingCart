@@ -4,19 +4,29 @@ import java.util.List;
 
 import com.example.ShoppingCart.model.CartRecord;
 
+/**
+ * Cart Service Interface - Defines all cart-related operations
+ * This interface abstracts cart business logic from the controller layer
+ */
 public interface CartInterface {
-    //check whether product in Cart
+    // Check if a specific product exists in user's cart
     CartRecord checkCartItem(String userId, String productId);
-    //update the quantity of product in Cart
+
+    // Update quantity with stock validation (for add/increase operations)
     CartRecord updateQuantity(CartRecord existingCartRecord, Integer quantity);
-    //update the quantity without stock check (for decrease operation)
+
+    // Update quantity without stock check (used for decrease operation)
     CartRecord updateQuantityWithoutStockCheck(CartRecord existingCartRecord, Integer quantity);
-    //create a new product in Cart
+
+    // Create a new cart item for the user
     CartRecord createCartItem(String userId, String productId, Integer quantity);
-    //get all item in Cart
+
+    // Retrieve all cart items for a specific user
     List<CartRecord> getCartItemsByUserId(String userId);
-    //check inventory whether it is enough
+
+    // Verify if product stock is sufficient for requested quantity
     boolean checkInventory(String productId, int quantity);
-    //get recent inventory amount
+
+    // Get current available stock for a product
     int getProductInventory(String productId);
 }

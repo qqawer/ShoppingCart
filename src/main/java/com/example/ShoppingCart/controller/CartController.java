@@ -18,14 +18,22 @@ import com.example.ShoppingCart.model.SessionConstant;
 
 import jakarta.servlet.http.HttpSession;
 
+/**
+ * Cart Controller - Handles shopping cart operations
+ * Main responsibilities: Display cart, add/remove items, update quantities
+ */
 @Controller
 public class CartController {
     @Autowired
     private CartInterface cartInterface;
 
-    // show the cart page
+    /**
+     * Display the cart page with all items
+     * Logic: Retrieve user's cart items, calculate total price, check stock availability
+     */
     @GetMapping("/cart")
     public String showCart(HttpSession session, Model model) {
+        // Step 1: Get user ID from session, use test user if not logged in
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
 
         if (userId == null) {
@@ -33,9 +41,10 @@ public class CartController {
             userId = "testUser123";
         }
 
+        // Step 2: Retrieve all cart items for this user
         List<CartRecord> cartItems = cartInterface.getCartItemsByUserId(userId);
 
-        // calculate the total price (all products)
+        // Step 3: Calculate total price and check stock for each item
         BigDecimal totalPrice = BigDecimal.ZERO;
         boolean hasInsufficientStock = false;
         for (CartRecord item : cartItems) {
@@ -59,7 +68,10 @@ public class CartController {
         return "product/cart";
     }
 
-    // update the quantity of product (through the input box)
+    /**
+     * Update product quantity via input box
+     * Logic: Validate new quantity, check stock availability, update cart record
+     */
     @PostMapping("/cart/update")
     public String updateQuantity(@RequestParam String productId,
                                  @RequestParam Integer quantity,
@@ -100,7 +112,10 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    // increase the quantity of product
+    /**
+     * Increase product quantity by 1
+     * Logic: Check if stock allows increment, update quantity if valid
+     */
     @GetMapping("/cart/increase")
     public String increaseQuantity(@RequestParam String productId, HttpSession session, RedirectAttributes redirectAttributes) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
@@ -130,7 +145,10 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    // decrease the quantity of product
+    /**
+     * Decrease product quantity by 1
+     * Logic: Prevent quantity from going below 1, no stock check needed for decrease
+     */
     @GetMapping("/cart/decrease")
     public String decreaseQuantity(@RequestParam String productId,
                                    HttpSession session,
@@ -165,7 +183,10 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    // delete the product
+    /**
+     * Remove product from cart
+     * Logic: Set quantity to negative to trigger deletion in service layer
+     */
     @GetMapping("/cart/remove")
     public String removeItem(@RequestParam String productId, HttpSession session) {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
@@ -182,7 +203,11 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    //add product into Cart
+    /**
+     * Add product to cart
+     * Logic: Check if item exists in cart, verify total quantity against stock,
+     * either update existing item or create new cart record
+     */
     @PostMapping("/cart/add")
     public String addToCart(
             @RequestParam String productId,
@@ -194,7 +219,7 @@ public class CartController {
         String userId = (String) session.getAttribute(SessionConstant.USER_ID);
 
         if (userId == null) {
-                // if not login, redirect to the login page
+            // if not login, redirect to the login page
             return "redirect:/login";
         }
 

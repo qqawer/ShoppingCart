@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+    Login Page
+    Logic: Accept phone number and password, validate credentials,
+    redirect to admin/customer page based on role after successful login
+-->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -84,6 +89,7 @@
 <div class="container">
     <h1>Login</h1>
 
+    <!-- Login form: Submit phone number and password for authentication -->
     <form id="loginForm" th:action="@{/login}" method="post">
         <div class="form-section">
             <label for="phoneNumber">Phone Number</label>
@@ -92,9 +98,11 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter password" required>
 
+            <!-- Display login error messages (e.g., invalid credentials) -->
             <div class="error" th:if="${error}" th:text="${error}"></div>
         </div>
 
+        <!-- Navigation: Back to products, register, or submit login -->
         <div class="button-group">
             <a th:href="@{/products/lists}" class="button-link">Back to Product List</a>
             <div>
