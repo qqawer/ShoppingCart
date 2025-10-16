@@ -167,8 +167,8 @@ public class ShoppingCartApplicationTests  {
             "https://tse2.mm.bing.net/th/id/OIP.weYGntZYbJe2DlbrLLnFsAHaKc?rs=1&pid=ImgDetMain&o=7&rm=3", "1899.00", "3M Automotive Window Tint Full Car Package", 80);
         productRepository.save(p19);
 
-        Product p20 = buildProduct("Apple", "Discontinued, Out of stock, Display only", 
-            "https://tse2.mm.bing.net/th/id/OIP.SOKeeHGcU3uKk3o8edUv7gHaE7?rs=1&pid=ImgDetMain&o=7&rm=3", "4999.00", "iPhone 13 mini 128GB", 0);
+        Product p20 = buildProduct("Apple", "Lightweight Apple, Only one stock",
+            "https://tse2.mm.bing.net/th/id/OIP.SOKeeHGcU3uKk3o8edUv7gHaE7?rs=1&pid=ImgDetMain&o=7&rm=3", "799.00", "iPhone 13 mini 128GB", 1);
         productRepository.save(p20);
         //Order
         Order order1 = buildShopOrder(0, "2025-10-05 10:00:00", "1259.97", userAddress1, user1);
